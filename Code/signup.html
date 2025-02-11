@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="scriptFunction" href="./javaScript.js" />
+    <script
+      src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"
+      defer
+    ></script>
+    <script src="./js/validation.js" defer></script>
+
+    <title>Sign Up Page</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navdiv">
+        <div class="logo">
+          <a href="index.html">
+            <img src="./images/logo.png" alt="Logo for Sports Online." />
+          </a>
+        </div>
+        <ul>
+          <li><a href="index.html">HOME</a></li>
+          <li><a href="products.html">PRODUCTS</a></li>
+          <li><a href="aboutUs.html">ABOUT US</a></li>
+          <li><a href="contact.html">CONTACT</a></li>
+        </ul>
+
+        <div class="header-icons">
+          <a href="#"
+            ><img
+              src="./images/shopping-cart.png"
+              alt="picture of a shopping cart."
+            />
+          </a>
+          <a href="index.php">
+            <img src="./images/user.png" alt="photo of a user." />
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <h1>Sign Up</h1>
+
+    <form action="process-signup.php" method="post" id="signup" novalidate>
+      <div>
+        <label for="first_name">First Name</label>
+        <input type="text" id="first_name" name="first_name" />
+      </div>
+      <br />
+
+      <div>
+        <label for="second_name">Second Name</label>
+        <input type="text" id="second_name" name="second_name" />
+      </div>
+      <br />
+
+      <div>
+        <label for="email_address">Email Address</label>
+        <input type="email address" id="email_address" name="email_address" />
+      </div>
+      <br />
+
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" />
+      </div>
+      <br />
+
+      <div>
+        <label for="password_confirmation">Re-enter Password</label>
+        <input
+          type="password"
+          id="password_confirmation"
+          name="password_confirmation"
+        />
+      </div>
+
+      <div id="signupbtn">
+        <button>Sign Up</button>
+      </div>
+    </form>
+
+    <footer>
+      <div class="site-footer">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <a href="index.html"
+              ><img src="./images/logo.png" alt="Your Logo"
+            /></a>
+          </div>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="aboutUs.html">About</a>
+            <a href="products.html">Products</a>
+            <a href="contact.html">Contact</a>
+          </div>
+          <div class="footer-social">
+            <a href="https://www.facebook.com/SportsDirect/"
+              ><img src="./images/facebook.png" alt="Facebook"
+            /></a>
+            <a href="https://twitter.com/sportsdirectuk?lang=en"
+              ><img src="./images/twitter.png" alt="Twitter"
+            /></a>
+            <a
+              href="https://uk.linkedin.com/company/sports-direct-international"
+              ><img src="./images/linkedin.png" alt="LinkedIn"
+            /></a>
+          </div>
+        </div>
+        <p class="footer-copyright">
+          &copy; 2024 Sports Online. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
