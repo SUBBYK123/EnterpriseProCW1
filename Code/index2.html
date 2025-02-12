@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 // Start the session to check if the user is logged in
 session_start();
 
@@ -18,14 +18,14 @@ if (isset($_SESSION["user_id"])) {
         $isAdminMessage = ", you are the admin.";
     }
 }
-?>
+?> -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" href="./style.css"/>
+    <link rel="stylesheet" href="./CSS/CSS.css"/>
     <link rel="scriptFunction" href="./javaScript.js"/>
     <title>Login Or signup Page</title>
 </head>
@@ -48,12 +48,12 @@ if (isset($_SESSION["user_id"])) {
         </ul>
         <!-- Header icons -->
         <div class="header-icons">
-          <a href="#"
-            ><img
+          <!-- <a href="#" -->
+            <!-- ><img
               src="./images/shopping-cart.png"
               alt="picture of a shopping cart."
-          /></a>
-          <a href="index.php"
+          /></a> -->
+          <a href="index.html"
             ><img src="./images/user.png" alt="photo of a user."
           /></a>
         </div>
@@ -61,15 +61,15 @@ if (isset($_SESSION["user_id"])) {
     </nav>
 <h1>Log In</h1>
 
-<?php if (isset($user)): ?>
+<!-- <?php if (isset($user)): ?> -->
     <!-- If user is logged in -->
     <div id="Login">
         <p style="text-align: center;">Hello <?= htmlspecialchars($user["first_name"]) ?><?= $isAdminMessage ?></p>
 
-        <p style="text-align: center;"><a href="logout.php">Log Out</a></p>
+        <p style="text-align: center;"><a href="index.html">Log Out</a></p>
     </div>
     <!-- Admin actions -->
-    <?php if ($user["is_admin"] == 1): ?>
+    <!-- <?php if ($user["is_admin"] == 1): ?> -->
         <div id="user-list">
             <h2>User List</h2>
             <table>
@@ -83,7 +83,7 @@ if (isset($_SESSION["user_id"])) {
                 </tr>
                 </thead>
                 <tbody>
-                <?php
+                <!-- <?php
                 // Fetch all users from the database
                 $sql_users = "SELECT * FROM user";
                 $result_users = $mysqli->query($sql_users);
@@ -100,15 +100,15 @@ if (isset($_SESSION["user_id"])) {
                         echo "</tr>";
                     }
                 }
-                ?>
+                ?> -->
                 </tbody>
             </table>
         </div>
-    <?php endif; ?>
-<?php else: ?>
+    <!-- <?php endif; ?>
+<?php else: ?> -->
     <!-- If user is not logged in, provide options to log in or sign up -->
-    <p style="text-align: center;"><a href="login.php">Log In</a> or <a href="signup.html">Sign Up</a></p>
-<?php endif; ?>
+    <p style="text-align: center;"><a href="login.html">Log In</a> or <a href="signup.html">Sign Up</a></p>
+<!-- <?php endif; ?> -->
 
 <<!-- Footer -->
 <footer>
