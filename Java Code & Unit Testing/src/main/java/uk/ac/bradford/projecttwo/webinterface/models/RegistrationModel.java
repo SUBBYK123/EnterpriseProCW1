@@ -1,5 +1,8 @@
 package uk.ac.bradford.projecttwo.webinterface.models;
 
+import org.springframework.security.crypto.bcrypt.BCrypt;
+
+
 public class RegistrationModel {
     private String firstName;
     private String lastName;
@@ -36,7 +39,7 @@ public class RegistrationModel {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = BCrypt.hashpw(password,BCrypt.gensalt());
     }
 
     public String getDepartment() {

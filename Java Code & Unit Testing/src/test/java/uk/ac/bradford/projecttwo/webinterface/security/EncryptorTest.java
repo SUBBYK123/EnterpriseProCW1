@@ -15,6 +15,7 @@ public class EncryptorTest {
         String encryptedPassword = encryptor.encryptString(rawPassword);
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        System.out.println(rawPassword + encryptedPassword);
         assertTrue(encoder.matches(rawPassword,encryptedPassword));
     }
 
