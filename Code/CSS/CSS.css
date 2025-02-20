@@ -10,26 +10,30 @@ body {
 }
 
 div.logo a img {
-  height: 50px;
+  height: 100px;
   float: left;
+  position: fixed;
+  top: 0;
 }
 
 div.header-icons a img {
-  height: 30px;
-  padding: 10px;
+  height: 40px;
+  padding: 30px;
+  float: right;
 }
 
 .navbar {
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: 0px;
+  padding-left: 0px;
   background-color: whitesmoke;
-  box-shadow: 10px 5px 2px dimgray;
+  box-shadow: -2px 5px 2px dimgray;
+  padding-top: 100px;
 }
 
 .navdiv {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 li {
@@ -134,46 +138,72 @@ button:hover {
 }
 
 .site-footer {
-  background-color: whitesmoke;
-  padding: 5px;
+  background-color: #666; /*gray*/
+  padding: 20px 0;
   text-align: center;
   width: 100%;
-  bottom: 0;
-  margin-top: auto;
 }
 
 .footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.footer-logo a img {
-  max-width: 100px;
-  height: 50px;
-  margin-bottom: -35px;
+  align-items: left;
+  text-align: left;
+  padding: 0 20px;
 }
 
 .footer-links a {
   text-decoration: none;
-  color: black;
-  margin-right: 50px;
-  padding-left: 10px;
+  color: #333; /* Dark gray text */
+  margin: 0 15px;
+  font-size: 14px;
 }
 
 .footer-social img {
-  max-width: 20px;
-  margin-right: 10px;
+  width: 30px; /* Smaller icons */
+  height: 30px;
+  margin: 0 10px;
+}
+
+/* Footer Section 2 */
+.site-footer-blue {
+  background-color: #005192; /* Blue background */
+  padding: 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.footer-blue {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.footer-logo img {
+  width: 150px;
+  height: auto;
+}
+
+.footer-contact p {
+  color: #fff; /* White text */
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.footer-legal a {
+  text-decoration: none;
+  color: #fff; /* White text */
+  margin: 0 10px;
+  font-size: 14px;
 }
 
 .footer-copyright {
-  align-items: center;
-  margin-top: 20px;
-  padding-right: 80px;
-  font-size: 14px;
-  color: gray;
+  background-color: #005192; /* Blue background */
+  color: #fff; /* White text */
+  text-align: left;
+  padding: 10px 0;
+  margin: 0;
 }
 
 /* Style the form container */
@@ -221,5 +251,20 @@ input[type="password"] {
 
 #signupbtn button:hover {
   background-color: #0056b3;
+}
+
+/* Code to center  */
+.container {
+  height: 75px;
+  position: relative;
+}
+
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
