@@ -1,5 +1,6 @@
 package uk.ac.bradford.projecttwo.webinterface.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -18,10 +19,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final Encryptor encryptor;
 
-
     public SecurityConfig(Encryptor encryptor) {
         this.encryptor = encryptor;
     }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
