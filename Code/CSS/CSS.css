@@ -262,9 +262,23 @@ input[type="password"] {
 .center {
   margin: 0;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-}
+  top: 10%;
+  left: 6%;
 
+}
+ /* Search bar */
+.search-bar {
+  position: absolute; 
+  top: 50px; 
+  left: 20px; 
+  right: 100px;
+  
+}
+/* Accessibilty */
+.accessibility {
+  position: absolute; 
+  top: 6px; 
+  left: 1720px; 
+  right: 150px;
+  
+}
