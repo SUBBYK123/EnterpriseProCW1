@@ -39,7 +39,7 @@ public class RegistrationModel {
     }
 
     public void setPassword(String password) {
-        this.password = BCrypt.hashpw(password,BCrypt.gensalt());
+        this.password = BCrypt.hashpw(password,"$2a$10$Dow0rZH2hP0n5qyrOqTpUeFKr2eb3Z7p/64rwE/o1CnMy6vlrJb7G");
     }
 
     public String getDepartment() {
