@@ -1,124 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./CSS/CSS.css" />
-    <link rel="scriptFunction" href="./javaScript.js" />
-    <script
-      src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"
-      defer
-    ></script>
-    <script src="./js/validation.js" defer></script>
 
-    <title>Sign Up Page</title>
-  </head>
-  <body>
-    <div class="logo">
-      <!-- Link to home page with logo -->
-      <a href="index.html">
-        <img src="./images/logo.png" />
-      </a>
-    </div>
-    <div class="header-icons">
-      </a>
-      <a href="index2.html"><img src="./images/user.png" alt="photo of a user." /></a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./CSS/CSS.css" />
+  <link rel="scriptFunction" href="./javaScript.js" />
+  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+  <script src="./js/validation.js" defer></script>
 
-      <!-- Search bar -->
-      <div class="search-bar">
-        <input type="text" placeholder="Search datasets" style="width: 10%; 
+  <title>Sign Up Page</title>
+</head>
+
+<body>
+  <div class="logo">
+    <!-- Link to home page with logo -->
+    <a href="index.html">
+      <img src="./images/logo.png" />
+    </a>
+  </div>
+  <div class="header-icons">
+    </a>
+    <a href="index2.html"><img src="./images/user.png" alt="photo of a user." /></a>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <input type="text" placeholder="Search datasets" style="width: 10%; 
         padding: 8px; font-size: 14px; border-radius: 4px; 
         border: 1px solid #cccccc; float:right;">
 
-      </div>
-        <!-- Accessibility -->
-        <div class="accessibility">
-          <a style="color: black; font-size: 20px; text-decoration: underline; width: 20%; 
+    </div>
+    <!-- Accessibility -->
+    <div class="accessibility">
+      <a style="color: black; font-size: 20px; text-decoration: underline; width: 20%; 
         padding: 8px; float:right;" href=#>accessibility</a>
 
-      </div>
-    </div>
-  
-    <!-- Navigation bar -->
-    <nav class="navbar">
-      <div style="background-color:#005192;" class="navdiv">
-  
-        <ul>
-          <li><a style="color:white;" href="#"></a></li>
-
-        </ul>
-        <!-- Header icons -->
-  
-      </div>
-    </nav>
-
-    <h1>Sign Up</h1>
-
-    <form action="process-signup.php" method="post" id="signup" novalidate>
-      <div>
-        <label for="first_name">First Name</label>
-        <input type="text" id="first_name" name="first_name" />
-      </div>
-      <br />
-
-      <div>
-        <label for="second_name">Second Name</label>
-        <input type="text" id="second_name" name="second_name" />
-      </div>
-      <br />
-
-      <div>
-        <label for="department">Department</label>
-        <select name="department" id="department" style="width: 107%; 
-        padding: 12px; font-size: 14px; border-radius: 4px; 
-        border: 1px solid #CCCCCC;">
-          <option value="department">Select Department</option>
-          <option value="adult">Adult</option>
-          <option value="child">Child</option>
-        </select>
-      </div>
-      <br />
-
-      <div>
-        <label for="email_address">Email Address</label>
-        <input type="email address" id="email_address" name="email_address" />
-      </div>
-      <br />
-
-      <div>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" />
-      </div>
-      <br />
-
-      <div>
-        <label for="password_confirmation">Re-enter Password</label>
-        <input
-          type="password"
-          id="password_confirmation"
-          name="password_confirmation"
-        />
-      </div>
-
-  <div class="container">
-    <div class="center">
-      <div id="signupbtn" style="width: 307%;" >
-        <button>Sign Up</button>
-      </div>
     </div>
   </div>
 
-  <a style="color: black; font-size: 20px; text-decoration: underline;" href="./login.html">or login</a>
+  <!-- Navigation bar -->
+  <nav class="navbar">
+    <div style="background-color:#005192;" class="navdiv">
 
-    </form>
+      <ul>
+        <li><a style="color:white;" href="#"></a></li>
 
-      <!-- Footer Section 1 -->
+      </ul>
+      <!-- Header icons -->
+
+    </div>
+  </nav>
+
+  <h1>Sign Up</h1>
+
+  <form id="signup">
+
+    <div id="firstNameErrorMsg"></div>
+    <div id="secondNameErrorMsg"></div>
+    <div id="departmentErrorMsg"></div>
+    <div id="emailErrorMsg"></div>
+    <div id="passwordErrorMsg"></div>
+
+    <div>
+      <label for="first_name">First Name</label>
+      <input type="text" id="first_name" name="first_name" />
+    </div>
+    <br />
+
+    <div>
+      <label for="second_name">Second Name</label>
+      <input type="text" id="second_name" name="second_name" />
+    </div>
+    <br />
+
+    <div>
+      <label for="department">Department</label>
+      <select name="department" id="department" style="width: 107%; 
+        padding: 12px; font-size: 14px; border-radius: 4px; 
+        border: 1px solid #CCCCCC;">
+        <option value="department">Select Department</option>
+        <option value="adult">Adult</option>
+        <option value="child">Child</option>
+      </select>
+    </div>
+    <br />
+
+    <div>
+      <label for="email_address">Email Address</label>
+      <input type="email address" id="email_address" name="email_address" />
+    </div>
+    <br />
+
+    <div>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" />
+    </div>
+    <br />
+
+    <div>
+      <label for="password_confirmation">Re-enter Password</label>
+      <input type="password" id="password_confirmation" name="password_confirmation" />
+    </div>
+
+    <div class="container">
+      <div class="center">
+        <div id="signupbtn" style="width: 307%;">
+          <button>Sign Up</button>
+        </div>
+      </div>
+    </div>
+
+    <a style="color: black; font-size: 20px; text-decoration: underline;" href="./login.html">or login</a>
+    <br>
+    <br>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('signup');
+
+        // Create error message containers
+        const errorMessages = {
+          firstName: document.createElement('div'),
+          secondName: document.createElement('div'),
+          department: document.createElement('div'),
+          email: document.createElement('div'),
+          password: document.createElement('div')
+        };
+
+        // Add error message elements to the form
+        for (const [key, msgDiv] of Object.entries(errorMessages)) {
+          form.appendChild(msgDiv);
+        }
+
+        function validateForm() {
+          let isValid = true;
+
+          // Validate First Name
+          const firstNameField = form.first_name;
+          if (!firstNameField.value.trim()) {
+            errorMessages.firstName.textContent = 'First name cannot be blank';
+            firstNameField.focus();
+            isValid = false;
+          }
+
+          // Validate Second Name
+          const secondNameField = form.second_name;
+          if (!secondNameField.value.trim()) {
+            errorMessages.secondName.textContent = 'Second name cannot be blank';
+            secondNameField.focus();
+            isValid = false;
+          }
+
+          // Validate Department
+          const departmentSelect = form.department;
+          if (departmentSelect.value === 'department') {
+            errorMessages.department.textContent = 'Please select a department';
+            departmentSelect.focus();
+            isValid = false;
+          }
+
+          // Validate Email Format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          const emailField = form.email_address;
+          if (!emailRegex.test(emailField.value)) {
+            errorMessages.email.textContent = 'Invalid email format';
+            emailField.focus();
+            isValid = false;
+          }
+
+          // Validate Password Length
+          const passwordField = form.password;
+          if (passwordField.value.length < 8) {
+            errorMessages.password.textContent = 'Password must be at least 8 characters long';
+            passwordField.focus();
+            isValid = false;
+          }
+
+          // Validate Password Matching
+          const passwordConfirmField = form.password_confirmation;
+          if (passwordField.value !== passwordConfirmField.value) {
+            errorMessages.password.textContent = 'Passwords do not match';
+            passwordField.focus();
+            isValid = false;
+          }
+
+          return isValid;
+        }
+
+        function handleSubmit(event) {
+          event.preventDefault();
+          const validationResult = validateForm();
+
+          if (validationResult) {
+            // Submit the form
+            alert('Form submitted successfully');
+          } else {
+            // Show error messages to the user
+            errorMessages.password.style.color = 'red';
+          }
+        }
+
+        // Add event listeners
+        form.addEventListener('submit', handleSubmit);
+      });
+    </script>
+
+
+  </form>
+
+  <!-- Footer Section 1 -->
   <footer class="site-footer">
     <div class="footer-content">
       <!-- Contact Information -->
       <p style="color:white">Council Switchboard: 01274 432111<br><br>
         Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-        <a style="font-size: 20px; color: white;"  href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
+        <a style="font-size: 20px; color: white;"
+          href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
       </p>
       <!-- Social Media Links -->
       <div class="footer-social">
@@ -126,16 +222,16 @@
           <img src="./images/facebook.png" alt="Facebook" style="width:65px; height:60px;" />
         </a>
         <a href="https://x.com/bradfordmdc">
-          <img src="./images/twitter.png" alt="Twitter"  style="width:65px; height:60px;"/>
+          <img src="./images/twitter.png" alt="Twitter" style="width:65px; height:60px;" />
         </a>
         <a href="https://www.linkedin.com/company/bradford-council/">
-          <img src="./images/linkedin.png" alt="LinkedIn"  style="width:65px; height:60px;"/>
+          <img src="./images/linkedin.png" alt="LinkedIn" style="width:65px; height:60px;" />
         </a>
         <a href="https://www.instagram.com/bradfordmdc/">
-          <img src="./images/Instagram.png" alt="Instagram"  style="width:65px; height:60px;"/>
+          <img src="./images/Instagram.png" alt="Instagram" style="width:65px; height:60px;" />
         </a>
         <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-          <img src="./images/Whatsapp.png" alt="Whatsapp"  style="width:65px; height:60px;"/>
+          <img src="./images/Whatsapp.png" alt="Whatsapp" style="width:65px; height:60px;" />
         </a>
       </div>
     </div>
@@ -150,15 +246,13 @@
         <a href="https://www.bradford.gov.uk/privacy-notice/">Privacy Notice</a>
         <a href="https://www.bradford.gov.uk/a-to-z/">A to Z</a>
         <a href="https://www.bradford.gov.uk/our-websites/accessibility/accessibility/">Accessibility Statement<br></a>
-    <!-- Copyright Notice -->
-     <p style="font-size: 20px;" class="footer-copyright">
-      &copy; 2025 City of Bradford Metropolitan District Council
-    </p>
+        <!-- Copyright Notice -->
+        <p style="font-size: 20px;" class="footer-copyright">
+          &copy; 2025 City of Bradford Metropolitan District Council
+        </p>
+      </div>
     </div>
-  </div>
-
-  
-
   </footer>
-  </body>
+</body>
+
 </html>

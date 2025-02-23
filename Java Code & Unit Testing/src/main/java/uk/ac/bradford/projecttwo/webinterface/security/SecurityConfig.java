@@ -1,6 +1,5 @@
 package uk.ac.bradford.projecttwo.webinterface.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,22 +16,29 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     private final Encryptor encryptor;
 
     public SecurityConfig(Encryptor encryptor) {
         this.encryptor = encryptor;
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults());
+            .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/", "/index", "/signup", "/css/**", "/js/**", "/images/**").permitAll() // Allow access to index and static resources
+                .requestMatchers("/admin/dashboard").hasAuthority("ADMIN") // Restrict /admin/dashboard to ADMIN
+                .anyRequest().authenticated() // Require authentication for all other endpoints
+            )
+            .httpBasic(Customizer.withDefaults()) // Enable HTTP Basic authentication
+            // .formLogin(form -> form
+            //     .loginPage("/login") // Custom login page
+            //     .permitAll() // Allow access to the login page
+            // )
+            .logout(logout -> logout
+                .permitAll() // Allow access to the logout endpoint
+            );
 
         return http.build();
     }
@@ -40,22 +46,22 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.builder()
-                .username("user")
-                .password(encryptor.encryptString("password"))  // Hashed password
-                .roles("USER")
-                .build();
+            .username("user")
+            .password(passwordEncoder().encode("password")) // Use PasswordEncoder to hash the password
+            .roles("USER")
+            .build();
 
-        UserDetails userDetails1 = User.builder()
-                .username("mustafakamran46@hotmail.com")
-                .password(encryptor.encryptString("password"))  // Hashed password
-                .authorities("ADMIN")
-                .build();
+        UserDetails adminDetails = User.builder()
+            .username("mustafakamran46@hotmail.com")
+            .password(passwordEncoder().encode("password")) // Use PasswordEncoder to hash the password
+            .authorities("ADMIN")
+            .build();
 
-        return new InMemoryUserDetailsManager(userDetails, userDetails1);
+        return new InMemoryUserDetailsManager(userDetails, adminDetails);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // Use BCrypt for password encoding
     }
 }
