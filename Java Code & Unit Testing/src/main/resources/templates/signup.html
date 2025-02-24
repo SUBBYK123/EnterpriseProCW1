@@ -44,7 +44,7 @@
 
   <!-- Signup Form -->
   <h1>Sign Up</h1>
-  <form id="signup" th:action="@{/signup}" method="post">
+  <form id="signup" th:action="@{/signup}" th:object="${user}" method="post">
     <!-- Error Messages -->
     <div id="firstNameErrorMsg" class="error-message"></div>
     <div id="secondNameErrorMsg" class="error-message"></div>
@@ -54,15 +54,15 @@
 
     <!-- First Name -->
     <div>
-      <label for="first_name">First Name</label>
-      <input type="text" id="first_name" name="first_name" required />
+      <label for="firstName">First Name</label>
+      <input type="text" id="firstName" th:field="*{firstName}" required />
     </div>
     <br />
 
     <!-- Second Name -->
     <div>
-      <label for="second_name">Second Name</label>
-      <input type="text" id="second_name" name="second_name" required />
+      <label for="lastName">Last Name</label>
+      <input type="text" id="lastName" th:field="*{lastName}" required />
     </div>
     <br />
 
@@ -79,8 +79,8 @@
 
     <!-- Email Address -->
     <div>
-      <label for="email_address">Email Address</label>
-      <input type="email" id="email_address" name="email_address" required />
+      <label for="emailAddress">Email Address</label>
+      <input type="email" id="emailAddress" th:field="*{emailAddress}" required />
     </div>
     <br />
 
