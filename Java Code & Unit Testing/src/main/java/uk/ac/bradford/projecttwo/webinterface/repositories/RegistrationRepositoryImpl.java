@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public class RegistrationRepositoryImpl implements RegistrationRepository {
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/your_database";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "Pakistan@1";
 
