@@ -16,9 +16,4 @@ public class HomeController {
         return "Hello " + userDetails.getUsername() + ". You are a " + userDetails.getAuthorities().stream().findFirst() + " on this project.";
     }
 
-    @GetMapping("/signup")
-    public String signup() {
-        return "signup"; // Refers to src/main/resources/templates/signup.html
-    }
-
 }
