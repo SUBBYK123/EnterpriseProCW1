@@ -1,69 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" th:href="@{css/CSS.css}" />
-    <title>Login Page</title>
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <title>Login Page</title>
+</head>
+<body>
 
-    <nav class="navbar">
-      <div class="navdiv">
-        <div class="logo">
-          <a th:href="index.html">
-            <img th:src="@{images/logo.png}" alt="Logo for Sports Online." />
-          </a>
-        </div>
-        <ul>
-          <li><a th:href="@{index.html}">HOME</a></li>
-          <li><a th:href="@{products.html}">PRODUCTS</a></li>
-          <li><a th:href="@{aboutUs.html}">ABOUT US</a></li>
-          <li><a th:href="@{contact.html}">CONTACT</a></li>
-        </ul>
-
-        <div class="header-icons">
-          <a th:href="@{index.html}">
-            <img th:src="@{images/shopping-cart.png}" alt="Shopping Cart" />
-          </a>
-          <a th:href="@{index.html}">
-            <img th:src="@{images/user.png}" alt="User Profile" />
-          </a>
-        </div>
-      </div>
-    </nav>
-
-    <h1>Login</h1>
-
-    <div class="login-error" th:if="loginError">
-      Invalid login attempt
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navdiv">
+    <div class="logo">
+      <a th:href="@{/}">
+        <img th:src="@{/images/logo.png}" alt="Logo for Sports Online." />
+      </a>
     </div>
+    <ul>
+      <li><a th:href="@{/}">HOME</a></li>
+      <li><a th:href="@{/products}">PRODUCTS</a></li>
+      <li><a th:href="@{/aboutUs}">ABOUT US</a></li>
+      <li><a th:href="@{/contact}">CONTACT</a></li>
+    </ul>
 
-    <form th:action="@{/login}" method="post">
-      <!-- Email Input -->
-      <div th:class="~['form-group']">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required="required"
-               placeholder="Enter your email" />
-        <div class="error-message" th:class="~['hidden']">
-          Invalid email format
-        </div>
-      </div>
+    <div class="header-icons">
+      <a th:href="@{/cart}">
+        <img th:src="@{/images/shopping-cart.png}" alt="Shopping Cart" />
+      </a>
+      <a th:href="@{/profile}">
+        <img th:src="@{/images/user.png}" alt="User Profile" />
+      </a>
+    </div>
+  </div>
+</nav>
 
-      <!-- Password Input -->
-      <div th:class="~['form-group']">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required="required"
-               placeholder="Enter your password" />
-        <div class="error-message" th:class="~['hidden']">
-          Password must be at least 8 characters
-        </div>
-      </div>
+<!-- Login Form -->
+<h1>Login</h1>
 
-      <!-- Login Button -->
-      <button type="submit">Login</button>
-    </form>
-    <a th:href="@{/signup}">Signup?</a>
+<!-- Display error message if login fails -->
+<div class="login-error" th:if="${param.error}">
+  <p style="color: red;">Invalid email or password.</p>
 </div>
+
+<form th:action="@{/login}" method="post">
+  <!-- Email (Username) Input -->
+  <div class="form-group">
+    <label for="username">Email</label>
+    <input type="email" id="username" name="username" required="required"
+           placeholder="Enter your email" />
+    <div class="error-message hidden">
+      Invalid email format
+    </div>
+  </div>
+
+  <!-- Password Input -->
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required="required"
+           placeholder="Enter your password" />
+    <div class="error-message hidden">
+      Password must be at least 8 characters
+    </div>
+  </div>
+
+  <!-- Login Button -->
+  <button type="submit">Login</button>
+</form>
+
+<!-- Signup Link -->
+<a th:href="@{/signup}">Signup?</a>
+
 </body>
 </html>
