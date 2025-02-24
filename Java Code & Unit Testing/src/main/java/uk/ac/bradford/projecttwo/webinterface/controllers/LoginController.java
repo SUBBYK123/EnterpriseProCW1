@@ -15,7 +15,7 @@ public class LoginController {
     private Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
         return "login";  // This returns login.html from the templates folder
     }
 

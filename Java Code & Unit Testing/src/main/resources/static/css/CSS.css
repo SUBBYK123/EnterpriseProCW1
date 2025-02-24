@@ -226,7 +226,7 @@ body {
   }
   
   input[type="text"],
-  input[type="email address"],
+  input[type="email"],
   input[type="password"] {
     width: 100%;
     padding: 10px;
@@ -277,8 +277,8 @@ body {
   /* Accessibilty */
   .accessibility {
     position: absolute; 
-    top: 6px; 
-    left: 1720px; 
+    top: 10px; 
+    left: 1950px; 
     right: 150px;
     
   }
