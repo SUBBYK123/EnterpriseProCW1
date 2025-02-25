@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" th:href="@{/css/CSS.css}" />
-  <link rel="scriptFunction" href="./javaScript.js" /> 
-  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script> 
+  <link rel="scriptFunction" href="./javaScript.js" />
+  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="./js/validation.js" defer></script>
   <title>Sign Up Page</title>
 </head>
@@ -24,12 +25,14 @@
 
     <!-- Search Bar -->
     <div class="search-bar">
-      <input type="text" placeholder="Search datasets" style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+      <input type="text" placeholder="Search datasets"
+        style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
     </div>
 
     <!-- Accessibility Link -->
     <div class="accessibility">
-      <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+      <a th:href="@{/accessibility}"
+        style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
     </div>
   </div>
 
@@ -42,41 +45,37 @@
     </div>
   </nav>
 
-<!-- Login Form -->
-<h1 style="margin-top: 50px; margin-bottom: -10px;">Login</h1>
+  <!-- Login Form -->
+  <h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
 
-<!-- Display error message if login fails -->
-<div class="login-error" th:if="${param.error}">
-  <p style="color: red;">Invalid email or password.</p>
-</div>
-
-<form th:action="@{/login}" method="post">
-  <!-- Email (Username) Input -->
-  <div class="form-group">
-    <label for="username">Email</label>
-    <input type="email" id="username" name="username" required="required"
-           placeholder="Enter your email" />
-    <div class="error-message hidden">
-      Invalid email format
+  <form th:action="@{/login}" method="post">
+    <!-- Email (Username) Input -->
+    <div class="form-group">
+      <label for="username">Email</label>
+      <input type="email" id="username" name="username" required="required" placeholder="Enter your email" />
     </div>
-  </div>
-
-  <!-- Password Input -->
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required="required"
-           placeholder="Enter your password" />
-    <div class="error-message hidden">
-      Password must be at least 8 characters
     </div>
-  </div>
+    <br>
+    <!-- Password Input -->
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required="required" placeholder="Enter your password" />
+    </div>
+    </div>
+    <br>
+    <!-- Login Button -->
+    <button type="submit">Login</button>
+    <br>
+    <br>
+    <!-- Reset password Link -->
+    <a th:href="@{#}" style="color: black; font-size: 16px; text-decoration: underline;">Reset Password</a>
+    <br>
+    <br>
+    <!-- Signup Link -->
+    <a th:href="@{/signup}" style="color: black; font-size: 16px; text-decoration: underline;">or Sign-up</a>
+  </form>
 
-  <!-- Login Button -->
-  <button type="submit">Login</button>
-</form>
 
-<!-- Signup Link -->
-<a th:href="@{/signup}">Signup?</a>
 
   <!-- Footer Section 1 -->
   <footer class="site-footer">
@@ -126,4 +125,5 @@
   </footer>
 
 </body>
+
 </html>

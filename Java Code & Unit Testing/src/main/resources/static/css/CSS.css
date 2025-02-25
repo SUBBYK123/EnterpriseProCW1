@@ -138,6 +138,9 @@ body {
   }
   
   .site-footer {
+    position: fixed;
+    left: 0;
+    bottom: 9%;
     background-color: #666; /*gray*/
     padding: 20px 0;
     text-align: center;
@@ -167,6 +170,9 @@ body {
   
   /* Footer Section 2 */
   .site-footer-blue {
+    position: fixed;
+    left: 0;
+    bottom: 0;
     background-color: #005192; /* Blue background */
     padding: 20px 0;
     text-align: center;
