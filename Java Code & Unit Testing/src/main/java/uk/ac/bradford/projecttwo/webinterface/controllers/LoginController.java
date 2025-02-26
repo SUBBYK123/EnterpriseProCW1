@@ -19,11 +19,9 @@ public class LoginController {
         return "login";  // This returns login.html from the templates folder
     }
 
-    @PostMapping("/perform_login")
+    @PostMapping("/login")
     public String loginForm(@ModelAttribute LoginModel loginModel,Model model){
-        logger.info("Email Address: " + loginModel.getEmailAddress());
-        logger.info("Password: " + loginModel.getPassword());
-        return "/";
+        return "redirect:/login?loginsuccess";
 
     }
 

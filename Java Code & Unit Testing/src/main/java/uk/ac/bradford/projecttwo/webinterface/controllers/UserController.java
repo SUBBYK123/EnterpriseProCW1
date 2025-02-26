@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
 
+import java.util.Optional;
+
 @Controller
 public class UserController {
 
@@ -16,27 +18,30 @@ public class UserController {
     RegistrationRepositoryImpl registrationRepository;
 
     @GetMapping("/signup")
-    public String showSignupForm(Model model){
+    public String showSignupForm(Model model) {
         model.addAttribute("user", new RegistrationModel());
         return "signup";
     }
 
     @PostMapping("/signup")
-    public String processSignup(@ModelAttribute("user") RegistrationModel user, Model model){
+    public String processSignup(@ModelAttribute("user") RegistrationModel user, Model model) {
 
-        try{
-            registrationRepository.registerUser(user);
-            return "redirect:/login?signupsuccess";}
-        catch (Exception e){
-            model.addAttribute("errorMessage",e.getMessage());
+        try {
+            Optional<RegistrationModel> existingUser = Optional.ofNullable(registrationRepository.findUserByEmail(user.getEmailAddress()));
+
+            if (existingUser.isPresent()) {
+                model.addAttribute("errorMessage", "Email Already Taken!");
+                return "signup";
+            } else {
+                registrationRepository.registerUser(user);
+                return "redirect:/login?signupsuccess";
+            }
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
             return "signup";
 
         }
-
-
     }
-
-
 
 
 }

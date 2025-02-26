@@ -136,18 +136,81 @@
   </div>
 </footer>
 
+
 <!-- JavaScript Validation -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('signup');
+    const errorMessages = {
+      firstName: document.getElementById('firstNameErrorMsg'),
+      secondName: document.getElementById('secondNameErrorMsg'),
+      department: document.getElementById('departmentErrorMsg'),
+      email: document.getElementById('emailErrorMsg'),
+      password: document.getElementById('passwordErrorMsg')
+    };
+
+    function validateForm() {
+      let isValid = true;
+
+      // Validate First Name
+      const firstName = form.firstName.value.trim();
+      if (!firstName) {
+        errorMessages.firstName.textContent = 'First name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.firstName.textContent = '';
+      }
+
+      // Validate Second Name
+      const secondName = form.secondName.value.trim();
+      if (!secondName) {
+        errorMessages.secondName.textContent = 'Second name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.secondName.textContent = '';
+      }
+
+      // Validate Department
+      const department = form.department.value;
+      if (!department) {
+        errorMessages.department.textContent = 'Please select a department';
+        isValid = false;
+      } else {
+        errorMessages.department.textContent = '';
+      }
+
+      // Validate Email
+      const email = form.emailAddress.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMessages.email.textContent = 'Invalid email format';
+        isValid = false;
+      } else {
+        errorMessages.email.textContent = '';
+      }
+
+      // Validate Password
+      const password = form.password.value;
+      if (password.length < 8) {
+        errorMessages.password.textContent = 'Password must be at least 8 characters long';
+        isValid = false;
+      } else {
+        errorMessages.password.textContent = '';
+      }
+
+      // Validate Password Confirmation
+      const passwordConfirm = form.password_confirmation.value;
+      if (password !== passwordConfirm) {
+        errorMessages.password.textContent = 'Passwords do not match';
+        isValid = false;
+      }
+
+      return isValid;
+    }
 
     form.addEventListener('submit', function (event) {
-      const password = document.getElementById('password').value;
-      const passwordConfirm = document.getElementById('password_confirmation').value;
-
-      if (password !== passwordConfirm) {
-        alert('Passwords do not match');
-        event.preventDefault(); // Prevent form submission
+      if (!validateForm()) {
+        event.preventDefault(); // Prevent form submission if validation fails
       }
     });
   });
