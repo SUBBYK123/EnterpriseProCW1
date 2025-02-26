@@ -8,7 +8,7 @@ public class RegistrationModel {
     private String lastName;
     private String emailAddress;
     private String password;
-    private String Department;
+    private String department;
 
     public String getFirstName() {
         return firstName;
@@ -38,15 +38,14 @@ public class RegistrationModel {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = BCrypt.hashpw(password,"$2a$10$Dow0rZH2hP0n5qyrOqTpUeFKr2eb3Z7p/64rwE/o1CnMy6vlrJb7G");
+    public void setPassword(String password) { this.password = password;
     }
 
     public String getDepartment() {
-        return Department;
+        return department;
     }
 
     public void setDepartment(String department) {
-        Department = department;
+        this.department = department;
     }
 }
