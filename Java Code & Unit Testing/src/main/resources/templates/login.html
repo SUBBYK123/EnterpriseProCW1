@@ -13,41 +13,41 @@
 
 <body>
 
-<!-- Logo and Header -->
-<div class="logo">
-  <a th:href="@{/}">
-    <img th:src="@{/images/logo.png}" alt="Website Logo" />
-  </a>
-</div>
-<div class="header-icons">
-  <a th:href="@{/profile}">
-    <img th:src="@{/images/user.png}" alt="User Profile" />
-  </a>
+  <!-- Logo and Header -->
+  <div class="logo">
+    <a th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Website Logo" />
+    </a>
+  </div>
+  <div class="header-icons">
+    <a th:href="@{/profile}">
+      <img th:src="@{/images/user.png}" alt="User Profile" />
+    </a>
 
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <input type="text" placeholder="Search datasets"
-           style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" placeholder="Search datasets"
+        style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+    </div>
+
+    <!-- Accessibility Link -->
+    <div class="accessibility">
+      <a th:href="@{/accessibility}"
+        style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+    </div>
   </div>
 
-  <!-- Accessibility Link -->
-  <div class="accessibility">
-    <a th:href="@{/accessibility}"
-       style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
-  </div>
-</div>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div style="background-color:#005192;" class="navdiv">
+      <ul>
+        <li><a style="color:white;" href="#"></a></li>
+      </ul>
+    </div>
+  </nav>
 
-<!-- Navigation Bar -->
-<nav class="navbar">
-  <div style="background-color:#005192;" class="navdiv">
-    <ul>
-      <li><a style="color:white;" href="#"></a></li>
-    </ul>
-  </div>
-</nav>
-
-<!-- Login Form -->
-<h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
+  <!-- Login Form -->
+  <h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
 
 <form th:action="@{/login}" method="post">
   <p th:if="${errorMessage}" style="color:red;">[[${errorMessage}]]</p>
@@ -61,6 +61,7 @@
     <label for="password">Password</label>
     <input type="password" id="password" name="password" required="required" placeholder="Enter your password" />
   </div>
+  <br>
 
   <button type="submit">Login</button>
   <br>
@@ -71,57 +72,56 @@
   <br>
   <!-- Signup Link -->
   <a th:href="@{/signup}" style="color: black; font-size: 16px; text-decoration: underline;">or Sign-up</a>
-</form>
+  </form>
 
 
 
-<!-- Footer Section 1 -->
-<footer class="site-footer">
-  <div class="footer-content">
-    <!-- Contact Information -->
-    <p style="color:white">Council Switchboard: 01274 432111<br><br>
-      Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-      <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
-    </p>
-
-    <!-- Social Media Links -->
-    <div class="footer-social">
-      <a href="https://www.facebook.com/bradfordmdc">
-        <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
-      </a>
-      <a href="https://x.com/bradfordmdc">
-        <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
-      </a>
-      <a href="https://www.linkedin.com/company/bradford-council/">
-        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
-      </a>
-      <a href="https://www.instagram.com/bradfordmdc/">
-        <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
-      </a>
-      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
-      </a>
-    </div>
-  </div>
-</footer>
-
-<!-- Footer Section 2 -->
-<footer class="site-footer-blue">
-  <div class="footer-blue">
-    <!-- Legal Links -->
-    <div class="footer-legal">
-      <a th:href="@{/cookies}">Cookies</a>
-      <a th:href="@{/privacy}">Privacy Notice</a>
-      <a th:href="@{/atoz}">A to Z</a>
-      <a th:href="@{/accessibility}">Accessibility Statement<br></a>
-      <!-- Copyright Notice -->
-      <p style="font-size: 20px;" class="footer-copyright">
-        &copy; 2025 City of Bradford Metropolitan District Council
+  <!-- Footer Section 1 -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <!-- Contact Information -->
+      <p style="color:white">Council Switchboard: 01274 432111<br><br>
+        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
+        <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
       </p>
-    </div>
-  </div>
-</footer>
 
+      <!-- Social Media Links -->
+      <div class="footer-social">
+        <a href="https://www.facebook.com/bradfordmdc">
+          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://x.com/bradfordmdc">
+          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.linkedin.com/company/bradford-council/">
+          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.instagram.com/bradfordmdc/">
+          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Footer Section 2 -->
+  <footer class="site-footer-blue">
+    <div class="footer-blue">
+      <!-- Legal Links -->
+      <div class="footer-legal">
+        <a th:href="@{/cookies}">Cookies</a>
+        <a th:href="@{/privacy}">Privacy Notice</a>
+        <a th:href="@{/atoz}">A to Z</a>
+        <a th:href="@{/accessibility}">Accessibility Statement<br></a>
+        <!-- Copyright Notice -->
+        <p style="font-size: 20px;" class="footer-copyright">
+          &copy; 2025 City of Bradford Metropolitan District Council
+        </p>
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>

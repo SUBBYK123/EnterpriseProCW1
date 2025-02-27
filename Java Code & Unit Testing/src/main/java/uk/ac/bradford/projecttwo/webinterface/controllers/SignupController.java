@@ -43,5 +43,11 @@ public class SignupController {
         }
     }
 
+    @GetMapping("/index")
+    public String index(Model model) {
+        model.addAttribute("user", new RegistrationModel());
+        return "index";
+    }
+
 
 }
