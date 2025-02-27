@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 
 
 public class RegistrationModel {
+    private int userId;
     private String firstName;
     private String lastName;
     private String emailAddress;
@@ -47,5 +48,13 @@ public class RegistrationModel {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

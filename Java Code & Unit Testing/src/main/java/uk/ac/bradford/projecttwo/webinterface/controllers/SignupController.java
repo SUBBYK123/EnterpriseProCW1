@@ -12,7 +12,7 @@ import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositor
 import java.util.Optional;
 
 @Controller
-public class UserController {
+public class SignupController {
 
     @Autowired
     RegistrationRepositoryImpl registrationRepository;

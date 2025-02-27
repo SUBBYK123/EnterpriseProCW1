@@ -28,13 +28,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         // Uncomment the line below if you wish to permit access to static resources and other endpoints
-                        .requestMatchers("/", "/index", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login" ,"/", "/index", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/index",true)
                         .usernameParameter("emailAddress")
                         .passwordParameter("password")
                         .permitAll()
