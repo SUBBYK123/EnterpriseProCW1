@@ -43,5 +43,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/index")
+    public String index(Model model) {
+        model.addAttribute("user", new RegistrationModel());
+        return "index";
+    }
+
 
 }
