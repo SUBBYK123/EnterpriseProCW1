@@ -1,14 +1,14 @@
 package uk.ac.bradford.projecttwo.webinterface.models;
 
 public class ResetPasswordModel {
-    private String email;
+    private String emailAddress;
     
     // Getters and setters
-    public String getEmail() {
-        return email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 }

@@ -1,11 +1,8 @@
 package uk.ac.bradford.projecttwo.webinterface.services;
 
-import uk.ac.bradford.projecttwo.webinterface.models.ResetPasswordModel;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Service
+public class ResetPasswordService {
 
-public interface ResetPasswordService {
-    boolean authenticateUser(String email);
-    ResetPasswordModel findUserByEmail(String email);
-    List<ResetPasswordModel> getAllUsers();
 }

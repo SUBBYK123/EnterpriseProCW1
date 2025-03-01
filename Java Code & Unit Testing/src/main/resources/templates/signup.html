@@ -165,7 +165,7 @@
       firstName: document.getElementById('firstNameErrorMsg'),
       secondName: document.getElementById('secondNameErrorMsg'),
       department: document.getElementById('departmentErrorMsg'),
-      email: document.getElementById('emailErrorMsg'),
+      emailAddress: document.getElementById('emailErrorMsg'),
       password: document.getElementById('passwordErrorMsg')
     };
 
@@ -200,13 +200,13 @@
       }
 
       // Validate Email
-      const email = form.emailAddress.value.trim();
+      const emailAddress = form.emailAddress.value.trim();
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        errorMessages.email.textContent = 'Invalid email format';
+      if (!emailRegex.test(emailAddress)) {
+        errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
         isValid = false;
       } else {
-        errorMessages.email.textContent = '';
+        errorMessages.emailAddress.textContent = '';
       }
 
       // Validate Password
