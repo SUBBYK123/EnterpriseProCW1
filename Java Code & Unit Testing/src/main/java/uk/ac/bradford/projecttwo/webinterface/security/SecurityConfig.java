@@ -17,54 +17,54 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final Encryptor encryptor;
+        private final Encryptor encryptor;
 
-    public SecurityConfig(Encryptor encryptor) {
-        this.encryptor = encryptor;
-    }
+        public SecurityConfig(Encryptor encryptor) {
+                this.encryptor = encryptor;
+        }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        // Uncomment the line below if you wish to permit access to static resources and other endpoints
-                        .requestMatchers("/", "/index", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .usernameParameter("emailAddress")
-                        .passwordParameter("password")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .permitAll()
-                );
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+                http
+                                .authorizeHttpRequests(authorize -> authorize
+                                                // Uncomment the line below if you wish to permit access to static
+                                                // resources and other endpoints
+                                                .requestMatchers("/", "/index", "/signup", "/css/**", "/js/**",
+                                                                "/images/**")
+                                                .permitAll()
+                                                .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
+                                                .anyRequest().authenticated())
+                                .httpBasic(Customizer.withDefaults())
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .usernameParameter("emailAddress")
+                                                .passwordParameter("password")
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .permitAll());
 
-        return http.build();
-    }
+                return http.build();
+        }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
+        @Bean
+        public UserDetailsService userDetailsService() {
+                UserDetails userDetails = User.builder()
+                                .username("user")
+                                .password(passwordEncoder().encode("password"))
+                                .roles("USER")
+                                .build();
 
-        UserDetails adminDetails = User.builder()
-                .username("mustafakamran46@hotmail.com")
-                .password(passwordEncoder().encode("password"))
-                .authorities("ADMIN")
-                .build();
+                UserDetails adminDetails = User.builder()
+                                .username("mustafakamran46@hotmail.com")
+                                .password(passwordEncoder().encode("password"))
+                                .authorities("ADMIN")
+                                .build();
 
-        return new InMemoryUserDetailsManager(userDetails, adminDetails);
-    }
+                return new InMemoryUserDetailsManager(userDetails, adminDetails);
+        }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
