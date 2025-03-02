@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
-import uk.ac.bradford.projecttwo.webinterface.repositories.LoginRepositoryImpl;
+import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepositoryImpl;
 import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class LoginServiceTest {
 
     @Mock
-    private LoginRepositoryImpl loginRepository;
+    private UserRepositoryImpl loginRepository;
 
     @InjectMocks
     private LoginServiceImpl loginService;

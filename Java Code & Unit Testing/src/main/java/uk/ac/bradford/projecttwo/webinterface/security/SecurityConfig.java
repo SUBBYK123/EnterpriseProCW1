@@ -28,7 +28,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         // Uncomment the line below if you wish to permit access to static resources and other endpoints
-                        .requestMatchers("/login" ,"/", "/index", "/signup", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login" ,"/", "/index", "/signup", "/css/**", "/js/**", "/images/**","/reset").permitAll()
                         .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -47,22 +47,22 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("password"))
-                .roles("USER")
-                .build();
-
-        UserDetails adminDetails = User.builder()
-                .username("mustafakamran46@hotmail.com")
-                .password(passwordEncoder().encode("password"))
-                .authorities("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails, adminDetails);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails userDetails = User.builder()
+//                .username("user")
+//                .password(passwordEncoder().encode("password"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails adminDetails = User.builder()
+//                .username("mustafakamran46@hotmail.com")
+//                .password(passwordEncoder().encode("password"))
+//                .authorities("ADMIN")
+//                .build();
+//
+//        return new InMemoryUserDetailsManager(userDetails, adminDetails);
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

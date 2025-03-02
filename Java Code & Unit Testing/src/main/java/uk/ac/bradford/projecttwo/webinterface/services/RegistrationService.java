@@ -2,6 +2,7 @@ package uk.ac.bradford.projecttwo.webinterface.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ public class RegistrationService {
     @Autowired
     private Encryptor encryptor;
 
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     public RegistrationService(RegistrationRepositoryImpl registrationRepositoryImpl) {
         this.registrationRepositoryImpl = registrationRepositoryImpl;
@@ -26,10 +29,6 @@ public class RegistrationService {
             System.out.println("Email Already Exists!");
             return false;
         }
-
-        // Hash password before storing
-        user.setPassword(encryptor.encryptString(user.getPassword()));
-
 
         // Save user
         return registrationRepositoryImpl.registerUser(user);

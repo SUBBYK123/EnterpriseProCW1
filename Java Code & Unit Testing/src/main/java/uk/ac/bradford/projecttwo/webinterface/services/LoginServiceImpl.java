@@ -3,15 +3,15 @@ package uk.ac.bradford.projecttwo.webinterface.services;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
-import uk.ac.bradford.projecttwo.webinterface.repositories.LoginRepositoryImpl;
+import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepositoryImpl;
 
 import java.util.List;
 
 @Service
 public class LoginServiceImpl implements LoginService {
-    private final LoginRepositoryImpl loginRepository;
+    private final UserRepositoryImpl loginRepository;
 
-    public LoginServiceImpl(LoginRepositoryImpl loginRepository) {
+    public LoginServiceImpl(UserRepositoryImpl loginRepository) {
         this.loginRepository = loginRepository;
     }
 

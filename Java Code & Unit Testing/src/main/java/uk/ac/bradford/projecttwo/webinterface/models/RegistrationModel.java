@@ -1,6 +1,7 @@
 package uk.ac.bradford.projecttwo.webinterface.models;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
 
 
 public class RegistrationModel {
@@ -39,7 +40,9 @@ public class RegistrationModel {
         return password;
     }
 
-    public void setPassword(String password) { this.password = password;
+    public void setPassword(String password) {
+        Encryptor encryptor = new Encryptor();
+        this.password = encryptor.encryptString(password);
     }
 
     public String getDepartment() {

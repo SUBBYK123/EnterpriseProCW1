@@ -4,8 +4,7 @@ import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
 
 import java.util.List;
 
-public interface LoginRepository {
-    boolean loginUser(LoginModel loginModel);
+public interface UserRepository {
     LoginModel findUserByEmail(String email);
     List<LoginModel> getAllUsers();
 }

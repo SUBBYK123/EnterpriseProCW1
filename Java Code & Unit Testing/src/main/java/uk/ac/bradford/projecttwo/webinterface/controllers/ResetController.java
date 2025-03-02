@@ -17,15 +17,15 @@ public class ResetController {
         return "reset"; // Ensure this matches your template name
     }
 
-    @PostMapping("/reset")
-    public String processResetRequest(@ModelAttribute("resetRequest") ResetPasswordModel resetRequest, Model model) {
-        // Add validation logic here
-        if (resetRequest.getEmailAddress() == null || resetRequest.getEmailAddress().isEmpty()) {
-            model.addAttribute("error", "Email is required");
-            return "reset";
-        }
-        
-        model.addAttribute("message", "Password reset instructions sent to your email");
-        return "reset";
-    }
+//    @PostMapping("/reset")
+//    public String processResetRequest(@ModelAttribute("resetRequest") ResetPasswordModel resetRequest, Model model) {
+//        // Add validation logic here
+//        if (resetRequest.getEmailAddress() == null || resetRequest.getEmailAddress().isEmpty()) {
+//            model.addAttribute("error", "Email is required");
+//            return "reset";
+//        }
+//
+//        model.addAttribute("message", "Password reset instructions sent to your email");
+//        return "reset";
+//    }
 }

@@ -8,34 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class LoginRepositoryImpl implements LoginRepository {
+public class UserRepositoryImpl implements UserRepository {
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "Pakistan@1";
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
-    }
-
-    @Override
-    public boolean loginUser(LoginModel loginModel) {
-        String sqlQuery = "SELECT * FROM user WHERE email_address = ? AND password_hash = ?";
-        try {
-            Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-
-            preparedStatement.setString(1, loginModel.getEmailAddress());
-            preparedStatement.setString(2, loginModel.getPassword());
-
-            try (ResultSet resultSet = preparedStatement.executeQuery(sqlQuery)) {
-                return resultSet.next();
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
     }
 
     @Override
