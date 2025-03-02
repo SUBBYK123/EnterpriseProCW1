@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public class RegistrationRepositoryImpl implements RegistrationRepository {
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/MyDB";
     private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "Pakistan@1";
+    private static final String JDBC_PASSWORD = "password";
 
 
     private Connection getConnection() throws SQLException {
