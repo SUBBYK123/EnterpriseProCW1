@@ -54,13 +54,13 @@ public class SecurityConfig {
 //                .password(passwordEncoder().encode("password"))
 //                .roles("USER")
 //                .build();
-//
+
 //        UserDetails adminDetails = User.builder()
 //                .username("mustafakamran46@hotmail.com")
 //                .password(passwordEncoder().encode("password"))
 //                .authorities("ADMIN")
 //                .build();
-//
+
 //        return new InMemoryUserDetailsManager(userDetails, adminDetails);
 //    }
 
