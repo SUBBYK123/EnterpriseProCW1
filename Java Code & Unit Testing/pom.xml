@@ -105,6 +105,12 @@
 			<version>3.4.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>6.2.2</version>
+		</dependency>
 
 
 
