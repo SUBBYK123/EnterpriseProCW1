@@ -12,7 +12,7 @@ body {
   div.logo a img {
     height: 100px;
     float: left;
-    position: fixed;
+    position: absolute;
     top: 0;
   }
   

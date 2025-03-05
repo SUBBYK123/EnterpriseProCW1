@@ -17,13 +17,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class RegistrationServicesTest {
+public class RegistrationServiceTest {
 
     @Mock
     private RegistrationRepositoryImpl registrationRepository;
 
     @InjectMocks
-    private RegistrationServices registrationServices;
+    private RegistrationService registrationService;
 
     private RegistrationModel user;
 
@@ -39,7 +39,7 @@ public class RegistrationServicesTest {
         when(registrationRepository.findUserByEmail(user.getEmailAddress())).thenReturn(null);
         when(registrationRepository.registerUser(any(RegistrationModel.class))).thenReturn(true);
 
-        boolean result = registrationServices.registerUser(user);
+        boolean result = registrationService.registerUser(user);
 
         assertTrue(result);
         verify(registrationRepository).registerUser(any(RegistrationModel.class));
@@ -50,7 +50,7 @@ public class RegistrationServicesTest {
     void testRegisterUser_UserAlreadyExists(){
         when(registrationRepository.findUserByEmail(user.getEmailAddress())).thenReturn(user);
 
-        boolean result = registrationServices.registerUser(user);
+        boolean result = registrationService.registerUser(user);
 
         assertFalse(result);
         verify(registrationRepository, never()).registerUser(any(RegistrationModel.class));
@@ -65,7 +65,7 @@ public class RegistrationServicesTest {
         user.setPassword(fixedHashedPassword);
         when(registrationRepository.findUserByEmail(user.getEmailAddress())).thenReturn(user);
 
-        boolean result = registrationServices.authenticateUser("test@example.com", rawPassword);
+        boolean result = registrationService.authenticateUser("test@example.com", rawPassword);
 
         assertTrue(result, "Authentication should succeed for correct password");
     }
@@ -75,7 +75,7 @@ public class RegistrationServicesTest {
     void testAuthenticateUser_UserNotFound(){
         when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(null);
 
-        boolean result = registrationServices.authenticateUser("test@example.com","password123");
+        boolean result = registrationService.authenticateUser("test@example.com","password123");
 
         assertFalse(result);
     }
@@ -86,7 +86,7 @@ public class RegistrationServicesTest {
         user.setPassword(hashedPassword);
         when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(user);
 
-        boolean result = registrationServices.authenticateUser("test@example.com","wrongpassword");
+        boolean result = registrationService.authenticateUser("test@example.com","wrongpassword");
 
         assertFalse(result);
     }
