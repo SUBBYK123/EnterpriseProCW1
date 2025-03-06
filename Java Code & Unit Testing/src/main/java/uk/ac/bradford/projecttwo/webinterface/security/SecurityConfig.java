@@ -13,63 +13,92 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Security configuration class that defines authentication and authorization settings
+ * for the web application using Spring Security.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-        private final Encryptor encryptor;
+    // Dependency on Encryptor class for password hashing (not used directly in this config)
+    private final Encryptor encryptor;
 
-        public SecurityConfig(Encryptor encryptor) {
-                this.encryptor = encryptor;
-        }
+    /**
+     * Constructor-based dependency injection for Encryptor.
+     *
+     * @param encryptor An instance of Encryptor for password encryption.
+     */
+    public SecurityConfig(Encryptor encryptor) {
+        this.encryptor = encryptor;
+    }
 
-
+    /**
+     * Configures HTTP security settings such as authentication and authorization.
+     *
+     * @param http The HttpSecurity object to configure security policies.
+     * @return A SecurityFilterChain instance with configured security rules.
+     * @throws Exception If an error occurs while configuring security settings.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // Uncomment the line below if you wish to permit access to static resources and other endpoints
-                        .requestMatchers("/login" ,"/", "/index", "/signup", "/css/**", "/js/**", "/images/**","/reset").permitAll()
+                        // Publicly accessible endpoints (login, signup, static resources, reset password)
+                        .requestMatchers("/login", "/", "/index", "/signup", "/css/**", "/js/**", "/images/**", "/reset").permitAll()
+                        // Restrict access to the admin dashboard to users with ADMIN authority
                         .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
+                // Enable HTTP Basic authentication (for APIs or debugging)
                 .httpBasic(Customizer.withDefaults())
+                // Configure form-based login
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/index",true)
-                        .usernameParameter("emailAddress")
-                        .passwordParameter("password")
-                        .permitAll()
+                        .loginPage("/login") // Custom login page
+                        .defaultSuccessUrl("/index", true) // Redirect to index after successful login
+                        .usernameParameter("emailAddress") // Custom username field (email-based login)
+                        .passwordParameter("password") // Custom password field
+                        .permitAll() // Allow access to the login page
                 )
+                // Configure logout behavior
                 .logout(logout -> logout
-                        .permitAll()
+                        .permitAll() // Allow all users to log out
                 );
 
-                return http.build();
-        }
+        return http.build();
+    }
 
+    /**
+     * Defines an in-memory user details service for testing authentication.
+     * Uncomment the method to enable in-memory authentication.
+     *
+     * @return An instance of UserDetailsService with predefined users.
+     */
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    //     UserDetails userDetails = User.builder()
+    //             .username("user")
+    //             .password(passwordEncoder().encode("password")) // Encode password using BCrypt
+    //             .roles("USER") // Assign USER role
+    //             .build();
 
+    //     UserDetails adminDetails = User.builder()
+    //             .username("mustafakamran46@hotmail.com")
+    //             .password(passwordEncoder().encode("password")) // Encode password
+    //             .authorities("ADMIN") // Assign ADMIN role
+    //             .build();
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails userDetails = User.builder()
-//                .username("user")
-//                .password(passwordEncoder().encode("password"))
-//                .roles("USER")
-//                .build();
+    //     return new InMemoryUserDetailsManager(userDetails, adminDetails);
+    // }
 
-//        UserDetails adminDetails = User.builder()
-//                .username("mustafakamran46@hotmail.com")
-//                .password(passwordEncoder().encode("password"))
-//                .authorities("ADMIN")
-//                .build();
-
-//        return new InMemoryUserDetailsManager(userDetails, adminDetails);
-//    }
-
-
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    /**
+     * Configures the password encoder to use BCrypt hashing.
+     *
+     * @return A PasswordEncoder instance for securely hashing passwords.
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
