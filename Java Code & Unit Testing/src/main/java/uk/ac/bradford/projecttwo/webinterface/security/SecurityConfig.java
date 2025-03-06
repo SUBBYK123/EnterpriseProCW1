@@ -17,11 +17,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final Encryptor encryptor;
+        private final Encryptor encryptor;
 
-    public SecurityConfig(Encryptor encryptor) {
-        this.encryptor = encryptor;
-    }
+        public SecurityConfig(Encryptor encryptor) {
+                this.encryptor = encryptor;
+        }
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,8 +45,10 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
-        return http.build();
-    }
+                return http.build();
+        }
+
+
 
 //    @Bean
 //    public UserDetailsService userDetailsService() {
@@ -64,8 +67,9 @@ public class SecurityConfig {
 //        return new InMemoryUserDetailsManager(userDetails, adminDetails);
 //    }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 }
