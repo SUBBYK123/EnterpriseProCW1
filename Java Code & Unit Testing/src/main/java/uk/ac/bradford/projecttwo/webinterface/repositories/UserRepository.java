@@ -1,6 +1,7 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
 
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
+import uk.ac.bradford.projecttwo.webinterface.models.User;
 
 import java.util.List;
 
@@ -24,4 +25,9 @@ public interface UserRepository {
      * @return A List of LoginModel objects representing all registered users.
      */
     List<LoginModel> getAllUsers();
+
+    static User findByEmail(String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
+    }
 }

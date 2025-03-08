@@ -23,6 +23,12 @@ public class ResetController {
         return "reset_verify"; // Ensure this matches your template name
     }
 
+    @GetMapping("/reset_password")
+    public String reset_password(Model model) {
+        model.addAttribute("resetRequest", new ResetPasswordModel());
+        return "reset_password"; // Ensure this matches your template name
+    }
+
 //    @PostMapping("/reset")
 //    public String processResetRequest(@ModelAttribute("resetRequest") ResetPasswordModel resetRequest, Model model) {
 //        // Add validation logic here
