@@ -1,11 +1,11 @@
 let map;
-let markersByCategory = {};  // This will hold markers grouped by dataset name
+let markersByCategory = {};  // Holds markers grouped by dataset name
 let uploadedFiles = new Set();
 const bradfordCenter = { lat: 53.795, lng: -1.759 };
 
-// Array of colors for the markers (you can add more colors if needed)
+// Array of marker colors
 const markerColors = ["blue", "red", "yellow", "green", "purple"];
-let currentColorIndex = 0;  // To cycle through the colors
+let currentColorIndex = 0;
 
 // Initialize the map
 function initMap() {
@@ -16,7 +16,7 @@ function initMap() {
     console.log('Map initialized');
 }
 
-// Fetch the API key dynamically and load the Google Maps script
+// Fetch API key dynamically and load the Google Maps script
 fetch('/api/maps-key')
     .then(response => response.text())
     .then(apiKey => {
@@ -40,19 +40,17 @@ function handleFileUpload() {
 
     const fileName = file.name;
 
-    // Check if the file has already been uploaded
+    // Prevent duplicate file uploads
     if (uploadedFiles.has(fileName)) {
         alert("This dataset has already been uploaded.");
-        return; // Prevent further processing of this file
+        return;
     }
 
     const reader = new FileReader();
-    reader.onload = function(event) {
+    reader.onload = function (event) {
         const fileContent = event.target.result;
         const fileType = file.name.split('.').pop().toLowerCase();
-
-        // Determine the category based on the file (you can customize this logic)
-        const categoryName = file.name.split('.')[0]; // Assuming the file name is the category name
+        const categoryName = file.name.split('.')[0]; // Use filename as category
 
         if (fileType === "csv") {
             parseCSV(fileContent, categoryName);
@@ -62,95 +60,109 @@ function handleFileUpload() {
             alert("Please upload a CSV or JSON file.");
         }
 
-        // Add the file name to the uploaded files set
         uploadedFiles.add(fileName);
+        document.getElementById("fileInput").value = "";
     };
 
     reader.readAsText(file);
 }
 
-// Parse CSV data
+// Parse CSV Data
 function parseCSV(csvData, categoryName) {
     const rows = csvData.split("\n");
-    const headers = rows[0].split(",").map(header => header.trim());  // Clean up any unwanted whitespace or \r
+    const headers = rows[0].split(",").map(header => header.trim());
 
-    const latIndex = headers.indexOf("Latitude");
-    const lngIndex = headers.indexOf("Longitude");
+    const latIndex = headers.findIndex(header => header.toLowerCase() === "latitude");
+    const lngIndex = headers.findIndex(header => header.toLowerCase() === "longitude");
 
     if (latIndex === -1 || lngIndex === -1) {
         alert("No Latitude or Longitude columns found.");
         return;
     }
-
-    // Get the current color for this dataset
+    var errorInDataset = 0;
     const markerColor = markerColors[currentColorIndex % markerColors.length];
-    currentColorIndex++;  // Increment and cycle through the colors
+    currentColorIndex++;
 
-    // Create markers based on Latitude and Longitude columns
     const newMarkers = rows.slice(1).map(row => {
         const columns = row.split(",");
         const lat = parseFloat(columns[latIndex]);
         const lng = parseFloat(columns[lngIndex]);
 
         if (!isNaN(lat) && !isNaN(lng)) {
-            return new google.maps.Marker({
+            const marker = new google.maps.Marker({
                 position: { lat, lng },
-                map: map, // Add marker to the map immediately
-                title: `Lat: ${lat}, Lng: ${lng}`, // Just using lat and lng as title
-                icon: {
-                    // Use default Google Maps marker icons and set the color
-                    url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png`
-                }
+                map: map,
+                title: `Lat: ${lat}, Lng: ${lng}`,
+                icon: { url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png` }
             });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<strong>Latitude:</strong> ${lat}<br><strong>Longitude:</strong> ${lng}`
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+
+            return marker;
+        } else {
+            errorInDataset += 1
         }
     }).filter(marker => marker !== undefined);
 
-    markersByCategory[categoryName] = newMarkers; // Store markers by category
-    displayMarkersByCategory(categoryName);  // Display the markers for this category
-    createFilters();  // Create the filters based on the datasets
-    updateMarkersVisibility(); // Show markers immediately after upload
+    markersByCategory[categoryName] = newMarkers;
+    createFilters();
+    updateMarkersVisibility();
+    alert(`Dataset successfully added with ${errorInDataset} errors.`);
 }
 
-// Parse JSON data
+// Parse JSON Data
 function parseJSON(jsonData, categoryName) {
     const data = JSON.parse(jsonData);
-    const markers = data.map(item => {
-        const lat = item.Latitude;
-        const lng = item.Longitude;
+    const markerColor = markerColors[currentColorIndex % markerColors.length];
+    currentColorIndex++;
 
-        // Get the current color for this dataset
-        const markerColor = markerColors[currentColorIndex % markerColors.length];
-        currentColorIndex++;  // Increment and cycle through the colors
+    const newMarkers = data.map(item => {
+        const lat = parseFloat(item.Latitude);
+        const lng = parseFloat(item.Longitude);
 
-        return {
-            position: { lat, lng },
-            title: `Lat: ${lat}, Lng: ${lng}`, // Using lat and lng as title
-            category: categoryName,  // Store the category (dataset name)
-            icon: {
-                // Use default Google Maps marker icons and set the color
-                url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png`
-            }
-        };
-    });
+        if (!isNaN(lat) && !isNaN(lng)) {
+            const marker = new google.maps.Marker({
+                position: { lat, lng },
+                map: map,
+                title: `Lat: ${lat}, Lng: ${lng}`,
+                icon: { url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png` }
+            });
 
-    markersByCategory[categoryName] = markers;
-    displayMarkersByCategory(categoryName);  // Display the markers for this category
-    createFilters();  // Create the filters based on the datasets
-    updateMarkersVisibility(); // Show markers immediately after upload
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<strong>Latitude:</strong> ${lat}<br><strong>Longitude:</strong> ${lng}`
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.open(map, marker);
+            });
+
+            return marker;
+        }
+    }).filter(marker => marker !== undefined);
+
+    markersByCategory[categoryName] = newMarkers;
+    createFilters();
+    updateMarkersVisibility();
 }
 
-// Create filter checkboxes for each category
-const filtersContainer = document.getElementById("filters-container");
-
+// Create filter checkboxes
 function createFilters() {
-    filtersContainer.innerHTML = "";  // Clear previous filters
+    const filtersContainer = document.getElementById("filters-container");
+    filtersContainer.innerHTML = "";
+
     Object.keys(markersByCategory).forEach(category => {
         let label = document.createElement("label");
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.classList.add("filter-checkbox");
         checkbox.id = category.toLowerCase().replace(/\s+/g, "-");
-        checkbox.checked = true;  // Make the checkbox checked by default
+        checkbox.checked = true;
         checkbox.addEventListener("change", updateMarkersVisibility);
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(` ${category}`));
@@ -165,47 +177,19 @@ function updateMarkersVisibility() {
         const isVisible = checkbox.checked;
 
         markersByCategory[category].forEach(marker => {
-            marker.setMap(isVisible ? map : null);  // Show or hide marker based on visibility
+            marker.setMap(isVisible ? map : null);
         });
     });
 }
 
-// Toggle visibility of all markers by checking/unchecking all checkboxes
+// Toggle visibility of all markers
 function toggleSelectAll() {
     const checkboxes = document.querySelectorAll(".filter-checkbox");
     const allChecked = [...checkboxes].every(checkbox => checkbox.checked);
 
     checkboxes.forEach(checkbox => {
-        checkbox.checked = !allChecked; // Toggle all checkboxes
+        checkbox.checked = !allChecked;
     });
 
     updateMarkersVisibility();
 }
-
-// Display markers for the selected category
-function displayMarkersByCategory(category) {
-    if (!map) {
-        console.log("Map is not initialized yet.");
-        return; // Ensure the map is initialized before adding markers
-    }
-
-    // Add markers to the map for the specific category
-    markersByCategory[category].forEach(marker => {
-        if (!marker.position || isNaN(marker.position.lat) || isNaN(marker.position.lng)) {
-            console.log("Invalid marker position:", marker);
-            return; // Skip markers with invalid positions
-        }
-
-        console.log("Marker data:", marker);
-
-        let infoWindow = new google.maps.InfoWindow({
-            content: `<strong>${marker.title}</strong><br>
-                      📍 Lat: ${marker.position.lat}, Lng: ${marker.position.lng}`
-        });
-
-        marker.addListener("click", () => {
-            infoWindow.open(map, marker);
-        });
-    });
-}
-
