@@ -2,6 +2,7 @@ package uk.ac.bradford.projecttwo.webinterface.repositories;
 
 import org.springframework.stereotype.Repository;
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
+import uk.ac.bradford.projecttwo.webinterface.models.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -85,5 +86,23 @@ public class UserRepositoryImpl implements UserRepository {
         }
 
         return users; // Return the list of users instead of null
+    }
+
+    @Override
+    public Object findAll() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
+    }
+
+    @Override
+    public Object findById(Integer userId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    }
+
+    @Override
+    public void save(User user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'save'");
     }
 }

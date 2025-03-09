@@ -64,4 +64,19 @@ public class User {
     public void setDepartment(String department) {
         this.department = department;
     }
+
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status = AccountStatus.PENDING;
+
+    public enum AccountStatus {
+        PENDING, APPROVED, DENIED
+    }
+
+    public void setStatus(AccountStatus approved) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStatus'");
+    }
+
+    // Add getters/setters for status
+
 }

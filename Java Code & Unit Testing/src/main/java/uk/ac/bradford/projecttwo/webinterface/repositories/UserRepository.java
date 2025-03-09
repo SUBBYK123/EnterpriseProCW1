@@ -30,4 +30,10 @@ public interface UserRepository {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
     }
+
+    Object findAll();
+
+    Object findById(Integer userId);
+
+    void save(User user);
 }
