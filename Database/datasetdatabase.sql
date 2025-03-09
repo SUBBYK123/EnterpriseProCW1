@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 24, 2025 at 02:35 PM
+-- Generation Time: Mar 09, 2025 at 06:03 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,13 +24,35 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `datasetindex`
+-- Table structure for table `dataset_index`
 --
 
-CREATE TABLE `datasetindex` (
-  `datasetName` varchar(255) NOT NULL,
-  `department` varchar(255) NOT NULL
+CREATE TABLE `dataset_index` (
+  `DatasetID` int(11) NOT NULL,
+  `DatasetName` varchar(255) NOT NULL,
+  `RoleID` int(11) DEFAULT NULL,
+  `Timestamp` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `dataset_index`
+--
+ALTER TABLE `dataset_index`
+  ADD PRIMARY KEY (`DatasetID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `dataset_index`
+--
+ALTER TABLE `dataset_index`
+  MODIFY `DatasetID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
