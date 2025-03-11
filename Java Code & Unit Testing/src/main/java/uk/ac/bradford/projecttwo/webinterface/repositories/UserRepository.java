@@ -1,6 +1,7 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
 
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
+import uk.ac.bradford.projecttwo.webinterface.models.User;
 
 import java.util.List;
 
@@ -25,5 +26,18 @@ public interface UserRepository {
      */
     List<LoginModel> getAllUsers();
 
+
     void updateUserPassword(String email, String newPasswordHash);
+
+    static User findByEmail(String username) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
+    }
+
+    Object findAll();
+
+    Object findById(Integer userId);
+
+    void save(User user);
+
 }
