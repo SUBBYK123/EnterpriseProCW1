@@ -24,4 +24,6 @@ public interface UserRepository {
      * @return A List of LoginModel objects representing all registered users.
      */
     List<LoginModel> getAllUsers();
+
+    void updateUserPassword(String email, String newPasswordHash);
 }

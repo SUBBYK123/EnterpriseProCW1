@@ -1,7 +1,7 @@
 package uk.ac.bradford.projecttwo.webinterface.services;
 
-import org.springframework.stereotype.Service;
-
-@Service
-public class ResetPasswordService {
+public interface ResetPasswordService {
+    void generateAndSendOtp(String emailAddress) throws Exception;
+    boolean verifyOtp(String emailAddress, String otp);
+    boolean resetPassword(String emailAddress, String otp, String newPassword);
 }
