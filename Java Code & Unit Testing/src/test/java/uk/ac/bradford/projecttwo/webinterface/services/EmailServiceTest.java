@@ -26,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
+
+//Testing isn't working for now due to dependency issues so we'll have to come back to it
 @ExtendWith(MockitoExtension.class)
 class EmailServiceTest {
 
