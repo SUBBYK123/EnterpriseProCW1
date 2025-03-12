@@ -1,4 +1,5 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
+
  // Adjust the package name as needed
 
 import uk.ac.bradford.projecttwo.webinterface.models.Log;

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.bradford.projecttwo.webinterface.services.LogService;
 import uk.ac.bradford.projecttwo.webinterface.models.Log;
+import uk.ac.bradford.projecttwo.webinterface.models.User; // Ensure you have the User model
 import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepository;
 import uk.ac.bradford.projecttwo.webinterface.repositories.LogRepository;
 import java.time.LocalDateTime;
@@ -29,12 +30,19 @@ public class LogController {
 
     @GetMapping("/logs")
     public String showLogs(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        // Log the access to the logs page
-        Log log = new Log();
-        log.setUser(UserRepository.findByEmail(userDetails.getUsername())); // Get the current user
-        log.setActionMessage("Accessed the logs page");
-        log.setTimestamp(LocalDateTime.now());
-        logRepository.save(log); // Save the log to the database
+        if (userDetails != null) {
+            // Retrieve the user from the repository
+            User user = UserRepository.findByEmail(userDetails.getUsername());
+
+            if (user != null) {
+                // Log the access to the logs page
+                Log log = new Log();
+                log.setUser(user);
+                log.setActionMessage("Accessed the logs page");
+                log.setTimestamp(LocalDateTime.now());
+                logRepository.save(log); // Save the log to the database
+            }
+        }
 
         // Add logs to the model for display
         model.addAttribute("logs", logService.getAllLogs());

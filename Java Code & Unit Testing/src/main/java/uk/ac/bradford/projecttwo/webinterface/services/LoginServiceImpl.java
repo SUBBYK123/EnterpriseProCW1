@@ -63,4 +63,16 @@ public class LoginServiceImpl implements LoginService {
     public List<LoginModel> getAllUsers() {
         return loginRepository.getAllUsers();
     }
+
+    /**
+     * Updates the user's password securely.
+     *
+     * @param email The email of the user whose password needs to be changed.
+     * @param newPassword The new password (plain text, will be hashed).
+     */
+    @Override
+    public void updateUserPassword(String email, String newPassword) {
+        String hashedPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+        loginRepository.updateUserPassword(email,hashedPassword);
+    }
 }

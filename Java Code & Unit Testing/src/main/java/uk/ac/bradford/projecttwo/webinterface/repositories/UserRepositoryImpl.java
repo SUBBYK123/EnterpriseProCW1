@@ -88,6 +88,32 @@ public class UserRepositoryImpl implements UserRepository {
         return users; // Return the list of users instead of null
     }
 
+
+    /**
+     * Updates the user's password in the database.
+     *
+     * @param email The email of the user whose password needs to be updated.
+     * @param newPasswordHash The new hashed password.
+     */
+    @Override
+    public void updateUserPassword(String email, String newPasswordHash) {
+        String sqlUpdateQuery = "UPDATE user SET password_hash = ? WHERE email_address = ?";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdateQuery);
+
+            preparedStatement.setString(1,newPasswordHash);
+            preparedStatement.setString(2,email);
+
+            preparedStatement.executeUpdate();
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     @Override
     public Object findAll() {
         // TODO Auto-generated method stub
@@ -104,5 +130,6 @@ public class UserRepositoryImpl implements UserRepository {
     public void save(User user) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'save'");
+
     }
 }

@@ -26,6 +26,9 @@ public interface UserRepository {
      */
     List<LoginModel> getAllUsers();
 
+
+    void updateUserPassword(String email, String newPasswordHash);
+
     static User findByEmail(String username) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findByEmail'");
@@ -36,4 +39,5 @@ public interface UserRepository {
     Object findById(Integer userId);
 
     void save(User user);
+
 }
