@@ -32,7 +32,7 @@ public class ResetController {
      */
     @GetMapping("/reset_verify")
     public String showVerifyPage() {
-        return "reset_verify"; // Make sure reset_verify.html exists in src/main/resources/templates/
+        return "redirect:/reset_verify"; // Make sure reset_verify.html exists in src/main/resources/templates/
     }
 
     /**
@@ -46,7 +46,7 @@ public class ResetController {
         try {
             resetPasswordService.generateAndSendOtp(emailAddress);
             model.addAttribute("successMessage", "OTP sent to your email.");
-            return "reset_verify"; // Redirect to OTP verification page
+            return "redirect:/reset_verify"; // Redirect to OTP verification page
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
             return "reset"; // Show the same page with an error message

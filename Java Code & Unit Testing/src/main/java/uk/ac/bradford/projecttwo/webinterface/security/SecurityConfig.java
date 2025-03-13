@@ -1,15 +1,22 @@
 package uk.ac.bradford.projecttwo.webinterface.security;
 
+// import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import uk.ac.bradford.projecttwo.webinterface.services.UserDetailsServiceImpl;
+// import uk.ac.bradford.projecttwo.webinterface.services.UserDetailsServiceImpl;
+
 
 /**
  * Security configuration class that defines authentication and authorization settings
@@ -73,22 +80,25 @@ public class SecurityConfig {
      *
      * @return An instance of UserDetailsService with predefined users.
      */
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    //     UserDetails userDetails = User.builder()
-    //             .username("user")
-    //             .password(passwordEncoder().encode("password")) // Encode password using BCrypt
-    //             .roles("USER") // Assign USER role
-    //             .build();
+        @Bean
+        @Primary  // Marks this as the preferred UserDetailsService bean
+        public UserDetailsService userDetailsService() {
+        UserDetails userDetails = User.builder()
+                .username("user")
+                .password(passwordEncoder().encode("password")) // Encode password using BCrypt
+                .roles("USER") // Assign USER role
+                .build();
 
-    //     UserDetails adminDetails = User.builder()
-    //             .username("mustafakamran46@hotmail.com")
-    //             .password(passwordEncoder().encode("password")) // Encode password
-    //             .authorities("ADMIN") // Assign ADMIN role
-    //             .build();
+        UserDetails adminDetails = User.builder()
+                .username("mustafakamran46@hotmail.com")
+                .password(passwordEncoder().encode("password")) // Encode password
+                .authorities("ADMIN") // Assign ADMIN role
+                .build();
 
-    //     return new InMemoryUserDetailsManager(userDetails, adminDetails);
-    // }
+        return new InMemoryUserDetailsManager(userDetails, adminDetails);
+        }
+
+
 
     /**
      * Configures the password encoder to use BCrypt hashing.
