@@ -9,6 +9,52 @@
   <!-- <script th:src="@{/js/validation.js}" defer></script> -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <title>Login Page</title>
+  <script>
+    // Check local storage and apply colorblind mode before page renders
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.documentElement.classList.add("colorblind-mode");
+    }
+  </script>
+
+  <style>
+    h3 {
+      font-family: Arial, sans-serif;
+    }
+
+    .colorblind-mode {
+      background-color: black !important;
+      color: yellow !important;
+    }
+
+    /* High-contrast Navigation */
+    .colorblind-mode .navbar {
+      background-color: #1e2021 !important;
+    }
+
+    /* High-contrast Footer */
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue {
+      background-color: black !important;
+      color: white !important;
+    }
+
+    .colorblind-mode .footer-copyright {
+      background-color: black !important;
+    }
+
+    /* High-contrast Links */
+    .colorblind-mode a,
+    .colorblind-mode p {
+      color: yellow !important;
+    }
+
+    .colorblind-mode .home,
+    .colorblind-mode #controls,
+    .colorblind-mode .filter-options,
+    .colorblind-mode .filter-section {
+      background-color: black !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -27,12 +73,33 @@
   <!-- Search Bar -->
   <div class="search-bar">
     <input type="text" placeholder="Search datasets"
-           style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+      style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
   </div>
 
   <!-- Accessibility Link -->
   <div class="accessibility">
-    <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+    <button id="colorblind-toggle" onclick="toggleColorblindMode()"
+      style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
+    <script>
+      console.log("Accessibility script loaded!");
+
+      function toggleColorblindMode() {
+        console.log("Toggling colorblind mode...");
+        let body = document.body;
+        let isEnabled = body.classList.toggle("colorblind-mode");
+        console.log("Colorblind mode is now:", isEnabled);
+        localStorage.setItem("colorblindMode", isEnabled);
+      }
+
+      // Preserve user preference on reload
+      window.onload = function () {
+        console.log("Checking stored colorblind mode...");
+        if (localStorage.getItem("colorblindMode") === "true") {
+          document.body.classList.add("colorblind-mode");
+          console.log("Colorblind mode applied on load");
+        }
+      };
+    </script>
   </div>
 
   <!-- Navigation bar -->
@@ -50,75 +117,80 @@
     </div>
   </nav>
 
-  <div style="background-color: white; width:100%; height: 1080px; float:left;"> 
+  <div style="width:100%; height: 1080px; float:left;">
 
-  <!-- Home content -->
-  <section class="home">
+    <!-- Home content -->
+    <section class="home">
 
-
-    <div id="controls" style="height:780px;">
-      <!-- Filters Section -->
-      <div id="filter-section" style="height:70%;">
-      <h3>Filters</h3>
-      <button class="select-all" onclick="toggleSelectAll()">Select All</button>
-      <div class="filter-options" id="filters-container" ></div>
+      <div id="controls" style="height:780px;">
+        <!-- Filters Section -->
+        <div id="filter-section" style="height:70%;">
+          <h3>Filters</h3>
+          <button class="select-all" onclick="toggleSelectAll()">Select All</button>
+          <div class="filter-options" id="filters-container"></div>
+        </div>
+        <!-- Upload Dataset Section -->
+        <div id="dataset_section" style="height:30%;">
+          <h3>Upload Dataset</h3>
+          <input type="file" id="fileInput">
+          <button onclick="handleFileUpload()">Upload</button><!-- SEND TO SPRING BOOT!!!!!!!!!!!!!!!!!! -->
+        </div>
       </div>
-      <!-- Upload Dataset Section -->
-      <div id="dataset_section" style="height:30%;">
-      <h3>Upload Dataset</h3>
-      <input type="file" id="fileInput">
-      <button onclick="handleFileUpload()">Upload</button><!-- SEND TO SPRING BOOT!!!!!!!!!!!!!!!!!! -->
+      <div id="map">
+        <!-- Load Google Maps securely from Spring Boot -->
+        <script th:src="@{/js/map.js}"></script>
       </div>
-  </div>
-    <div id="map">
-    <!-- Load Google Maps securely from Spring Boot -->
-    <script th:src="@{/js/map.js}"></script>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer Section 1 -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <p style="color:white">
-        Council Switchboard: 01274 432111<br><br>
-        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-        <a style="font-size: 20px; color: white;" href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
-      </p>
-      <div class="footer-social">
-        <a href="https://www.facebook.com/bradfordmdc">
-          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;"/>
-        </a>
-        <a href="https://x.com/bradfordmdc">
-          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;"/>
-        </a>
-        <a href="https://www.linkedin.com/company/bradford-council/">
-          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;"/>
-        </a>
-        <a href="https://www.instagram.com/bradfordmdc/">
-          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;"/>
-        </a>
-        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;"/>
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Footer Section 2 -->
-  <footer class="site-footer-blue">
-    <div class="footer-blue">
-      <div class="footer-legal">
-        <a th:href="@{/cookies}">Cookies</a>
-        <a th:href="@{/privacy}">Privacy Notice</a>
-        <a th:href="@{/atoz}">A to Z</a>
-        <a th:href="@{/accessibility}">Accessibility Statement</a>
-        <p style="font-size: 20px;" class="footer-copyright">
-          &copy; 2025 City of Bradford Metropolitan District Council
+    <!-- Footer Section 1 -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <p style="color:white">
+          Council Switchboard: 01274 432111<br><br>
+          Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
+          <a style="font-size: 20px; color: white;"
+            href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
         </p>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/bradfordmdc">
+            <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+          </a>
+          <a href="https://x.com/bradfordmdc">
+            <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+          </a>
+          <a href="https://www.linkedin.com/company/bradford-council/">
+            <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+          </a>
+          <a href="https://www.instagram.com/bradfordmdc/">
+            <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+          </a>
+          <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+            <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+          </a>
+        </div>
       </div>
-    </div>
-  </footer>
-  </div>
-</body>
-</html>
+    </footer>
 
+    <!-- Footer Section 2 -->
+    <footer class="site-footer-blue">
+      <div class="footer-blue">
+        <div class="footer-legal">
+          <a th:href="@{/cookies}">Cookies</a>
+          <a th:href="@{/privacy}">Privacy Notice</a>
+          <a th:href="@{/atoz}">A to Z</a>
+          <a th:href="@{/accessibility}">Accessibility Statement</a>
+          <p style="font-size: 20px;" class="footer-copyright">
+            &copy; 2025 City of Bradford Metropolitan District Council
+          </p>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script>
+    document.getElementById("colorblind-toggle").addEventListener("click", function () {
+      console.log("Button clicked!");
+    });
+  </script>
+</body>
+
+</html>

@@ -77,10 +77,7 @@ public class User {
         throw new UnsupportedOperationException("Unimplemented method 'setStatus'");
     }
 
-    public void addRole(Role requestedRole) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addRole'");
-    }
+
 
     // Add getters/setters for status
 
