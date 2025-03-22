@@ -8,7 +8,7 @@
   <link rel="scriptFunction" href="./javaScript.js" />
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="./js/validation.js" defer></script>
-  <title>Permissions Page</title>
+  <title>Logs Page</title>
   <style>
     .button-container {
       display: flex;
@@ -71,50 +71,51 @@
     </div>
   </nav>
 
-  <div class="content">
-    <h1 style="margin-top: 100px; margin-bottom: 50px; text-align: center;">Permissions Management</h1>
-    
-    <!-- Status Messages -->
-    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-    <table style="width: 80%; margin: auto; border-collapse: collapse;">
+  <!-- Logs Table -->
+  <h1 style="margin-top: 100px; margin-bottom: 50px; text-align: center;">Logs Table</h1>
+  <div style="height: 540px;">
+    <table style="width: 80%; margin-left: auto; margin-right: auto; border-collapse: collapse;">
       <thead>
         <tr>
-            <th>User</th>
-            <th>Requested Role</th>
-            <th>Department</th>
-            <th>Accessible Datasets</th>
-            <th>Status</th>
-            <th>Actions</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Department</th>
+          <th>Request</th>
+          <th>Dataset Approval Status</th>
+          <th>Change Dataset Access</th>
         </tr>
-    </thead>
-    <tbody>
-        <tr th:each="request : ${requests}">
-            <td th:text="${request.user.firstName + ' ' + request.user.lastName}"></td>
-            <td th:text="${request.requestedRole.roleName}"></td>
-            <td th:text="${request.requestedRole.department}"></td>
-            <td>
-                <ul>
-                    <li th:each="dataset : ${request.requestedRole.accessibleDatasets}"
-                        th:text="${dataset.datasetName}"></li>
-                </ul>
-            </td>
-            <td th:text="${request.status}"></td>
-            <td>
-                <div th:if="${request.status == 'PENDING'}" class="button-container">
-                    <form th:action="@{/permissions/approve/{id}(id=${request.requestId})}" method="post">
-                        <button type="submit" class="grant">Approve Role</button>
-                    </form>
-                    <form th:action="@{/permissions/deny/{id}(id=${request.requestId})}" method="post">
-                        <button type="submit" class="deny">Deny Role</button>
-                    </form>
-                </div>
-            </td>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John</td>
+          <td>Doe</td>
+          <td>IT</td>
+          <td>Database Access Change</td>
+          <td>Approved</td>
+          <td>
+            <div class="button-container">
+              <button class="grant">Grant</button>
+              <button class="deny">Deny</button>
+            </div>
+          </td>
         </tr>
-    </tbody>
-</table>
-</div>
+        <tr>
+          <td>Jane</td>
+          <td>Smith</td>
+          <td>HR</td>
+          <td>Dataset Access Request</td>
+          <td>Pending</td>
+          <td>
+            <div class="button-container">
+              <button class="grant">Grant</button>
+              <button class="deny">Deny</button>
+            </div>
+          </td>
+        </tr>
+        <!-- Add more rows as needed -->
+      </tbody>
+    </table>
+  </div>
 
   <!-- Footer Section 1 -->
   <footer class="site-footer">

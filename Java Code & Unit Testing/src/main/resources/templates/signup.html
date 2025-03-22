@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,170 +7,106 @@
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="@{/js/validation.js}" defer></script>
   <title>Sign Up Page</title>
-
-  <script>
-    // Check local storage and apply colorblind mode before page renders
-    if (localStorage.getItem("colorblindMode") === "true") {
-      document.documentElement.classList.add("colorblind-mode");
-    }
-  </script>
-
-  <style>
-    h3 {
-      font-family: Arial, sans-serif;
-    }
-
-    .colorblind-mode {
-      background-color: black !important;
-      color: yellow !important;
-    }
-
-    /* High-contrast Navigation */
-    .colorblind-mode .navbar {
-      background-color: #1e2021 !important;
-    }
-
-    /* High-contrast Footer */
-    .colorblind-mode .site-footer,
-    .colorblind-mode .site-footer-blue {
-      background-color: black !important;
-      color: white !important;
-    }
-
-    .colorblind-mode .footer-copyright {
-      background-color: black !important;
-    }
-
-    /* High-contrast Links */
-    .colorblind-mode a,
-    .colorblind-mode p {
-      color: yellow !important;
-    }
-
-    .colorblind-mode .home,
-    .colorblind-mode #controls,
-    .colorblind-mode .filter-options,
-    .colorblind-mode .filter-section {
-      background-color: black !important;
-    }
-  </style>
 </head>
 
 <body>
-  <!-- Logo and Header -->
-  <div class="logo">
-    <a th:href="@{#}">
-      <img th:src="@{/images/logo.png}" alt="Website Logo" />
-    </a>
-  </div>
-  <div class="header-icons">
-    <a th:href="@{/profile}">
-      <img th:src="@{/images/user.png}" alt="User Profile" />
-    </a>
+<!-- Logo and Header -->
+<div class="logo">
+  <a th:href="@{#}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" />
+  </a>
+</div>
+<div class="header-icons">
+  <a th:href="@{/profile}">
+    <img th:src="@{/images/user.png}" alt="User Profile" />
+  </a>
 
-    <!-- Accessibility Link -->
-    <div class="accessibility">
-      <button id="colorblind-toggle" onclick="toggleColorblindMode()"
-        style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
-      <script>
-        console.log("Accessibility script loaded!");
-
-        function toggleColorblindMode() {
-          console.log("Toggling colorblind mode...");
-          let body = document.body;
-          let isEnabled = body.classList.toggle("colorblind-mode");
-          console.log("Colorblind mode is now:", isEnabled);
-          localStorage.setItem("colorblindMode", isEnabled);
-        }
-
-        // Preserve user preference on reload
-        window.onload = function () {
-          console.log("Checking stored colorblind mode...");
-          if (localStorage.getItem("colorblindMode") === "true") {
-            document.body.classList.add("colorblind-mode");
-            console.log("Colorblind mode applied on load");
-          }
-        };
-      </script>
-    </div>
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search datasets" style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
   </div>
 
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div style="background-color:#005192;" class="navdiv">
-      <ul>
-        <li><a style="color:#005192;" href="#"></a></li>
-      </ul>
-    </div>
-  </nav>
+  <!-- Accessibility Link -->
+  <div class="accessibility">
+    <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+  </div>
+</div>
 
-  <!-- Signup Form -->
-  <h1 style="margin-top: 40px; margin-bottom: -20px;">Sign Up</h1>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div style="background-color:#005192;" class="navdiv">
+    <ul>
+      <li><a style="color:#005192;" href="#"></a></li>
+    </ul>
+  </div>
+</nav>
 
-  <form id="signup" th:action="@{/signup}" th:object="${user}" method="post">
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" style="color: red;">
-      <p th:text="${errorMessage}"></p>
-    </div>
+<!-- Signup Form -->
+<h1 style="margin-top: 40px; margin-bottom: -20px;">Sign Up</h1>
 
-    <!-- First Name -->
-    <div>
-      <label for="firstName">First Name</label>
-      <input style="margin-bottom: -20px;" type="text" id="firstName" th:field="*{firstName}" required />
-    </div>
-    <br />
+<form id="signup" th:action="@{/signup}" th:object="${user}" method="post">
+  <!-- Error Messages -->
+  <div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+  </div>
 
-    <!-- Last Name -->
-    <div>
-      <label for="lastName">Last Name</label>
-      <input style="margin-bottom: -20px;" type="text" id="lastName" th:field="*{lastName}" required />
-    </div>
-    <br />
+  <!-- First Name -->
+  <div>
+    <label for="firstName">First Name</label>
+    <input style="margin-bottom: -20px;" type="text" id="firstName" th:field="*{firstName}" required />
+  </div>
+  <br />
 
-    <!-- Department -->
-    <div>
-      <label for="department">Department</label>
-      <select id="department" th:field="*{department}"
-        style="width: 107%; padding: 12px; font-size: 14px; border-radius: 4px; border: 1px solid #CCCCCC;" required>
-        <option value="">Select Department</option>
-        <option value="adult">Adult</option>
-        <option value="child">Child</option>
-      </select>
-    </div>
-    <br />
+  <!-- Last Name -->
+  <div>
+    <label for="lastName">Last Name</label>
+    <input style="margin-bottom: -20px;" type="text" id="lastName" th:field="*{lastName}" required />
+  </div>
+  <br />
 
-    <!-- Email Address -->
-    <div>
-      <label for="emailAddress">Email Address</label>
-      <input style="margin-bottom: -20px;" type="email" id="emailAddress" th:field="*{emailAddress}" required />
-    </div>
-    <br />
+  <!-- Department -->
+  <div>
+    <label for="department">Department</label>
+    <select id="department" th:field="*{department}" style="width: 107%; padding: 12px; font-size: 14px; border-radius: 4px; border: 1px solid #CCCCCC;" required>
+      <option value="">Select Department</option>
+      <option value="adult">Adult</option>
+      <option value="child">Child</option>
+    </select>
+  </div>
+  <br />
 
-    <!-- Password -->
-    <div>
-      <label for="password">Password</label>
-      <input style="margin-bottom: -20px;" type="password" id="password" th:field="*{password}" required />
-    </div>
-    <br />
+  <!-- Email Address -->
+  <div>
+    <label for="emailAddress">Email Address</label>
+    <input style="margin-bottom: -20px;" type="email" id="emailAddress" th:field="*{emailAddress}" required />
+  </div>
+  <br />
 
-    <!-- Confirm Password -->
-    <div>
-      <label for="password_confirmation">Re-enter Password</label>
-      <input type="password" id="password_confirmation" name="password_confirmation" required />
-    </div>
+  <!-- Password -->
+  <div>
+    <label for="password">Password</label>
+    <input style="margin-bottom: -20px;" type="password" id="password" th:field="*{password}" required />
+  </div>
+  <br />
 
-    <!-- Submit Button -->
-    <div class="container">
-      <div class="center">
-        <div id="signupbtn" style="width: 307%;">
-          <button type="submit">Sign Up</button>
-        </div>
+  <!-- Confirm Password -->
+  <div>
+    <label for="password_confirmation">Re-enter Password</label>
+    <input type="password" id="password_confirmation" name="password_confirmation" required />
+  </div>
+
+  <!-- Submit Button -->
+  <div class="container">
+    <div class="center">
+      <div id="signupbtn" style="width: 307%;">
+        <button type="submit" >Sign Up</button>
       </div>
     </div>
+  </div>
 
-    <!-- Login Link -->
-    <a th:href="@{/login}" style="color: black; font-size: 20px; text-decoration: underline;">or login</a>
-  </form>
+  <!-- Login Link -->
+  <a th:href="@{/login}" style="color: black; font-size: 20px; text-decoration: underline;">or login</a>
+</form>
 
 
   <!-- Footer Section 1 -->
@@ -222,89 +157,84 @@
   </footer>
 
 
-  <!-- JavaScript Validation -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('signup');
-      const errorMessages = {
-        firstName: document.getElementById('firstNameErrorMsg'),
-        secondName: document.getElementById('secondNameErrorMsg'),
-        department: document.getElementById('departmentErrorMsg'),
-        emailAddress: document.getElementById('emailErrorMsg'),
-        password: document.getElementById('passwordErrorMsg')
-      };
+<!-- JavaScript Validation -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('signup');
+    const errorMessages = {
+      firstName: document.getElementById('firstNameErrorMsg'),
+      secondName: document.getElementById('secondNameErrorMsg'),
+      department: document.getElementById('departmentErrorMsg'),
+      emailAddress: document.getElementById('emailErrorMsg'),
+      password: document.getElementById('passwordErrorMsg')
+    };
 
-      function validateForm() {
-        let isValid = true;
+    function validateForm() {
+      let isValid = true;
 
-        // Validate First Name
-        const firstName = form.firstName.value.trim();
-        if (!firstName) {
-          errorMessages.firstName.textContent = 'First name cannot be blank';
-          isValid = false;
-        } else {
-          errorMessages.firstName.textContent = '';
-        }
-
-        // Validate Second Name
-        const secondName = form.secondName.value.trim();
-        if (!secondName) {
-          errorMessages.secondName.textContent = 'Second name cannot be blank';
-          isValid = false;
-        } else {
-          errorMessages.secondName.textContent = '';
-        }
-
-        // Validate Department
-        const department = form.department.value;
-        if (!department) {
-          errorMessages.department.textContent = 'Please select a department';
-          isValid = false;
-        } else {
-          errorMessages.department.textContent = '';
-        }
-
-        // Validate Email
-        const emailAddress = form.emailAddress.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailAddress)) {
-          errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
-          isValid = false;
-        } else {
-          errorMessages.emailAddress.textContent = '';
-        }
-
-        // Validate Password
-        const password = form.password.value;
-        if (password.length < 8) {
-          errorMessages.password.textContent = 'Password must be at least 8 characters long';
-          isValid = false;
-        } else {
-          errorMessages.password.textContent = '';
-        }
-
-        // Validate Password Confirmation
-        const passwordConfirm = form.password_confirmation.value;
-        if (password !== passwordConfirm) {
-          errorMessages.password.textContent = 'Passwords do not match';
-          isValid = false;
-        }
-
-        return isValid;
+      // Validate First Name
+      const firstName = form.firstName.value.trim();
+      if (!firstName) {
+        errorMessages.firstName.textContent = 'First name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.firstName.textContent = '';
       }
 
-      form.addEventListener('submit', function (event) {
-        if (!validateForm()) {
-          event.preventDefault(); // Prevent form submission if validation fails
-        }
-      });
-    });
-  </script>
-  <script>
-    document.getElementById("colorblind-toggle").addEventListener("click", function () {
-      console.log("Button clicked!");
-    });
-  </script>
-</body>
+      // Validate Second Name
+      const secondName = form.secondName.value.trim();
+      if (!secondName) {
+        errorMessages.secondName.textContent = 'Second name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.secondName.textContent = '';
+      }
 
+      // Validate Department
+      const department = form.department.value;
+      if (!department) {
+        errorMessages.department.textContent = 'Please select a department';
+        isValid = false;
+      } else {
+        errorMessages.department.textContent = '';
+      }
+
+      // Validate Email
+      const emailAddress = form.emailAddress.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailAddress)) {
+        errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
+        isValid = false;
+      } else {
+        errorMessages.emailAddress.textContent = '';
+      }
+
+      // Validate Password
+      const password = form.password.value;
+      if (password.length < 8) {
+        errorMessages.password.textContent = 'Password must be at least 8 characters long';
+        isValid = false;
+      } else {
+        errorMessages.password.textContent = '';
+      }
+
+      // Validate Password Confirmation
+      const passwordConfirm = form.password_confirmation.value;
+      if (password !== passwordConfirm) {
+        errorMessages.password.textContent = 'Passwords do not match';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', function (event) {
+      if (!validateForm()) {
+        event.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+  });
+</script>
+
+</body>
 </html>

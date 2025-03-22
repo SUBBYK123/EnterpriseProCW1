@@ -40,6 +40,4 @@ public interface UserRepository {
 
     void save(User user);
 
-    void save(org.springframework.security.core.userdetails.User user);
-
 }

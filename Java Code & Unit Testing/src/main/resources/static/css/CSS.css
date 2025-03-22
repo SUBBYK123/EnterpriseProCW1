@@ -92,7 +92,6 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     position: relative;
-    margin-top: 10px;
     z-index: 0;
     font-family: "Roboto Slab", serif;
     background-color: white;
@@ -288,6 +287,69 @@ body {
     right: 150px;
     
   }
+/* ################################################################################ */
+#controls {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Adds space between sections */
+}
+
+#filter-section, #dataset_section {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+#filter-section h3, #dataset_section h3 {
+  font-size: 18px;
+  color: #005192;
+  border-bottom: 2px solid #005192;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+.select-all {
+  background: #005192;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+}
+
+#dataset_section input[type="file"] {
+  width: 96.5%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#dataset_section button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#dataset_section .cloud-search-btn {
+  background: #28a745; /* Green for contrast */
+}
+
+#dataset_section .cloud-search-btn:hover {
+  background: #218838;
+}
 
   /* Map for index page */
   #controls {
@@ -302,14 +364,27 @@ body {
       height: 780px;
   }
   .filter-options {
-      margin-bottom: 20px;
-      height:50%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
   }
-
+  
   .filter-options label {
-      display: flex;
-      
-      margin: 5px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px;
+    background: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .filter-options input[type="checkbox"] {
+    accent-color: #005192;
+    transform: scale(1.2);
   }
   .select-all {
       margin-top: 5px;
@@ -327,38 +402,3 @@ body {
       font-size: 14px;
       color: #333;
   }
-
-  /* CSS for permissions page */
-.status-approved {
-  color: #3c763d;
-  font-weight: bold;
-}
-
-.status-denied {
-  color: #a94442;
-  font-weight: bold;
-}
-
-.status-pending {
-  color: #8a6d3b;
-  font-weight: bold;
-}
-
-.alert {
-  padding: 15px;
-  margin: 20px auto;
-  width: 80%;
-  border-radius: 4px;
-}
-
-.alert-success {
-  background-color: #dff0d8;
-  border: 1px solid #d6e9c6;
-  color: #3c763d;
-}
-
-.alert-danger {
-  background-color: #f2dede;
-  border: 1px solid #ebccd1;
-  color: #a94442;
-}

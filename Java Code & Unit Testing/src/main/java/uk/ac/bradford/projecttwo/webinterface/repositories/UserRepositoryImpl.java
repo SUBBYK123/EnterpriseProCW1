@@ -132,10 +132,4 @@ public class UserRepositoryImpl implements UserRepository {
         throw new UnsupportedOperationException("Unimplemented method 'save'");
 
     }
-
-    @Override
-    public void save(org.springframework.security.core.userdetails.User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'save'");
-    }
 }

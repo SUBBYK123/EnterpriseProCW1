@@ -77,8 +77,6 @@ public class User {
         throw new UnsupportedOperationException("Unimplemented method 'setStatus'");
     }
 
-
-
     // Add getters/setters for status
 
 }
