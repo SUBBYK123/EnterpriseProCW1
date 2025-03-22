@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <link rel="scriptFunction" href="./javaScript.js" />
+  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+  <script src="./js/validation.js" defer></script>
+  <title>Logs Page</title>
+  <style>
+    .button-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .button-container button {
+      margin: 5px 0;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #005192;
+      color: white;
+    }
+
+    .button-container button.deny {
+      background-color: #d9534f;
+    }
+
+    .button-container button.grant {
+      background-color: #5bc0de;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Logo and Header -->
+  <div class="logo">
+    <a th:href="@{#}">
+      <img th:src="@{/images/logo.png}" alt="Website Logo" />
+    </a>
+  </div>
+  <div class="header-icons">
+    <a th:href="@{/profile}">
+      <img th:src="@{/images/user.png}" alt="User Profile" />
+    </a>
+
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <input type="text" placeholder="Search logs"
+        style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+    </div>
+
+    <!-- Accessibility Link -->
+    <div class="accessibility">
+      <a th:href="@{/accessibility}"
+        style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+    </div>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div style="background-color:#005192;" class="navdiv">
+      <ul>
+        <li><a style="color:white;" href="#"></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Logs Table -->
+  <h1 style="margin-top: 100px; margin-bottom: 50px; text-align: center;">Logs Table</h1>
+  <div style="height: 540px;">
+    <table style="width: 80%; margin-left: auto; margin-right: auto; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Department</th>
+          <th>Request</th>
+          <th>Dataset Approval Status</th>
+          <th>Change Dataset Access</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John</td>
+          <td>Doe</td>
+          <td>IT</td>
+          <td>Database Access Change</td>
+          <td>Approved</td>
+          <td>
+            <div class="button-container">
+              <button class="grant">Grant</button>
+              <button class="deny">Deny</button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Jane</td>
+          <td>Smith</td>
+          <td>HR</td>
+          <td>Dataset Access Request</td>
+          <td>Pending</td>
+          <td>
+            <div class="button-container">
+              <button class="grant">Grant</button>
+              <button class="deny">Deny</button>
+            </div>
+          </td>
+        </tr>
+        <!-- Add more rows as needed -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer Section 1 -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <!-- Contact Information -->
+      <p style="color:white">Council Switchboard: 01274 432111<br><br>
+        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
+        <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
+      </p>
+
+      <!-- Social Media Links -->
+      <div class="footer-social">
+        <a href="https://www.facebook.com/bradfordmdc">
+          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://x.com/bradfordmdc">
+          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.linkedin.com/company/bradford-council/">
+          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.instagram.com/bradfordmdc/">
+          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Footer Section 2 -->
+  <footer class="site-footer-blue">
+    <div class="footer-blue">
+      <!-- Legal Links -->
+      <div class="footer-legal">
+        <a th:href="@{/cookies}">Cookies</a>
+        <a th:href="@{/privacy}">Privacy Notice</a>
+        <a th:href="@{/atoz}">A to Z</a>
+        <a th:href="@{/accessibility}">Accessibility Statement<br></a>
+        <!-- Copyright Notice -->
+        <p style="font-size: 20px;" class="footer-copyright">
+          &copy; 2025 City of Bradford Metropolitan District Council
+        </p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
