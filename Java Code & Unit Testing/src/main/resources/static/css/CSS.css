@@ -397,8 +397,42 @@ body {
       font-size: 14px;
       cursor: pointer;
   }
-
   #datasets {
       font-size: 14px;
       color: #333;
   }
+
+  /* CSS for permissions page */
+.status-approved {
+  color: #3c763d;
+  font-weight: bold;
+}
+
+.status-denied {
+  color: #a94442;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #8a6d3b;
+  font-weight: bold;
+}
+
+.alert {
+  padding: 15px;
+  margin: 20px auto;
+  width: 80%;
+  border-radius: 4px;
+}
+
+.alert-success {
+  background-color: #dff0d8;
+  border: 1px solid #d6e9c6;
+  color: #3c763d;
+}
+
+.alert-danger {
+  background-color: #f2dede;
+  border: 1px solid #ebccd1;
+  color: #a94442;
+}
