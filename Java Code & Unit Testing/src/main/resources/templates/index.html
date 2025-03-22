@@ -79,6 +79,28 @@
 
   <!-- Accessibility Link -->
   <div class="accessibility">
+    <button id="colorblind-toggle" onclick="toggleColorblindMode()"
+      style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
+    <script>
+      console.log("Accessibility script loaded!");
+
+      function toggleColorblindMode() {
+        console.log("Toggling colorblind mode...");
+        let body = document.body;
+        let isEnabled = body.classList.toggle("colorblind-mode");
+        console.log("Colorblind mode is now:", isEnabled);
+        localStorage.setItem("colorblindMode", isEnabled);
+      }
+
+      // Preserve user preference on reload
+      window.onload = function () {
+        console.log("Checking stored colorblind mode...");
+        if (localStorage.getItem("colorblindMode") === "true") {
+          document.body.classList.add("colorblind-mode");
+          console.log("Colorblind mode applied on load");
+        }
+      };
+    </script>
     <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
   </div>
 
