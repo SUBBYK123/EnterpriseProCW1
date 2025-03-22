@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+  <script src="@{/js/validation.js}" defer></script>
+  <title>Sign Up Page</title>
+</head>
+
+<body>
+<!-- Logo and Header -->
+<div class="logo">
+  <a th:href="@{#}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" />
+  </a>
+</div>
+<div class="header-icons">
+  <a th:href="@{/profile}">
+    <img th:src="@{/images/user.png}" alt="User Profile" />
+  </a>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search datasets" style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+  </div>
+
+  <!-- Accessibility Link -->
+  <div class="accessibility">
+    <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+  </div>
+</div>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div style="background-color:#005192;" class="navdiv">
+    <ul>
+      <li><a style="color:#005192;" href="#"></a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Signup Form -->
+<h1 style="margin-top: 40px; margin-bottom: -20px;">Sign Up</h1>
+
+<form id="signup" th:action="@{/signup}" th:object="${user}" method="post">
+  <!-- Error Messages -->
+  <div th:if="${errorMessage}" style="color: red;">
+    <p th:text="${errorMessage}"></p>
+  </div>
+
+  <!-- First Name -->
+  <div>
+    <label for="firstName">First Name</label>
+    <input style="margin-bottom: -20px;" type="text" id="firstName" th:field="*{firstName}" required />
+  </div>
+  <br />
+
+  <!-- Last Name -->
+  <div>
+    <label for="lastName">Last Name</label>
+    <input style="margin-bottom: -20px;" type="text" id="lastName" th:field="*{lastName}" required />
+  </div>
+  <br />
+
+  <!-- Department -->
+  <div>
+    <label for="department">Department</label>
+    <select id="department" th:field="*{department}" style="width: 107%; padding: 12px; font-size: 14px; border-radius: 4px; border: 1px solid #CCCCCC;" required>
+      <option value="">Select Department</option>
+      <option value="adult">Adult</option>
+      <option value="child">Child</option>
+    </select>
+  </div>
+  <br />
+
+  <!-- Email Address -->
+  <div>
+    <label for="emailAddress">Email Address</label>
+    <input style="margin-bottom: -20px;" type="email" id="emailAddress" th:field="*{emailAddress}" required />
+  </div>
+  <br />
+
+  <!-- Password -->
+  <div>
+    <label for="password">Password</label>
+    <input style="margin-bottom: -20px;" type="password" id="password" th:field="*{password}" required />
+  </div>
+  <br />
+
+  <!-- Confirm Password -->
+  <div>
+    <label for="password_confirmation">Re-enter Password</label>
+    <input type="password" id="password_confirmation" name="password_confirmation" required />
+  </div>
+
+  <!-- Submit Button -->
+  <div class="container">
+    <div class="center">
+      <div id="signupbtn" style="width: 307%;">
+        <button type="submit" >Sign Up</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Link -->
+  <a th:href="@{/login}" style="color: black; font-size: 20px; text-decoration: underline;">or login</a>
+</form>
+
+
+  <!-- Footer Section 1 -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <!-- Contact Information -->
+      <p style="color:white">Council Switchboard: 01274 432111<br><br>
+        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
+        <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
+      </p>
+
+      <!-- Social Media Links -->
+      <div class="footer-social">
+        <a href="https://www.facebook.com/bradfordmdc">
+          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://x.com/bradfordmdc">
+          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.linkedin.com/company/bradford-council/">
+          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.instagram.com/bradfordmdc/">
+          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+        </a>
+        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Footer Section 2 -->
+  <footer class="site-footer-blue">
+    <div class="footer-blue">
+      <!-- Legal Links -->
+      <div class="footer-legal">
+        <a th:href="@{/cookies}">Cookies</a>
+        <a th:href="@{/privacy}">Privacy Notice</a>
+        <a th:href="@{/atoz}">A to Z</a>
+        <a th:href="@{/accessibility}">Accessibility Statement<br></a>
+        <!-- Copyright Notice -->
+        <p style="font-size: 20px;" class="footer-copyright">
+          &copy; 2025 City of Bradford Metropolitan District Council
+        </p>
+      </div>
+    </div>
+  </footer>
+
+
+<!-- JavaScript Validation -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('signup');
+    const errorMessages = {
+      firstName: document.getElementById('firstNameErrorMsg'),
+      secondName: document.getElementById('secondNameErrorMsg'),
+      department: document.getElementById('departmentErrorMsg'),
+      emailAddress: document.getElementById('emailErrorMsg'),
+      password: document.getElementById('passwordErrorMsg')
+    };
+
+    function validateForm() {
+      let isValid = true;
+
+      // Validate First Name
+      const firstName = form.firstName.value.trim();
+      if (!firstName) {
+        errorMessages.firstName.textContent = 'First name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.firstName.textContent = '';
+      }
+
+      // Validate Second Name
+      const secondName = form.secondName.value.trim();
+      if (!secondName) {
+        errorMessages.secondName.textContent = 'Second name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.secondName.textContent = '';
+      }
+
+      // Validate Department
+      const department = form.department.value;
+      if (!department) {
+        errorMessages.department.textContent = 'Please select a department';
+        isValid = false;
+      } else {
+        errorMessages.department.textContent = '';
+      }
+
+      // Validate Email
+      const emailAddress = form.emailAddress.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailAddress)) {
+        errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
+        isValid = false;
+      } else {
+        errorMessages.emailAddress.textContent = '';
+      }
+
+      // Validate Password
+      const password = form.password.value;
+      if (password.length < 8) {
+        errorMessages.password.textContent = 'Password must be at least 8 characters long';
+        isValid = false;
+      } else {
+        errorMessages.password.textContent = '';
+      }
+
+      // Validate Password Confirmation
+      const passwordConfirm = form.password_confirmation.value;
+      if (password !== passwordConfirm) {
+        errorMessages.password.textContent = 'Passwords do not match';
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', function (event) {
+      if (!validateForm()) {
+        event.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

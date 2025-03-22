@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <title>Login Page</title>
+</head>
+
+<body>
+  <!-- Logo and Header -->
+  <div class="logo">
+    <a th:href="@{/}">
+      <img th:src="@{/images/logo.png}" alt="Website Logo" />
+    </a>
+  </div>
+  <div class="header-icons">
+    <a th:href="@{/profile}">
+      <img th:src="@{/images/user.png}" alt="User Profile" />
+    </a>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search datasets"
+           style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+  </div>
+
+  <!-- Accessibility Link -->
+  <div class="accessibility">
+    <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+  </div>
+
+  <!-- Navigation bar -->
+  <nav class="navbar">
+    <div style="background-color:#005192;" class="navdiv">
+      <ul>
+        <li><a style="color:white;" th:href="@{/index}">HOME</a></li>
+        <li><a style="color:white;" href="@{/reset}">RESET PASSWORD</a></li>
+        <li><a style="color:white;" href="@{/logs}">LOGS</a></li>
+        <li><a style="color:white;" th:href="@{/user-access}">USER ACCESS CONTROL</a></li>
+        <li><a style="color:white;" href="#">PERMISSIONS</a></li>
+        <li><a style="color:white;" href="#">LOGOUT</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div style="background-color: white; width:100%; height: 1080px; float:left;"> 
+
+  <!-- Home content -->
+  <section class="home">
+    <div id="controls" style="height:780px;">
+      <!-- Filters Section -->
+      <div id="filter-section" style="height:60%;">
+      <h3>Filters</h3>
+      <button class="select-all" onclick="toggleSelectAll()">Select All</button>
+      <div class="filter-options" id="filters-container" ></div>
+      </div>
+
+      <!-- Upload Dataset Section -->
+      <div id="dataset_section" style="height:40%;">
+        <h3>Upload Dataset</h3>
+        <input type="file" id="fileInput">
+        <button onclick="handleFileUpload()">Upload</button>
+        <br><br>
+        <h3>Search from Cloud</h3>
+        <button onclick="location.href='@{/logs}'">Search from cloud</button>
+      </div>
+    </div>
+
+    <div id="map">
+      <script th:src="@{/js/map.js}"></script>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <p style="color:white">
+        Council Switchboard: 01274 432111<br><br>
+        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
+        <a style="font-size: 20px; color: white;" href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
+      </p>
+    </div>
+  </footer>
+
+  <footer class="site-footer-blue">
+    <div class="footer-blue">
+      <div class="footer-legal">
+        <a th:href="@{/cookies}">Cookies</a>
+        <a th:href="@{/privacy}">Privacy Notice</a>
+        <a th:href="@{/atoz}">A to Z</a>
+        <a th:href="@{/accessibility}">Accessibility Statement</a>
+        <p style="font-size: 20px;" class="footer-copyright">
+          &copy; 2025 City of Bradford Metropolitan District Council
+        </p>
+      </div>
+    </div>
+  </footer>
+  </div>
+</body>
+</html>
