@@ -10,6 +10,52 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <title>Login Page</title>
+   <script>
+    // Check local storage and apply colorblind mode before page renders
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.documentElement.classList.add("colorblind-mode");
+    }
+  </script>
+
+  <style>
+    h3 {
+      font-family: Arial, sans-serif;
+    }
+
+    .colorblind-mode {
+      background-color: black !important;
+      color: yellow !important;
+    }
+
+    /* High-contrast Navigation */
+    .colorblind-mode .navbar {
+      background-color: #1e2021 !important;
+    }
+
+    /* High-contrast Footer */
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue {
+      background-color: black !important;
+      color: white !important;
+    }
+
+    .colorblind-mode .footer-copyright {
+      background-color: black !important;
+    }
+
+    /* High-contrast Links */
+    .colorblind-mode a,
+    .colorblind-mode p {
+      color: yellow !important;
+    }
+
+    .colorblind-mode .home,
+    .colorblind-mode #controls,
+    .colorblind-mode .filter-options,
+    .colorblind-mode .filter-section {
+      background-color: black !important;
+    }
+  </style>
 </head>
 
 <body>
