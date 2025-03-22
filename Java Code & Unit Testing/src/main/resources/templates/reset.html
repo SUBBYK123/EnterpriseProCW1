@@ -7,6 +7,52 @@
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="@{/js/validation.js}" defer></script>
   <title>reset password page</title>
+  <script>
+    // Check local storage and apply colorblind mode before page renders
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.documentElement.classList.add("colorblind-mode");
+    }
+  </script>
+
+  <style>
+    h3 {
+      font-family: Arial, sans-serif;
+    }
+
+    .colorblind-mode {
+      background-color: black !important;
+      color: yellow !important;
+    }
+
+    /* High-contrast Navigation */
+    .colorblind-mode .navbar {
+      background-color: #1e2021 !important;
+    }
+
+    /* High-contrast Footer */
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue {
+      background-color: black !important;
+      color: white !important;
+    }
+
+    .colorblind-mode .footer-copyright {
+      background-color: black !important;
+    }
+
+    /* High-contrast Links */
+    .colorblind-mode a,
+    .colorblind-mode p {
+      color: yellow !important;
+    }
+
+    .colorblind-mode .home,
+    .colorblind-mode #controls,
+    .colorblind-mode .filter-options,
+    .colorblind-mode .filter-section {
+      background-color: black !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -23,7 +69,28 @@
 
   <!-- Accessibility Link -->
   <div class="accessibility">
-    <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">accessibility</a>
+    <button id="colorblind-toggle" onclick="toggleColorblindMode()"
+      style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
+    <script>
+      console.log("Accessibility script loaded!");
+
+      function toggleColorblindMode() {
+        console.log("Toggling colorblind mode...");
+        let body = document.body;
+        let isEnabled = body.classList.toggle("colorblind-mode");
+        console.log("Colorblind mode is now:", isEnabled);
+        localStorage.setItem("colorblindMode", isEnabled);
+      }
+
+      // Preserve user preference on reload
+      window.onload = function () {
+        console.log("Checking stored colorblind mode...");
+        if (localStorage.getItem("colorblindMode") === "true") {
+          document.body.classList.add("colorblind-mode");
+          console.log("Colorblind mode applied on load");
+        }
+      };
+    </script>
   </div>
 </div>
 
@@ -119,7 +186,11 @@
     });
   });
 </script>
-
+<script>
+  document.getElementById("colorblind-toggle").addEventListener("click", function () {
+    console.log("Button clicked!");
+  });
+</script>
 </body>
 
 </html>
