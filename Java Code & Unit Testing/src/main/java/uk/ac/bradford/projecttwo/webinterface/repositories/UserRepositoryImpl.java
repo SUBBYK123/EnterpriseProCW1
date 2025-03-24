@@ -16,9 +16,10 @@ import java.util.List;
 public class UserRepositoryImpl implements UserRepository {
 
     // Database connection details
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/mydb";
     private static final String JDBC_USER = "root";
-    private static final String JDBC_PASSWORD = "Pakistan@1"; // Consider securing this password using environment variables
+    private static final String JDBC_PASSWORD = "password"; // Consider securing this password using environment
+                                                            // variables
 
     /**
      * Establishes a connection to the database.
@@ -34,14 +35,15 @@ public class UserRepositoryImpl implements UserRepository {
      * Finds a user by their email address in the database.
      *
      * @param email The email address to search for.
-     * @return A LoginModel object containing user authentication details if found, otherwise null.
+     * @return A LoginModel object containing user authentication details if found,
+     *         otherwise null.
      */
     @Override
     public LoginModel findUserByEmail(String email) {
         String sqlQuery = "SELECT email_address, password_hash FROM user WHERE email_address = ?";
 
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
 
             preparedStatement.setString(1, email);
 
@@ -71,8 +73,8 @@ public class UserRepositoryImpl implements UserRepository {
         String sqlQuery = "SELECT email_address, password_hash FROM user";
 
         try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+                PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+                ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()) {
                 users.add(new LoginModel(
@@ -88,11 +90,11 @@ public class UserRepositoryImpl implements UserRepository {
         return users; // Return the list of users instead of null
     }
 
-
     /**
      * Updates the user's password in the database.
      *
-     * @param email The email of the user whose password needs to be updated.
+     * @param email           The email of the user whose password needs to be
+     *                        updated.
      * @param newPasswordHash The new hashed password.
      */
     @Override
@@ -103,11 +105,10 @@ public class UserRepositoryImpl implements UserRepository {
             Connection connection = getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlUpdateQuery);
 
-            preparedStatement.setString(1,newPasswordHash);
-            preparedStatement.setString(2,email);
+            preparedStatement.setString(1, newPasswordHash);
+            preparedStatement.setString(2, email);
 
             preparedStatement.executeUpdate();
-
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
