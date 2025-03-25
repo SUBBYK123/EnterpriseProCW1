@@ -22,6 +22,21 @@
       font-family: Arial, sans-serif;
     }
 
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
     .colorblind-mode {
       background-color: black !important;
       color: yellow !important;
@@ -72,30 +87,30 @@
     </a>
 
     <!-- Accessibility Link -->
-  <div class="accessibility">
-    <button id="colorblind-toggle" onclick="toggleColorblindMode()"
-      style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
-    <script>
-      console.log("Accessibility script loaded!");
+    <div class="accessibility">
+      <button id="colorblind-toggle" onclick="toggleColorblindMode()"
+        style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
+      <script>
+        console.log("Accessibility script loaded!");
 
-      function toggleColorblindMode() {
-        console.log("Toggling colorblind mode...");
-        let body = document.body;
-        let isEnabled = body.classList.toggle("colorblind-mode");
-        console.log("Colorblind mode is now:", isEnabled);
-        localStorage.setItem("colorblindMode", isEnabled);
-      }
-
-      // Preserve user preference on reload
-      window.onload = function () {
-        console.log("Checking stored colorblind mode...");
-        if (localStorage.getItem("colorblindMode") === "true") {
-          document.body.classList.add("colorblind-mode");
-          console.log("Colorblind mode applied on load");
+        function toggleColorblindMode() {
+          console.log("Toggling colorblind mode...");
+          let body = document.body;
+          let isEnabled = body.classList.toggle("colorblind-mode");
+          console.log("Colorblind mode is now:", isEnabled);
+          localStorage.setItem("colorblindMode", isEnabled);
         }
-      };
-    </script>
-  </div>
+
+        // Preserve user preference on reload
+        window.onload = function () {
+          console.log("Checking stored colorblind mode...");
+          if (localStorage.getItem("colorblindMode") === "true") {
+            document.body.classList.add("colorblind-mode");
+            console.log("Colorblind mode applied on load");
+          }
+        };
+      </script>
+    </div>
   </div>
 
   <!-- Navigation Bar -->
@@ -110,29 +125,31 @@
   <!-- Login Form -->
   <h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
 
-<form th:action="@{/login}" method="post" style="margin-bottom: 130px;">
-  <p th:if="${errorMessage}" style="color:red;">[[${errorMessage}]]</p>
+  <form th:action="@{/login}" method="post" style="margin-bottom: 130px;">
+    <p th:if="${errorMessage}" style="color:red;">[[${errorMessage}]]</p>
 
-  <div class="form-group">
-    <label for="emailAddress">Email</label>
-    <input type="email" id="emailErrorMsg" name="emailAddress" required="required" placeholder="Enter your emailAddress" />
-  </div>
-  <br>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" id="passwordErrorMsg" name="password" required="required" placeholder="Enter your password" />
-  </div>
-  <br>
+    <div class="form-group">
+      <label for="emailAddress">Email</label>
+      <input type="email" id="emailErrorMsg" name="emailAddress" required="required"
+        placeholder="Enter your emailAddress" />
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="passwordErrorMsg" name="password" required="required"
+        placeholder="Enter your password" />
+    </div>
+    <br>
 
-  <button type="submit" >Login</button>
-  <br>
-  <br>
-  <!-- Reset password Link -->
-  <a th:href="@{/reset}" style="color: black; font-size: 20px; text-decoration: underline;">Reset Password</a>
-  <br>
-  <br>
-  <!-- Signup Link -->
-  <a th:href="@{/signup}" style="color: black; font-size: 20px; text-decoration: underline;">or Sign-up</a>
+    <button type="submit">Login</button>
+    <br>
+    <br>
+    <!-- Reset password Link -->
+    <a th:href="@{/reset}" style="color: black; font-size: 20px; text-decoration: underline;">Reset Password</a>
+    <br>
+    <br>
+    <!-- Signup Link -->
+    <a th:href="@{/signup}" style="color: black; font-size: 20px; text-decoration: underline;">or Sign-up</a>
   </form>
 
 
@@ -183,7 +200,7 @@
       </div>
     </div>
   </footer>
-<!-- Java script for the form to make sure there is no incorrect information being sent to the backend database -->
+  <!-- Java script for the form to make sure there is no incorrect information being sent to the backend database -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.getElementById('login');
@@ -191,10 +208,10 @@
         emailAddress: document.getElementById('emailErrorMsg'),
         password: document.getElementById('passwordErrorMsg')
       };
-  
+
       function validateForm() {
         let isValid = true;
-  
+
         // Validate Email
         const emailAddress = form.emailAddress.value.trim();
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -204,7 +221,7 @@
         } else {
           errorMessages.emailAddress.textContent = '';
         }
-  
+
         // Validate Password
         const password = form.password.value;
         if (password.length < 8) {
@@ -216,7 +233,7 @@
 
         return isValid;
       }
-  
+
       form.addEventListener('submit', function (event) {
         if (!validateForm()) {
           event.preventDefault(); // Prevent form submission if validation fails
@@ -225,11 +242,11 @@
     });
   </script>
 
-<script>
-  document.getElementById("colorblind-toggle").addEventListener("click", function () {
-    console.log("Button clicked!");
-  });
-</script>
+  <script>
+    document.getElementById("colorblind-toggle").addEventListener("click", function () {
+      console.log("Button clicked!");
+    });
+  </script>
 
 </body>
 
