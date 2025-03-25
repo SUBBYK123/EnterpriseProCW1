@@ -16,6 +16,7 @@ public class DatasetController {
     @PostMapping("/upload-dataset")
     public ResponseEntity<String> uploadDataset(@RequestBody DatasetRequest datasetRequest) {
         try {
+            System.out.println("Received upload request: " + datasetRequest);
             datasetService.createTableAndSaveData(datasetRequest);
             return ResponseEntity.ok("Dataset uploaded successfully!");
         } catch (RuntimeException e) {

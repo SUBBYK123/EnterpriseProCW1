@@ -47,7 +47,7 @@ public class LoginController {
         if (error != null) {
             model.addAttribute("errorMessage", "Invalid Email or Password");
         }
-        return "login";  // This returns login.html from the templates folder
+        return "login"; // This returns login.html from the templates folder
     }
 
     /**
@@ -55,9 +55,10 @@ public class LoginController {
      * Authenticates the user and creates a session if successful.
      *
      * @param loginModel The LoginModel containing email and password.
-     * @param model The Model object to pass attributes to the view.
-     * @param session The HttpSession to store authenticated user details.
-     * @return Redirects to the index page if successful, otherwise redirects to login with an error message.
+     * @param model      The Model object to pass attributes to the view.
+     * @param session    The HttpSession to store authenticated user details.
+     * @return Redirects to the index page if successful, otherwise redirects to
+     *         login with an error message.
      */
     @PostMapping("/login")
     public String loginForm(@ModelAttribute LoginModel loginModel, Model model, HttpSession session) {
@@ -66,7 +67,9 @@ public class LoginController {
 
         if (loginService.authenticateUser(email, password)) {
             session.setAttribute("user", email);
+
             logger.info("User {} logged in successfully", email);
+            System.out.println("Session User: " + session.getAttribute("user"));
             return "redirect:/index";
         } else {
             model.addAttribute("errorMessage", "Invalid Email or Password");
@@ -82,7 +85,7 @@ public class LoginController {
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate();  // Destroy the session
+        session.invalidate(); // Destroy the session
         logger.info("User logged out.");
         return "redirect:/login";
     }
