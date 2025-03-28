@@ -157,17 +157,99 @@ function createFilters() {
     filtersContainer.innerHTML = "";
 
     Object.keys(markersByCategory).forEach(category => {
-        let label = document.createElement("label");
+        let filterDiv = document.createElement("div");
+        filterDiv.classList.add("filter-item");
+
+        // Checkbox for toggling visibility
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.classList.add("filter-checkbox");
         checkbox.id = category.toLowerCase().replace(/\s+/g, "-");
         checkbox.checked = true;
         checkbox.addEventListener("change", updateMarkersVisibility);
+
+        let label = document.createElement("label");
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(` ${category}`));
-        filtersContainer.appendChild(label);
+
+        // Upload button
+        let uploadBtn = document.createElement("button");
+        uploadBtn.textContent = "Upload";
+        uploadBtn.classList.add("upload-btn");
+        uploadBtn.dataset.category = category;
+        uploadBtn.addEventListener("click", function () {
+            uploadDataset(category);
+        });
+
+        filterDiv.appendChild(label);
+        filterDiv.appendChild(uploadBtn);
+        filtersContainer.appendChild(filterDiv);
     });
+}
+
+function uploadDataset(categoryName) {
+    const markers = markersByCategory[categoryName];
+
+    if (!markers || markers.length === 0) {
+        alert("No data available for upload.");
+        return;
+    }
+
+    // Assign role ID dynamically (Assuming "Adult" has roleId = 2)
+    const userRole = "Adult"; 
+    const roleIdMapping = { "Adult": 2 }; // Expand this if more roles exist
+    const roleId = roleIdMapping[userRole] || 1; // Default to 1 if role is unknown
+
+    // Extract all columns dynamically from first marker
+    const firstMarker = markers[0];
+    const infoWindowContent = firstMarker.getTitle(); // Assuming title contains data
+
+    let columns = [];
+    let sampleData = {};
+
+    if (infoWindowContent.includes("<br>")) {
+        let rows = infoWindowContent.split("<br>");
+        rows.forEach(row => {
+            let [key, value] = row.split(":").map(item => item.trim());
+            if (key && value) {
+                columns.push(key.toLowerCase());
+                sampleData[key.toLowerCase()] = value;
+            }
+        });
+    }
+
+    // Extract data for each marker
+    const datasetData = markers.map(marker => {
+        let markerInfo = marker.getTitle().split("<br>");
+        let rowData = {};
+
+        markerInfo.forEach(row => {
+            let [key, value] = row.split(":").map(item => item.trim());
+            if (key && value) {
+                rowData[key.toLowerCase()] = value;
+            }
+        });
+
+        return rowData;
+    });
+
+    const requestBody = {
+        datasetName: categoryName,
+        roleId: roleId,  // Dynamically assigned roleId
+        columns: columns,
+        data: datasetData
+    };
+
+    console.log("Uploading dataset:", requestBody);
+
+    fetch("/api/upload-dataset", {
+        method: "POST",
+        headers: {"Content-Type": "application/json" },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => response.text())
+    .then(message => alert(message))  // Show success or error message
+    .catch(error => console.error("Error uploading dataset:", error));
 }
 
 // Update marker visibility based on checkbox selection

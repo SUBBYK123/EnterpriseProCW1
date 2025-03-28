@@ -9,9 +9,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-
 /**
- * Security configuration class that defines authentication and authorization settings
+ * Security configuration class that defines authentication and authorization
+ * settings
  * for the web application using Spring Security.
  */
 @Configuration
@@ -96,16 +96,39 @@ public class SecurityConfig {
 //        }
 
 
+        /**
+         * Defines an in-memory user details service for testing authentication.
+         * Uncomment the method to enable in-memory authentication.
+         *
+         * @return An instance of UserDetailsService with predefined users.
+         */
+        // @Bean
+        // @Primary // Marks this as the preferred UserDetailsService bean
+        // public UserDetailsService userDetailsService() {
+        // UserDetails userDetails = User.builder()
+        // .username("user")
+        // .password(passwordEncoder().encode("password")) // Encode password using
+        // BCrypt
+        // .roles("USER") // Assign USER role
+        // .build();
 
-    /**
-     * Configures the password encoder to use BCrypt hashing.
-     *
-     * @return A PasswordEncoder instance for securely hashing passwords.
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        // UserDetails adminDetails = User.builder()
+        // .username("mustafakamran46@hotmail.com")
+        // .password(passwordEncoder().encode("password")) // Encode password
+        // .authorities("ADMIN") // Assign ADMIN role
+        // .build();
 
+        // return new InMemoryUserDetailsManager(userDetails, adminDetails);
+        // }
+
+        /**
+         * Configures the password encoder to use BCrypt hashing.
+         *
+         * @return A PasswordEncoder instance for securely hashing passwords.
+         */
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
 }

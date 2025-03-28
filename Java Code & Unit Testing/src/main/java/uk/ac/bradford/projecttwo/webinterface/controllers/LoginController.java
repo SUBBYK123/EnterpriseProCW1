@@ -53,7 +53,7 @@ public class LoginController {
         if (error != null) {
             model.addAttribute("errorMessage", "Invalid Email or Password");
         }
-        return "login";  // This returns login.html from the templates folder
+        return "login"; // This returns login.html from the templates folder
     }
 
     /**
@@ -64,7 +64,7 @@ public class LoginController {
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate();  // Destroy the session
+        session.invalidate(); // Destroy the session
         logger.info("User logged out.");
         return "redirect:/login";
     }
