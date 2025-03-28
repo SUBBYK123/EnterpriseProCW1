@@ -110,7 +110,7 @@
   <!-- Login Form -->
   <h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
 
-<form th:action="@{/login}" method="post" style="margin-bottom: 130px;">
+<form th:action="@{/process-login}" method="post" style="margin-bottom: 130px;">
   <p th:if="${errorMessage}" style="color:red;">[[${errorMessage}]]</p>
 
   <div class="form-group">
