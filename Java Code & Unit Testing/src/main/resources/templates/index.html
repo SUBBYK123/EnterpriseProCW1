@@ -106,7 +106,11 @@
       <ul>
         <li><a style="color:white;" th:href="@{/index}">HOME</a></li>
         <li><a style="color:white;" href="@{/reset}">RESET PASSWORD</a></li>
-        <li><a style="color:white;" href="#">LOGOUT</a></li>
+        <li>
+          <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">LOGOUT</button>
+          </form>
+        </li>
       </ul>
     </div>
   </nav>

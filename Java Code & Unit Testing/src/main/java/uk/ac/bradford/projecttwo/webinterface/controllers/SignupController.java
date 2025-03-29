@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
+import uk.ac.bradford.projecttwo.webinterface.services.LogServiceImpl;
 
 import java.util.Optional;
 
@@ -21,6 +22,9 @@ public class SignupController {
     // Injects the RegistrationRepository for handling database operations
     @Autowired
     private RegistrationRepositoryImpl registrationRepository;
+
+    @Autowired
+    private LogServiceImpl logService;
 
     /**
      * Displays the signup form.
@@ -49,13 +53,16 @@ public class SignupController {
             Optional<RegistrationModel> existingUser = Optional.ofNullable(registrationRepository.findUserByEmail(user.getEmailAddress()));
 
             if (existingUser.isPresent()) {
+                logService.log(user.getEmailAddress(), "REGISTER","FAILED");
                 model.addAttribute("errorMessage", "Email Already Taken!");
                 return "signup"; // Reloads the signup page with an error message
             } else {
                 registrationRepository.registerUser(user);
+                logService.log(user.getEmailAddress(), "REGISTER","SUCCESS");
                 return "redirect:/login?signupsuccess"; // Redirects to login with a success message
             }
         } catch (Exception e) {
+            logService.log(user.getEmailAddress(),"REGISTER","ERROR");
             model.addAttribute("errorMessage", "An error occurred: " + e.getMessage());
             return "signup"; // Reloads signup page with the error message
         }

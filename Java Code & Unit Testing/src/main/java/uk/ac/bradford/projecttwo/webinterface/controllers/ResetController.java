@@ -38,7 +38,7 @@ public class ResetController {
     /**
      * Handles OTP request submission and sends an OTP to the provided email address.
      * @param emailAddress The email address to which the OTP should be sent.
-     * @param model The model to add success or error messages.
+     * @param model The model to add sucess or error messages.
      * @return The name of the template to be rendered next.
      */
     @PostMapping("/request")

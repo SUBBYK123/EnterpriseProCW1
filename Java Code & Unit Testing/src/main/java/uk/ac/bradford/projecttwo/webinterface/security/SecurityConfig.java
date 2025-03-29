@@ -21,16 +21,18 @@ public class SecurityConfig {
     // Dependency on Encryptor class for password hashing (not used directly in this config)
     private final Encryptor encryptor;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
 
     /**
      * Constructor-based dependency injection for Encryptor.
-     *
-     * @param encryptor An instance of Encryptor for password encryption.
+     *  @param encryptor An instance of Encryptor for password encryption.
      * @param customLoginSuccessHandler
+     * @param customLogoutSuccessHandler
      */
-    public SecurityConfig(Encryptor encryptor, CustomLoginSuccessHandler customLoginSuccessHandler) {
+    public SecurityConfig(Encryptor encryptor, CustomLoginSuccessHandler customLoginSuccessHandler, CustomLogoutSuccessHandler customLogoutSuccessHandler) {
         this.encryptor = encryptor;
         this.customLoginSuccessHandler = customLoginSuccessHandler;
+        this.customLogoutSuccessHandler = customLogoutSuccessHandler;
     }
 
     /**
@@ -41,7 +43,7 @@ public class SecurityConfig {
      * @throws Exception If an error occurs while configuring security settings.
      */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginSuccessHandler customLoginSuccessHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomLoginSuccessHandler customLoginSuccessHandler,CustomLogoutSuccessHandler customLogoutSuccessHandler) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         // Publicly accessible endpoints (login, signup, static resources, reset password)
@@ -51,8 +53,7 @@ public class SecurityConfig {
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
-                // Enable HTTP Basic authentication (for APIs or debugging)
-                .httpBasic(Customizer.withDefaults())
+
                 // Configure form-based login
                 .formLogin(form -> form
                         .loginPage("/login") // Custom login page
@@ -64,7 +65,11 @@ public class SecurityConfig {
                 )
                 // Configure logout behavior
                 .logout(logout -> logout
-                        .permitAll() // Allow all users to log out
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler(customLogoutSuccessHandler)
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
                 );
 
         return http.build();
@@ -94,32 +99,6 @@ public class SecurityConfig {
 //
 //        return new InMemoryUserDetailsManager(userDetails, adminDetails);
 //        }
-
-
-        /**
-         * Defines an in-memory user details service for testing authentication.
-         * Uncomment the method to enable in-memory authentication.
-         *
-         * @return An instance of UserDetailsService with predefined users.
-         */
-        // @Bean
-        // @Primary // Marks this as the preferred UserDetailsService bean
-        // public UserDetailsService userDetailsService() {
-        // UserDetails userDetails = User.builder()
-        // .username("user")
-        // .password(passwordEncoder().encode("password")) // Encode password using
-        // BCrypt
-        // .roles("USER") // Assign USER role
-        // .build();
-
-        // UserDetails adminDetails = User.builder()
-        // .username("mustafakamran46@hotmail.com")
-        // .password(passwordEncoder().encode("password")) // Encode password
-        // .authorities("ADMIN") // Assign ADMIN role
-        // .build();
-
-        // return new InMemoryUserDetailsManager(userDetails, adminDetails);
-        // }
 
         /**
          * Configures the password encoder to use BCrypt hashing.

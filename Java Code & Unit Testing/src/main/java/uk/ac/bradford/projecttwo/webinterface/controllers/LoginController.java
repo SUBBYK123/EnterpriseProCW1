@@ -56,16 +56,4 @@ public class LoginController {
         return "login"; // This returns login.html from the templates folder
     }
 
-    /**
-     * Logs out the user by invalidating the session.
-     *
-     * @param session The HttpSession object to invalidate.
-     * @return Redirects to the login page after logout.
-     */
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // Destroy the session
-        logger.info("User logged out.");
-        return "redirect:/login";
-    }
 }
