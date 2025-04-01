@@ -1,68 +1,105 @@
 package uk.ac.bradford.projecttwo.webinterface.services;
 
-import org.junit.jupiter.api.*;
-import uk.ac.bradford.projecttwo.webinterface.models.LogModel;
-import uk.ac.bradford.projecttwo.webinterface.repositories.LogRepositoryImpl;
-
-import java.sql.*;
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.*;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
+import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
+import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class LogRepositoryImplTest {
+class RegistrationServiceTest {
 
-    private LogRepositoryImpl logRepository;
-    private Connection sharedConnection;
+    @Mock
+    private RegistrationRepositoryImpl registrationRepository;
+
+    @Mock
+    private Encryptor encryptor; // Not directly used in your service logic but included for completeness
+
+    @InjectMocks
+    private RegistrationService registrationService;
 
     @BeforeEach
-    void setUp() throws Exception {
-        // Ensure the H2 driver is loaded
-        Class.forName("org.h2.Driver");
-
-        // Create in-memory database connection
-        sharedConnection = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1", "sa", "");
-
-        // Create the logs table
-        Statement stmt = sharedConnection.createStatement();
-        stmt.executeUpdate("CREATE TABLE logs (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "email VARCHAR(100), " +
-                "action VARCHAR(100), " +
-                "status VARCHAR(20), " +
-                "timestamp TIMESTAMP)");
-
-        // Inject custom connection for testing
-        logRepository = new LogRepositoryImpl() {
-            @Override
-            protected Connection getConnection() {
-                return sharedConnection;
-            }
-        };
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        if (sharedConnection != null && !sharedConnection.isClosed()) {
-            sharedConnection.close();
-        }
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testSaveLogAndRetrieve() {
-        // Save a test log
-        LogModel log = new LogModel("test@example.com", "LOGIN", "SUCCESS");
-        logRepository.saveLog(log);
+    void registerUser_shouldReturnFalse_whenEmailAlreadyExists() {
+        RegistrationModel existingUser = new RegistrationModel();
+        existingUser.setEmailAddress("test@example.com");
 
-        // Retrieve all logs
-        List<LogModel> logs = logRepository.getAllLogs();
+        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(existingUser);
 
-        // Assertions
-        assertEquals(1, logs.size(), "There should be one log entry in the table.");
-        LogModel retrieved = logs.get(0);
-        assertEquals("test@example.com", retrieved.getEmailAddress());
-        assertEquals("LOGIN", retrieved.getAction());
-        assertEquals("SUCCESS", retrieved.getStatus());
+        RegistrationModel newUser = new RegistrationModel();
+        newUser.setEmailAddress("test@example.com");
+        newUser.setPassword("password123");
 
-        System.out.println("✅ Log retrieved: " + retrieved.getEmailAddress() + " | " + retrieved.getAction() + " | " + retrieved.getStatus());
+        boolean result = registrationService.registerUser(newUser);
+
+        assertFalse(result);
+        verify(registrationRepository, never()).registerUser(any());
+    }
+
+    @Test
+    void registerUser_shouldRegisterSuccessfully_whenEmailIsUnique() {
+        when(registrationRepository.findUserByEmail("unique@example.com")).thenReturn(null);
+        when(registrationRepository.registerUser(any(RegistrationModel.class))).thenReturn(true);
+
+        RegistrationModel newUser = new RegistrationModel();
+        newUser.setEmailAddress("unique@example.com");
+        newUser.setPassword("password123");
+
+        boolean result = registrationService.registerUser(newUser);
+
+        assertTrue(result);
+        verify(registrationRepository).registerUser(argThat(user ->
+                user.getEmailAddress().equals("unique@example.com") &&
+                        !user.getPassword().equals("password123") // password should be encoded
+        ));
+    }
+
+    @Test
+    void authenticateUser_shouldReturnFalse_whenUserDoesNotExist() {
+        when(registrationRepository.findUserByEmail("notfound@example.com")).thenReturn(null);
+
+        boolean result = registrationService.authenticateUser("notfound@example.com", "password");
+
+        assertFalse(result);
+    }
+
+
+    //Test isn't working atm
+    @Test
+    void authenticateUser_shouldReturnTrue_whenPasswordMatches() {
+        String rawPassword = "mypassword";
+        String hashedPassword = new BCryptPasswordEncoder().encode(rawPassword);
+
+        RegistrationModel user = new RegistrationModel();
+        user.setEmailAddress("test@example.com");
+        user.setPassword(hashedPassword);
+
+        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(user);
+
+        boolean result = registrationService.authenticateUser("test@example.com", rawPassword);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void authenticateUser_shouldReturnFalse_whenPasswordDoesNotMatch() {
+        RegistrationModel user = new RegistrationModel();
+        user.setEmailAddress("test@example.com");
+        user.setPassword(new BCryptPasswordEncoder().encode("correctPassword"));
+
+        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(user);
+
+        boolean result = registrationService.authenticateUser("test@example.com", "wrongPassword");
+
+        assertFalse(result);
     }
 }
