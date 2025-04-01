@@ -32,4 +32,6 @@ public interface RegistrationRepository {
      * @return A List of RegistrationModel objects representing all registered users.
      */
     List<RegistrationModel> getAllUsers();
+
+    boolean savePendingUser(RegistrationModel user);
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import uk.ac.bradford.projecttwo.webinterface.services.LogService;
 import uk.ac.bradford.projecttwo.webinterface.services.PermissionRequestService;
 
 @Controller
@@ -12,10 +13,12 @@ public class PermissionController {
 
 
     private final PermissionRequestService permissionRequestService;
+    private final LogService logService;
 
     @Autowired
-    public PermissionController(PermissionRequestService permissionRequestService) {
+    public PermissionController(PermissionRequestService permissionRequestService, LogService logService) {
         this.permissionRequestService = permissionRequestService;
+        this.logService = logService;
     }
 
     /**
@@ -43,6 +46,7 @@ public class PermissionController {
 
         if (result) {
             return "redirect:/permissions?success=Permission approved successfully.";
+
         } else {
             return "redirect:/permissions?error=Failed to approve the request.";
         }

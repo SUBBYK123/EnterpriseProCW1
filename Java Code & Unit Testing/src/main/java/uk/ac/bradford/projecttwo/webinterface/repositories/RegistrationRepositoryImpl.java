@@ -112,6 +112,34 @@ public class RegistrationRepositoryImpl implements RegistrationRepository {
         return users;
     }
 
+    @Override
+    public boolean savePendingUser(RegistrationModel user) {
+
+        String sqlQuery = "INSERT INTO permission_requests "
+                        + "(first_name,last_name,email,department,requested_role,status,password_hash) "
+                        + "VALUES(?,?,?,?,'ROLE_USER','PENDING',?)";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+
+            statement.setString(1, user.getFirstName());
+            statement.setString(2, user.getLastName());
+            statement.setString(3, user.getEmailAddress());
+            statement.setString(4, user.getDepartment());
+            statement.setString(5,user.getPassword());
+
+            return statement.executeUpdate() > 0;
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+
+        return false;
+    }
+
     /**
      * Extracts user details from a ResultSet and returns a RegistrationModel
      * object.

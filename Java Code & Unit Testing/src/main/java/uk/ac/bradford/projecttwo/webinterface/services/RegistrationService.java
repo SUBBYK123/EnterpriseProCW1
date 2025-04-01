@@ -22,6 +22,9 @@ public class RegistrationService {
     @Autowired
     private Encryptor encryptor;
 
+    @Autowired
+    private EmailService emailService;
+
     // Password encoder instance for hashing and verifying passwords
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -47,11 +50,21 @@ public class RegistrationService {
             return false;
         }
 
-        // Hash the password before saving the user
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        boolean pending = registrationRepositoryImpl.savePendingUser(user);
+
+        if (pending){
+            try {
+                String fullName = user.getFirstName() + " " + user.getLastName();
+                emailService.sendSignupNotificationToAdmin(fullName,user.getEmailAddress());
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
 
         // Save user in the database
-        return registrationRepositoryImpl.registerUser(user);
+        return pending;
     }
 
     /**

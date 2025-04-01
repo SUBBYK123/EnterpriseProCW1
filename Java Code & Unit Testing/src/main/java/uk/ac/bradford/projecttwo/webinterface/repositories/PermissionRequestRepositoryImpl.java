@@ -1,7 +1,11 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
 
+import org.hibernate.sql.ast.tree.insert.InsertSelectStatement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uk.ac.bradford.projecttwo.webinterface.models.PermissionRequestModel;
+import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +14,9 @@ import java.util.List;
 
 @Repository
 public class PermissionRequestRepositoryImpl implements PermissionRequestRepository{
+
+    @Autowired
+    private Encryptor encryptor;
 
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private static final String JDBC_USER = "root";
@@ -53,7 +60,82 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
 
     @Override
     public boolean denyRequest(int requestId) {
+
         return updateStatus(requestId,"DENIED");
+    }
+
+    @Override
+    public boolean approveRequestAndCreateUser(int requestId) {
+        String selectQuery = "SELECT * FROM permission_requests WHERE request_id = ?";
+        String insertUserQuery = "INSERT INTO user (first_name, last_name, email_address, password_hash, department) VALUES (?, ?, ?, ?, ?)";
+        String updateStatusQuery = "UPDATE permission_requests SET status = 'APPROVED' WHERE request_id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement selectStmt = conn.prepareStatement(selectQuery);
+             PreparedStatement insertStmt = conn.prepareStatement(insertUserQuery);
+             PreparedStatement updateStmt = conn.prepareStatement(updateStatusQuery)) {
+
+            // Step 1: Select user data from permission_requests
+            selectStmt.setInt(1, requestId);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                // ✅ Extract correct column names
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String email = rs.getString("email"); // from permission_requests
+                String hashedPassword = rs.getString("password_hash");
+                String department = rs.getString("department");
+
+                // Step 2: Insert into user table
+                insertStmt.setString(1, firstName);
+                insertStmt.setString(2, lastName);
+                insertStmt.setString(3, email);              // ✅ goes into email_address
+                insertStmt.setString(4, hashedPassword);           // ✅ goes into password_hash
+                insertStmt.setString(5, department);
+
+                int inserted = insertStmt.executeUpdate();
+
+                // Step 3: Update status if insert successful
+                if (inserted > 0) {
+                    updateStmt.setInt(1, requestId);
+                    updateStmt.executeUpdate();
+                    return true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public PermissionRequestModel getRequestById(int requestId) {
+        String sql = "SELECT * FROM permission_requests WHERE request_id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, requestId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                PermissionRequestModel req = new PermissionRequestModel();
+                req.setRequestId(rs.getInt("request_id"));
+                req.setFirstName(rs.getString("first_name"));
+                req.setLastName(rs.getString("last_name"));
+                req.setEmailAddress(rs.getString("email"));
+                // other fields if needed
+                return req;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private boolean updateStatus(int requestId, String newStatus) {
@@ -84,7 +166,11 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         request.setDepartment(resultSet.getString("department"));
 
         String datasetStr = resultSet.getString("accessible_datasets");
-        List<String> datasets = Arrays.asList(datasetStr.split("\\s*,\\s*"));
+        List<String> datasets = new ArrayList<>();
+
+        if (datasetStr != null && !datasetStr.isBlank()) {
+            datasets = Arrays.asList(datasetStr.split("\\s*,\\s*"));
+        }
         request.setAccessibleDatasets(datasets);
 
         request.setStatus(resultSet.getString("status"));

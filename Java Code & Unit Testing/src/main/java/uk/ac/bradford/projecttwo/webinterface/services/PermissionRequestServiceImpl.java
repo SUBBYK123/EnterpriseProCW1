@@ -12,9 +12,12 @@ public class PermissionRequestServiceImpl implements PermissionRequestService{
 
     private final PermissionRequestRepository permissionRequestRepository;
 
+    private final EmailService emailService;
+
     @Autowired
-    public PermissionRequestServiceImpl(PermissionRequestRepository permissionRequestRepository) {
+    public PermissionRequestServiceImpl(PermissionRequestRepository permissionRequestRepository, EmailService emailService) {
         this.permissionRequestRepository = permissionRequestRepository;
+        this.emailService = emailService;
     }
 
 
@@ -25,7 +28,20 @@ public class PermissionRequestServiceImpl implements PermissionRequestService{
 
     @Override
     public boolean approveRequest(int requestId) {
-        return permissionRequestRepository.approveRequest(requestId);
+        PermissionRequestModel request = permissionRequestRepository.getRequestById(requestId); // You may need to add this method
+        if (request == null) return false;
+
+        boolean approved = permissionRequestRepository.approveRequestAndCreateUser(requestId);
+
+        if (approved) {
+            try {
+                emailService.sendApprovalNotification(request.getEmailAddress(), request.getFirstName() + " " + request.getLastName());
+            } catch (Exception e) {
+                e.printStackTrace(); // Log this in production
+            }
+        }
+
+        return approved;
     }
 
     @Override

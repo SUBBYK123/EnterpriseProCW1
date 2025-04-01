@@ -86,4 +86,37 @@ public class EmailService {
         // Send the message using the Gmail API
         gmailService.users().messages().send("me", message).execute();
     }
+
+    public void sendSignupNotificationToAdmin(String fullName, String userEmail) throws MessagingException, IOException {
+        String subject = "New User Signup: Action Required!";
+        String body = "A new user has registered : \n\n"
+                    + "Name: " + fullName + "\n"
+                    + "Email: " + userEmail + "\n\n"
+                    + "Please review and approve their request in the Permissions page: \n"
+                    + "http://localhost:8080/permissions";
+
+                                            //Add admin email
+        MimeMessage email = createEmail(userEmail,"mustafakamran491@gmail.com",subject,body);
+        sendMessage(email);
+    }
+
+    /**
+     * Sends a notification email to the user once their registration is approved.
+     * @param toEmail The recipient's email address.
+     * @param fullName The user's full name.
+     */
+    public void sendApprovalNotification(String toEmail, String fullName) throws Exception {
+        String subject = "Your Account Has Been Approved – Bradford Council Web System";
+        String body = "Dear " + fullName + ",\n\n"
+                + "Your account registration has been approved by the system administrator.\n\n"
+                + "You can now log in to the system using the credentials you provided during signup.\n"
+                + "Access the system here: http://localhost:8080/login\n\n"
+                + "If you experience any issues, please contact support.\n\n"
+                + "Best regards,\n"
+                + "City of Bradford Council Web Team";
+
+        MimeMessage email = createEmail(toEmail, "mustafakamran491@gmail.com", subject, body);
+        sendMessage(email);
+    }
+
 }

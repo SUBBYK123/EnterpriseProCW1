@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
 import uk.ac.bradford.projecttwo.webinterface.services.LogServiceImpl;
+import uk.ac.bradford.projecttwo.webinterface.services.RegistrationService;
 
 import java.util.Optional;
 
@@ -24,6 +25,9 @@ public class SignupController {
     private RegistrationRepositoryImpl registrationRepository;
 
     @Autowired
+    private RegistrationService registrationService;
+
+    @Autowired
     private LogServiceImpl logService;
 
     /**
@@ -37,6 +41,8 @@ public class SignupController {
         model.addAttribute("user", new RegistrationModel());
         return "signup"; // Returns signup.html from the templates folder
     }
+
+
 
     /**
      * Processes the user signup request.
@@ -57,9 +63,9 @@ public class SignupController {
                 model.addAttribute("errorMessage", "Email Already Taken!");
                 return "signup"; // Reloads the signup page with an error message
             } else {
-                registrationRepository.registerUser(user);
+                registrationService.registerUser(user);
                 logService.log(user.getEmailAddress(), "REGISTER","SUCCESS");
-                return "redirect:/login?signupsuccess"; // Redirects to login with a success message
+                return "redirect:/signup/pending";
             }
         } catch (Exception e) {
             logService.log(user.getEmailAddress(),"REGISTER","ERROR");
@@ -67,6 +73,12 @@ public class SignupController {
             return "signup"; // Reloads signup page with the error message
         }
     }
+
+    @GetMapping("/signup/pending")
+    public String showPendingPage() {
+        return "signup_pending";
+    }
+
 
     /**
      * Displays the index page.

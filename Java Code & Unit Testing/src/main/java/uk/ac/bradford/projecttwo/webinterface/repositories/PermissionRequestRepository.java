@@ -8,4 +8,6 @@ public interface PermissionRequestRepository {
     List<PermissionRequestModel> getAllRequests();
     boolean approveRequest(int requestId);
     boolean denyRequest(int requestId);
+    boolean approveRequestAndCreateUser(int requestId);
+    PermissionRequestModel getRequestById(int requestId);
 }
