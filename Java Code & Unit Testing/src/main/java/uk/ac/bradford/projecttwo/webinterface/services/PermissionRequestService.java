@@ -8,4 +8,5 @@ public interface PermissionRequestService {
     List<PermissionRequestModel> getAllRequests();
     boolean approveRequest(int requestId);
     boolean denyRequest(int requestId);
+    String getRequestEmailById(int requestId);
 }

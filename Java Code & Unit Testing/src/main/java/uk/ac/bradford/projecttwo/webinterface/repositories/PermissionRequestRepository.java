@@ -10,4 +10,6 @@ public interface PermissionRequestRepository {
     boolean denyRequest(int requestId);
     boolean approveRequestAndCreateUser(int requestId);
     PermissionRequestModel getRequestById(int requestId);
+    String getRequestEmailById(int requestId);
+    boolean saveDatasetAccessRequest(String email,String department, String datasetList);
 }

@@ -48,4 +48,9 @@ public class PermissionRequestServiceImpl implements PermissionRequestService{
     public boolean denyRequest(int requestId) {
         return permissionRequestRepository.denyRequest(requestId);
     }
+
+    @Override
+    public String getRequestEmailById(int requestId) {
+        return permissionRequestRepository.getRequestEmailById(requestId);
+    }
 }

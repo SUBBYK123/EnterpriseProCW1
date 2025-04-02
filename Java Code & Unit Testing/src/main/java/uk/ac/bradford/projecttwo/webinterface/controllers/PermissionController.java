@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uk.ac.bradford.projecttwo.webinterface.services.LogService;
+import uk.ac.bradford.projecttwo.webinterface.services.LogServiceImpl;
 import uk.ac.bradford.projecttwo.webinterface.services.PermissionRequestService;
 
 @Controller
@@ -13,10 +15,10 @@ public class PermissionController {
 
 
     private final PermissionRequestService permissionRequestService;
-    private final LogService logService;
+    private final LogServiceImpl logService;
 
     @Autowired
-    public PermissionController(PermissionRequestService permissionRequestService, LogService logService) {
+    public PermissionController(PermissionRequestService permissionRequestService, LogServiceImpl logService) {
         this.permissionRequestService = permissionRequestService;
         this.logService = logService;
     }
@@ -41,29 +43,35 @@ public class PermissionController {
      * Handles approval of a permission request by ID.
      */
     @PostMapping("/approve/{id}")
-    public String approveRequest(@PathVariable("id") int id) {
-        boolean result = permissionRequestService.approveRequest(id);
-
-        if (result) {
-            return "redirect:/permissions?success=Permission approved successfully.";
-
-        } else {
-            return "redirect:/permissions?error=Failed to approve the request.";
+    public String approveRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
+        try {
+            permissionRequestService.approveRequest(requestId);
+            String email = permissionRequestService.getRequestEmailById(requestId);
+            logService.log(email, "APPROVE", "SUCCESS");
+            redirectAttributes.addFlashAttribute("success", "Request approved successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error approving request.");
         }
+        return "redirect:/permissions";
     }
+
 
     /**
      * Handles denial of a permission request by ID.
      */
     @PostMapping("/deny/{id}")
-    public String denyRequest(@PathVariable("id") int id) {
-        boolean result = permissionRequestService.denyRequest(id);
-
-        if (result) {
-            return "redirect:/permissions?success=Permission denied successfully.";
-        } else {
-            return "redirect:/permissions?error=Failed to deny the request.";
+    public String denyRequest(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        try {
+            permissionRequestService.denyRequest(id);
+            String email = permissionRequestService.getRequestEmailById(id);
+            logService.log(email, "DENY", "SUCCESS");
+            redirectAttributes.addFlashAttribute("error", "Request Denied.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Error approving request.");
         }
+        return "redirect:/permissions";
     }
 
 }

@@ -138,6 +138,44 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return null;
     }
 
+    @Override
+    public String getRequestEmailById(int requestId) {
+        String query = "SELECT email FROM permission_requests WHERE request_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, requestId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("email");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean saveDatasetAccessRequest(String email, String department, String datasetList) {
+        String sql = "INSERT INTO permission_requests (email,department,accessible_datasets, requested_role,status) "
+                    + "VALUES (?,?,?,'ROLE_USER','PENDING')";
+
+        try {
+            Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+
+            statement.setString(1,email);
+            statement.setString(2,department);
+            statement.setString(3,datasetList);
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+
+    }
+
     private boolean updateStatus(int requestId, String newStatus) {
         String sql = "UPDATE permission_requests SET status = ? WHERE request_id = ? AND status = 'PENDING'";
         try (Connection connection = getConnection();

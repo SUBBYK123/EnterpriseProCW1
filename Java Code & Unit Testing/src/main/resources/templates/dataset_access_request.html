@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+    <title>Dataset Access Request</title>
+</head>
+<body>
+
+<div class="content" style="padding: 30px; text-align: center;">
+    <h2>Request Dataset Access</h2>
+
+    <form th:action="@{/request-access}" method="post">
+        <!-- Department Selection -->
+        <label for="department">Select Department:</label>
+        <select name="department" id="department" required onchange="this.form.submit()">
+            <option value="">-- Select --</option>
+            <option th:each="dept : ${departments}" th:value="${dept}" th:text="${dept}"
+                    th:selected="${selectedDepartment == dept}"></option>
+        </select>
+    </form>
+
+    <!-- Dataset Selection (Shown after department selection) -->
+    <div th:if="${datasets}">
+        <form th:action="@{/request-access}" method="post">
+            <input type="hidden" name="department" th:value="${selectedDepartment}" />
+
+            <div>
+                <h3>Available Datasets</h3>
+                <div th:each="dataset : ${datasets}">
+                    <input type="checkbox" name="datasets" th:value="${dataset.datasetName}" />
+                    <label th:text="${dataset.datasetName}"></label><br/>
+                </div>
+            </div>
+
+            <button type="submit" style="margin-top: 20px;">Request Access</button>
+        </form>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+</div>
+
+</body>
+</html>
