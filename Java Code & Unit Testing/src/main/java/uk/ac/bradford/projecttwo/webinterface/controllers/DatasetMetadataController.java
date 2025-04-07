@@ -9,10 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.bradford.projecttwo.webinterface.models.DatasetMetadataModel;
+import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.models.UploadDatasetModel;
+import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
 import uk.ac.bradford.projecttwo.webinterface.services.DatasetMetadataService;
+import uk.ac.bradford.projecttwo.webinterface.services.LoginServiceImpl;
 import uk.ac.bradford.projecttwo.webinterface.services.UploadDatasetService;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +31,44 @@ public class DatasetMetadataController {
     @Autowired
     private DatasetMetadataService datasetMetadataService;
 
+    @Autowired
+    private LoginServiceImpl loginService;
+
+    @Autowired
+    private RegistrationRepositoryImpl registrationRepository;
+
     @GetMapping("/list")
-    public String listDatasets(Model model) {
+    public String listDatasets(Model model, Principal principal) {
         List<DatasetMetadataModel> datasets = datasetMetadataService.fetchAllMetadata();
         model.addAttribute("datasets", datasets);
+
+        if (principal != null) {
+            String email = principal.getName();
+            RegistrationModel user = registrationRepository.findUserByEmail(email);
+            if (user != null) {
+                model.addAttribute("loggedEmail", user.getEmailAddress());
+                model.addAttribute("loggedDepartment", user.getDepartment());
+            }
+        }
+
         return "dataset_list";
+    }
+
+    @GetMapping("/index")
+    public String indexPage(Model model, Principal principal) {
+        if (principal != null) {
+            String email = principal.getName();
+            RegistrationModel user = registrationRepository.findUserByEmail(email);
+
+            if (user != null) {
+                model.addAttribute("loggedEmail", user.getEmailAddress());
+                model.addAttribute("loggedDepartment", user.getDepartment());
+            } else {
+                model.addAttribute("loggedEmail", email);
+                model.addAttribute("loggedDepartment", "Unknown");
+            }
+        }
+        return "index";
     }
 
     @PostMapping("/upload")
@@ -43,7 +80,8 @@ public class DatasetMetadataController {
             @RequestParam("role") String role,
             @RequestParam("columns") String columnsJson,
             @RequestParam("data") String dataJson,
-            @RequestParam(value = "file", required = false) MultipartFile file) {
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            Principal principal) {
 
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -51,11 +89,24 @@ public class DatasetMetadataController {
             List<String> columns = mapper.readValue(columnsJson, new TypeReference<>() {});
             List<Map<String, Object>> data = mapper.readValue(dataJson, new TypeReference<>() {});
 
-            // Upload dataset (create table, insert data)
+            // Override department and uploadedBy if logged in
+            String finalEmail = uploadedBy;
+            String finalDepartment = department;
+
+            if (principal != null) {
+                String email = principal.getName();
+                RegistrationModel user = registrationRepository.findUserByEmail(email);
+                if (user != null) {
+                    finalEmail = user.getEmailAddress();
+                    finalDepartment = user.getDepartment();
+                }
+            }
+
+            // Upload dataset
             UploadDatasetModel uploadModel = new UploadDatasetModel();
             uploadModel.setDatasetName(datasetName);
-            uploadModel.setDepartment(department);
-            uploadModel.setUploadedBy(uploadedBy);
+            uploadModel.setDepartment(finalDepartment);
+            uploadModel.setUploadedBy(finalEmail);
             uploadModel.setRole(role);
             uploadModel.setColumns(columns);
             uploadModel.setData(data);
@@ -65,12 +116,14 @@ public class DatasetMetadataController {
             if (success) {
                 DatasetMetadataModel metadata = new DatasetMetadataModel();
                 metadata.setDatasetName(datasetName);
-                metadata.setDepartment(department);
-                metadata.setUploadedBy(uploadedBy);
+                metadata.setDepartment(finalDepartment);
+                metadata.setUploadedBy(finalEmail);
                 metadata.setRole(role);
                 metadata.setUploadDate(LocalDateTime.now());
 
-                datasetMetadataService.storeDatasetMetadata(metadata);
+                if (!datasetMetadataService.isDuplicateDataset(datasetName, uploadedBy)) {
+                    datasetMetadataService.storeDatasetMetadata(metadata);
+                }
 
                 return ResponseEntity.ok("✅ Dataset uploaded and metadata saved.");
             } else {
@@ -82,8 +135,4 @@ public class DatasetMetadataController {
             return ResponseEntity.status(400).body("❌ Error parsing data: " + e.getMessage());
         }
     }
-
-
-
-
 }

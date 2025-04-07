@@ -28,4 +28,9 @@ public class DatasetMetadataService {
     public DatasetMetadataModel getMetadataByName(String datasetName) {
         return repository.findByName(datasetName);
     }
+
+    public boolean isDuplicateDataset(String datasetName, String uploadedBy) {
+        return repository.findByNameAndUploader(datasetName, uploadedBy) != null;
+    }
+
 }

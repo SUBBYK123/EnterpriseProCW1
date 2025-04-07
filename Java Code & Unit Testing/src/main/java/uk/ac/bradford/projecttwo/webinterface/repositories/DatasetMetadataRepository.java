@@ -8,4 +8,5 @@ public interface DatasetMetadataRepository {
     boolean saveMetadata(DatasetMetadataModel dataset);
     List<DatasetMetadataModel> getAllMetadata();
     DatasetMetadataModel findByName(String datasetName);
+    DatasetMetadataModel findByNameAndUploader(String datasetName, String uploadedBy);
 }

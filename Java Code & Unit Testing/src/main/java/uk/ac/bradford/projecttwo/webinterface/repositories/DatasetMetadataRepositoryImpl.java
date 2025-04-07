@@ -20,18 +20,32 @@ public class DatasetMetadataRepositoryImpl implements DatasetMetadataRepository 
 
     @Override
     public boolean saveMetadata(DatasetMetadataModel dataset) {
-        String query = "INSERT INTO dataset_metadata (dataset_name, department, uploaded_by, role, upload_date) VALUES (?, ?, ?, ?, ?)";
+        String checkQuery = "SELECT COUNT(*) FROM dataset_metadata WHERE dataset_name = ? AND uploaded_by = ?";
+        String insertQuery = "INSERT INTO dataset_metadata (dataset_name, department, uploaded_by, role, upload_date) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = getConnection()) {
+            // Check for existing entry
+            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+                checkStmt.setString(1, dataset.getDatasetName());
+                checkStmt.setString(2, dataset.getUploadedBy());
 
-            stmt.setString(1, dataset.getDatasetName());
-            stmt.setString(2, dataset.getDepartment());
-            stmt.setString(3, dataset.getUploadedBy());
-            stmt.setString(4, dataset.getRole());
-            stmt.setTimestamp(5, Timestamp.valueOf(dataset.getUploadDate()));
+                ResultSet rs = checkStmt.executeQuery();
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // Duplicate found
+                    return false;
+                }
+            }
 
-            return stmt.executeUpdate() > 0;
+            // Insert new entry
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+                insertStmt.setString(1, dataset.getDatasetName());
+                insertStmt.setString(2, dataset.getDepartment());
+                insertStmt.setString(3, dataset.getUploadedBy());
+                insertStmt.setString(4, dataset.getRole());
+                insertStmt.setTimestamp(5, Timestamp.valueOf(dataset.getUploadDate()));
+
+                return insertStmt.executeUpdate() > 0;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,6 +93,30 @@ public class DatasetMetadataRepositoryImpl implements DatasetMetadataRepository 
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    @Override
+    public DatasetMetadataModel findByNameAndUploader(String datasetName, String uploadedBy) {
+        String query = "SELECT * FROM dataset_metadata WHERE dataset_name = ? AND uploaded_by = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, datasetName);
+            stmt.setString(2, uploadedBy);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                DatasetMetadataModel model = new DatasetMetadataModel();
+                model.setDatasetName(rs.getString("dataset_name"));
+                model.setDepartment(rs.getString("department"));
+                model.setUploadedBy(rs.getString("uploaded_by"));
+                model.setRole(rs.getString("role"));
+                model.setUploadDate(rs.getTimestamp("upload_date").toLocalDateTime());
+                return model;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
