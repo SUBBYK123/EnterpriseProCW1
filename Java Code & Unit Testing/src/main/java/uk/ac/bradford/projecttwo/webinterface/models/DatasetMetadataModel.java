@@ -9,6 +9,8 @@ public class DatasetMetadataModel {
     private String uploadedBy;
     private String role;
     private LocalDateTime uploadDate;
+    private boolean approved;
+    private boolean requested;
 
     public int getId() { return id; }
 
@@ -54,5 +56,21 @@ public class DatasetMetadataModel {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isApproved() {
+        return approved;
+    }
+
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+    }
+
+    public boolean isRequested() {
+        return requested;
+    }
+
+    public void setRequested(boolean requested) {
+        this.requested = requested;
     }
 }

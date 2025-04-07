@@ -54,7 +54,7 @@ public class EmailService {
      * @return A MimeMessage object representing the email.
      * @throws MessagingException If an error occurs while creating the message.
      */
-    private MimeMessage createEmail(String to, String from, String subject, String body) throws MessagingException {
+    public MimeMessage createEmail(String to, String from, String subject, String body) throws MessagingException {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage email = new MimeMessage(session);

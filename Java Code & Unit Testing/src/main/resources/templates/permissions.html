@@ -98,39 +98,78 @@
 <div class="content">
     <h1 style="margin-top: 50px; text-align: center;">Permissions Management</h1>
 
-    <!-- Status Messages -->
     <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
     <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-    <!-- Permissions Table -->
-    <table style="width: 80%; margin: auto; border-collapse: collapse; margin-top: 30px;" border="1">
+    <!-- DATASET ACCESS REQUESTS -->
+    <h2 style="text-align:center; margin-top: 40px;">Dataset Access Requests</h2>
+    <table>
         <thead>
         <tr>
             <th>User</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Dataset</th>
+            <th>Status</th>
+            <th>Request Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="request : ${datasetRequests}">
+            <td th:text="${request.requestedBy}"></td>
+            <td th:text="${request.role}"></td>
+            <td th:text="${request.department}"></td>
+            <td th:text="${request.datasetName}"></td>
+            <td th:text="${request.status}"></td>
+            <td th:text="${#temporals.format(request.requestDate, 'dd MMM yyyy HH:mm')}"></td>
+            <td>
+                <div th:if="${request.status == 'PENDING'}" class="button-container">
+                    <form th:action="@{/permissions/approve-dataset/{id}(id=${request.id})}" method="post">
+                        <button type="submit" class="grant">Approve</button>
+                    </form>
+                    <form th:action="@{/permissions/deny-dataset/{id}(id=${request.id})}" method="post">
+                        <button type="submit" class="deny">Deny</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- ROLE/PERMISSION REQUESTS -->
+    <h2 style="text-align:center; margin-top: 60px;">Role & Department Permission Requests</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
             <th>Requested Role</th>
             <th>Department</th>
-            <th>Accessible Datasets</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="request : ${requests}">
-            <td th:text="|${request.firstName} ${request.lastName}|"></td>
-            <td th:text="${request.requestedRole}"></td>
-            <td th:text="${request.department}"></td>
+        <tr th:each="req : ${roleRequests}">
+            <td th:text="${req.firstName}"></td>
+            <td th:text="${req.lastName}"></td>
+            <td th:text="${req.emailAddress}"></td>
+            <td th:text="${req.requestedRole}"></td>
+            <td th:text="${req.department}"></td>
             <td>
                 <ul>
-                    <li th:each="dataset : ${request.accessibleDatasets}" th:text="${dataset}"></li>
+                    <li th:each="ds : ${req.accessibleDatasets}" th:text="${ds}"></li>
                 </ul>
             </td>
-            <td th:text="${request.status}"></td>
+            <td th:text="${req.status}"></td>
             <td>
-                <div th:if="${request.status == 'PENDING'}" class="button-container">
-                    <form th:action="@{/permissions/approve/{id}(id=${request.requestId})}" method="post">
+                <div th:if="${req.status == 'PENDING'}" class="button-container">
+                    <form th:action="@{/permissions/approve/{id}(id=${req.requestId})}" method="post">
                         <button type="submit" class="grant">Approve</button>
                     </form>
-                    <form th:action="@{/permissions/deny/{id}(id=${request.requestId})}" method="post">
+                    <form th:action="@{/permissions/deny/{id}(id=${req.requestId})}" method="post">
                         <button type="submit" class="deny">Deny</button>
                     </form>
                 </div>

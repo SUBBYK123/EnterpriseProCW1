@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Dataset List</title>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" th:href="@{/css/CSS.css}"/>
     <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
     <script src="./js/validation.js" defer></script>
 </head>
@@ -14,12 +14,12 @@
 <!-- Logo and Header -->
 <div class="logo">
     <a th:href="@{/index}">
-        <img th:src="@{/images/logo.png}" alt="Website Logo" />
+        <img th:src="@{/images/logo.png}" alt="Website Logo"/>
     </a>
 </div>
 <div class="header-icons">
     <a th:href="@{/profile}">
-        <img th:src="@{/images/user.png}" alt="User Profile" />
+        <img th:src="@{/images/user.png}" alt="User Profile"/>
     </a>
 
     <!-- Search Bar -->
@@ -30,7 +30,8 @@
 
     <!-- Accessibility Link -->
     <div class="accessibility">
-        <a th:href="@{/accessibility}" style="color: black; font-size: 20px; text-decoration: underline;">Accessibility</a>
+        <a th:href="@{/accessibility}"
+           style="color: black; font-size: 20px; text-decoration: underline;">Accessibility</a>
     </div>
 </div>
 
@@ -59,6 +60,7 @@
             <th>Uploaded By</th>
             <th>Role</th>
             <th>Upload Date</th>
+            <th>Action</th> <!-- One action column only -->
         </tr>
         </thead>
         <tbody>
@@ -68,10 +70,27 @@
             <td th:text="${dataset.uploadedBy}"></td>
             <td th:text="${dataset.role}"></td>
             <td th:text="${dataset.uploadDate}"></td>
+            <td>
+                    <span th:if="${dataset.approved}">
+                        <a th:href="@{/datasets/download/{name}(name=${dataset.datasetName})}" class="btn btn-success">Download</a>
+                    </span>
+                <span th:if="${!dataset.approved}">
+                        <span th:if="${dataset.requested}">
+                            <button disabled class="btn btn-secondary">Awaiting Approval</button>
+                        </span>
+                        <span th:if="${!dataset.requested}">
+                            <form th:action="@{/permissions/access/request}" method="post">
+                                <input type="hidden" name="datasetName" th:value="${dataset.datasetName}" />
+                                <button type="submit" class="btn btn-primary">Request Access</button>
+                            </form>
+                        </span>
+                    </span>
+            </td>
         </tr>
         </tbody>
     </table>
 </div>
+
 
 <!-- Footer Section 1 -->
 <footer class="site-footer">
@@ -83,19 +102,19 @@
 
         <div class="footer-social">
             <a href="https://www.facebook.com/bradfordmdc">
-                <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+                <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;"/>
             </a>
             <a href="https://x.com/bradfordmdc">
-                <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+                <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;"/>
             </a>
             <a href="https://www.linkedin.com/company/bradford-council/">
-                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;"/>
             </a>
             <a href="https://www.instagram.com/bradfordmdc/">
-                <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+                <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;"/>
             </a>
             <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;"/>
             </a>
         </div>
     </div>
