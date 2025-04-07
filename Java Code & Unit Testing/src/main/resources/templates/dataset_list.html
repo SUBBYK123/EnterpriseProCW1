@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dataset List</title>
+    <link rel="stylesheet" th:href="@{/css/CSS.css}">
+</head>
+<body>
+<div class="container">
+    <h2>All Uploaded Datasets</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Dataset Name</th>
+            <th>Department</th>
+            <th>Uploaded By</th>
+            <th>Role</th>
+            <th>Upload Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="dataset : ${datasets}">
+            <td th:text="${dataset.datasetName}"></td>
+            <td th:text="${dataset.department}"></td>
+            <td th:text="${dataset.uploadedBy}"></td>
+            <td th:text="${dataset.role}"></td>
+            <td th:text="${dataset.uploadDate}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

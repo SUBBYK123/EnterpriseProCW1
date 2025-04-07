@@ -9,6 +9,7 @@
   <script th:src="@{/js/validation.js}" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script th:src="@{/js/handlefileupload.js}" defer></script>
   <title>Index Page</title>
    <script>
     // Check local storage and apply colorblind mode before page renders
@@ -174,5 +175,109 @@
       console.log("Button clicked!");
     });
   </script>
+
+  <script>
+    function handleFileUpload() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+
+      const departmentSelect = document.getElementById("departmentSelect");
+      const department = departmentSelect ? departmentSelect.value : "Unknown";
+
+      const uploadedBy = document.getElementById("uploadedByHidden")?.value || "anonymous@example.com";
+      const role = document.getElementById("roleHidden")?.value || "ROLE_USER";
+
+      const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
+      if (uploadButton) {
+        uploadButton.disabled = true;
+        uploadButton.textContent = "Uploading...";
+      }
+
+      if (!file) {
+        alert("Please select a file.");
+        resetUploadButton();
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const content = event.target.result;
+        const fileType = file.name.split('.').pop().toLowerCase();
+        const datasetName = file.name.split('.')[0];
+        let columns = [];
+        let datasetData = [];
+
+        if (fileType === "csv") {
+          const rows = content.trim().split("\n");
+          columns = rows[0].split(",").map(h => h.trim());
+
+          datasetData = rows.slice(1).map(row => {
+            const values = row.split(",");
+            const obj = {};
+            columns.forEach((col, i) => obj[col] = values[i]?.trim());
+            return obj;
+          });
+        } else if (fileType === "json") {
+          const json = JSON.parse(content);
+          if (Array.isArray(json) && json.length > 0) {
+            columns = Object.keys(json[0]);
+            datasetData = json;
+          }
+        } else {
+          alert("Unsupported file format. Please upload CSV or JSON.");
+          resetUploadButton();
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("datasetName", datasetName);
+        formData.append("department", department);
+        formData.append("uploadedBy", uploadedBy);
+        formData.append("role", role);
+        formData.append("columns", JSON.stringify(columns));
+        formData.append("data", JSON.stringify(datasetData));
+
+        fetch("/datasets/upload", {
+          method: "POST",
+          body: formData
+        })
+                .then(response => {
+                  if (response.ok) {
+                    alert("✅ Dataset uploaded and metadata saved!");
+
+                    // ✅ Also render on map
+                    if (fileType === "csv") {
+                      parseCSV(content, datasetName);
+                    } else if (fileType === "json") {
+                      parseJSON(content, datasetName);
+                    }
+                  } else {
+                    alert("❌ Upload failed.");
+                  }
+                  resetUploadButton();
+                })
+                .catch(err => {
+                  console.error("Upload error:", err);
+                  alert("Something went wrong.");
+                  resetUploadButton();
+                });
+      };
+
+      reader.readAsText(file);
+    }
+
+    function resetUploadButton() {
+      const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
+      if (uploadButton) {
+        uploadButton.disabled = false;
+        uploadButton.textContent = "Upload";
+      }
+    }
+  </script>
+
+
+
 </body>
 </html>

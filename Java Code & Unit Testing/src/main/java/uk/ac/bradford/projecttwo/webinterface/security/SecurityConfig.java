@@ -8,6 +8,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Security configuration class that defines authentication and authorization
@@ -52,6 +55,10 @@ public class SecurityConfig {
                         .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
                         // All other requests require authentication
                         .anyRequest().authenticated()
+                )
+
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(new AntPathRequestMatcher("/datasets/upload")) // ✅ Disable CSRF for JS upload
                 )
 
                 // Configure form-based login
@@ -108,6 +115,19 @@ public class SecurityConfig {
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public WebMvcConfigurer corsConfigurer() {
+            return new WebMvcConfigurer() {
+                @Override
+                public void addCorsMappings(CorsRegistry registry) {
+                    registry.addMapping("/**")
+                            .allowedOrigins("http://localhost:8080") // change as per your frontend origin
+                            .allowedMethods("GET", "POST", "PUT", "DELETE")
+                            .allowCredentials(true);
+                }
+            };
         }
 
 }

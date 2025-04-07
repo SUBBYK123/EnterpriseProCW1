@@ -28,44 +28,6 @@ fetch('/api/maps-key')
     })
     .catch(error => console.error("Error fetching API key:", error));
 
-// Handle file upload
-function handleFileUpload() {
-    const fileInput = document.getElementById('fileInput');
-    const file = fileInput.files[0];
-
-    if (!file) {
-        alert("Please select a file.");
-        return;
-    }
-
-    const fileName = file.name;
-
-    // Prevent duplicate file uploads
-    if (uploadedFiles.has(fileName)) {
-        alert("This dataset has already been uploaded.");
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        const fileContent = event.target.result;
-        const fileType = file.name.split('.').pop().toLowerCase();
-        const categoryName = file.name.split('.')[0]; // Use filename as category
-
-        if (fileType === "csv") {
-            parseCSV(fileContent, categoryName);
-        } else if (fileType === "json") {
-            parseJSON(fileContent, categoryName);
-        } else {
-            alert("Please upload a CSV or JSON file.");
-        }
-
-        uploadedFiles.add(fileName);
-        document.getElementById("fileInput").value = "";
-    };
-
-    reader.readAsText(file);
-}
 
 // Parse CSV Data
 function parseCSV(csvData, categoryName) {
@@ -92,7 +54,7 @@ function parseCSV(csvData, categoryName) {
             const marker = new google.maps.Marker({
                 position: { lat, lng },
                 map: map,
-                title: `Lat: ${lat}, Lng: ${lng}`,
+                title: `Latitude: ${lat}\nLongitude: ${lng}`,
                 icon: { url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png` }
             });
 
@@ -106,7 +68,7 @@ function parseCSV(csvData, categoryName) {
 
             return marker;
         } else {
-            errorInDataset += 1
+            errorInDataset += 1;
         }
     }).filter(marker => marker !== undefined);
 
@@ -130,7 +92,7 @@ function parseJSON(jsonData, categoryName) {
             const marker = new google.maps.Marker({
                 position: { lat, lng },
                 map: map,
-                title: `Lat: ${lat}, Lng: ${lng}`,
+                title: `Latitude: ${lat}\nLongitude: ${lng}`,
                 icon: { url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png` }
             });
 
@@ -195,20 +157,18 @@ function uploadDataset(categoryName) {
         return;
     }
 
-    // Assign role ID dynamically (Assuming "Adult" has roleId = 2)
-    const userRole = "Adult"; 
-    const roleIdMapping = { "Adult": 2 }; // Expand this if more roles exist
-    const roleId = roleIdMapping[userRole] || 1; // Default to 1 if role is unknown
+    // These can be dynamic from user session or form inputs
+    const uploadedBy = "admin@bradford.gov.uk";
+    const role = "Admin";
+    const department = "Geography";
 
-    // Extract all columns dynamically from first marker
     const firstMarker = markers[0];
-    const infoWindowContent = firstMarker.getTitle(); // Assuming title contains data
-
+    const infoWindowContent = firstMarker.getTitle();
     let columns = [];
     let sampleData = {};
 
-    if (infoWindowContent.includes("<br>")) {
-        let rows = infoWindowContent.split("<br>");
+    if (infoWindowContent.includes("\n")) {
+        let rows = infoWindowContent.split("\n");
         rows.forEach(row => {
             let [key, value] = row.split(":").map(item => item.trim());
             if (key && value) {
@@ -218,9 +178,8 @@ function uploadDataset(categoryName) {
         });
     }
 
-    // Extract data for each marker
     const datasetData = markers.map(marker => {
-        let markerInfo = marker.getTitle().split("<br>");
+        let markerInfo = marker.getTitle().split("\n");
         let rowData = {};
 
         markerInfo.forEach(row => {
@@ -235,21 +194,31 @@ function uploadDataset(categoryName) {
 
     const requestBody = {
         datasetName: categoryName,
-        roleId: roleId,  // Dynamically assigned roleId
+        department: department,
+        uploadedBy: uploadedBy,
+        role: role,
         columns: columns,
         data: datasetData
     };
 
     console.log("Uploading dataset:", requestBody);
 
-    fetch("/api/upload-dataset", {
+    fetch("/datasets/upload", {
         method: "POST",
-        headers: {"Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(requestBody)
     })
-    .then(response => response.text())
-    .then(message => alert(message))  // Show success or error message
-    .catch(error => console.error("Error uploading dataset:", error));
+        .then(response => {
+            if (!response.ok) throw new Error("Upload failed");
+            return response.text();
+        })
+        .then(message => alert(message))
+        .catch(error => {
+            console.error("Error uploading dataset:", error);
+            alert("Error uploading dataset: " + error.message);
+        });
 }
 
 // Update marker visibility based on checkbox selection
