@@ -191,4 +191,54 @@ public class DatasetMetadataController {
             return ResponseEntity.status(500).body("Error while reading the file.");
         }
     }
+
+    @PostMapping("/upload-stream")
+    @ResponseBody
+    public ResponseEntity<String> uploadDatasetStream(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("datasetName") String datasetName,
+            @RequestParam("department") String department,
+            @RequestParam("uploadedBy") String uploadedBy,
+            @RequestParam("role") String role,
+            Principal principal) {
+
+        try {
+            String finalEmail = uploadedBy;
+            String finalDepartment = department;
+
+            if (principal != null) {
+                String email = principal.getName();
+                RegistrationModel user = registrationRepository.findUserByEmail(email);
+                if (user != null) {
+                    finalEmail = user.getEmailAddress();
+                    finalDepartment = user.getDepartment();
+                }
+            }
+
+            boolean success = uploadDatasetService.uploadDatasetStreamed(datasetName, finalDepartment, finalEmail, role, file);
+
+
+            if (success) {
+                DatasetMetadataModel metadata = new DatasetMetadataModel();
+                metadata.setDatasetName(datasetName);
+                metadata.setDepartment(finalDepartment);
+                metadata.setUploadedBy(finalEmail);
+                metadata.setRole(role);
+                metadata.setUploadDate(LocalDateTime.now());
+
+                if (!datasetMetadataService.isDuplicateDataset(datasetName, finalEmail)) {
+                    datasetMetadataService.storeDatasetMetadata(metadata);
+                }
+
+                return ResponseEntity.ok("✅ Dataset uploaded via stream.");
+            } else {
+                return ResponseEntity.status(500).body("❌ Failed to upload.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body("❌ Error uploading file: " + e.getMessage());
+        }
+    }
+
 }

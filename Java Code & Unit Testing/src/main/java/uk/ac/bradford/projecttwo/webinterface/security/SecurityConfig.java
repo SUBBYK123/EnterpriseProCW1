@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
                                 new AntPathRequestMatcher("/datasets/upload"),
+                                new AntPathRequestMatcher("/datasets/upload-stream"),
                                 new AntPathRequestMatcher("/api/assets/add"),
                                 new AntPathRequestMatcher("/api/assets/update"),
                                 new AntPathRequestMatcher("/api/assets/delete/**")

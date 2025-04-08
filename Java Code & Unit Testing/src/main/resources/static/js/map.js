@@ -34,7 +34,8 @@ fetch('/api/maps-key')
 // Parse CSV Data
 function parseCSV(csvData, categoryName) {
     const rows = csvData.split("\n");
-    const headers = rows[0].split(",").map(header => header.trim());
+    const headers = rows[0].replace("\uFEFF", "").split(",").map(h => h.trim());
+
 
     const latIndex = headers.findIndex(header => header.toLowerCase() === "latitude");
     const lngIndex = headers.findIndex(header => header.toLowerCase() === "longitude");
