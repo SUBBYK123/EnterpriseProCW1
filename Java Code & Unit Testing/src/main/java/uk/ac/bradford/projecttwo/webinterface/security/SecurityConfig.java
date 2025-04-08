@@ -53,12 +53,19 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/", "/index", "/signup", "/css/**", "/js/**", "/images/**", "/reset").permitAll()
                         // Restrict access to the admin dashboard to users with ADMIN authority
                         .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
+
+                        .requestMatchers("/api/assets/add", "/api/assets/**").authenticated()
                         // All other requests require authentication
                         .anyRequest().authenticated()
                 )
 
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers(new AntPathRequestMatcher("/datasets/upload")) // ✅ Disable CSRF for JS upload
+                        .ignoringRequestMatchers(
+                                new AntPathRequestMatcher("/datasets/upload"),
+                                new AntPathRequestMatcher("/api/assets/add"),
+                                new AntPathRequestMatcher("/api/assets/update"),
+                                new AntPathRequestMatcher("/api/assets/delete/**")
+                        )
                 )
 
                 // Configure form-based login

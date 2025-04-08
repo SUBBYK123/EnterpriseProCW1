@@ -116,32 +116,51 @@
     </div>
   </nav>
 
-  <div style="background-color: white; width:100%; height: 1080px; float:left;"> 
+  <div style="background-color: white; width:100%; height: 1080px; float:left;">
 
   <!-- Home content -->
-  <section class="home">
-    <div id="controls" style="height:780px;">
-      <!-- Filters Section -->
-      <div id="filter-section" style="height:60%;">
-      <h3>Filters</h3>
-      <button class="select-all" onclick="toggleSelectAll()">Select All</button>
-      <div class="filter-options" id="filters-container" ></div>
+    <section class="home">
+
+      <!-- 👇 Hidden input for logged-in user's email -->
+      <input type="hidden" id="uploadedByHidden" th:value="${#authentication.name}" />
+
+
+      <div id="controls" style="height:780px;">
+        <div id="filter-section" style="height:60%;">
+          <h3>Filters</h3>
+          <button class="select-all" onclick="toggleSelectAll()">Select All</button>
+          <div class="filter-options" id="filters-container"></div>
+        </div>
+
+        <div id="dataset_section" style="height:40%;">
+          <h3>Upload Dataset Or Add an Asset</h3>
+          <input type="file" id="fileInput">
+          <button onclick="handleFileUpload()">Upload</button>
+          <br><br>
+          <button id="addAssetButton">Add an Asset</button>
+          <br><br>
+          <h3>Search from Cloud</h3>
+          <button onclick="location.href='@{/logs}'">Search from cloud</button>
+        </div>
       </div>
 
-      <!-- Upload Dataset Section -->
-      <div id="dataset_section" style="height:40%;">
-        <h3>Upload Dataset</h3>
-        <input type="file" id="fileInput">
-        <button onclick="handleFileUpload()">Upload</button>
-        <br><br>
-        <h3>Search from Cloud</h3>
-        <button onclick="location.href='@{/logs}'">Search from cloud</button>
+      <div id="addAssetModal" style="display:none; position:fixed; top:20%; left:35%; background:white; border:1px solid black; padding:20px; z-index:1000;">
+        <h3>Add New Asset</h3>
+        <label>Asset Name:</label><br>
+        <input type="text" id="assetName" /><br><br>
+        <label>Latitude:</label><br>
+        <input type="number" id="assetLat" step="0.0001" /><br><br>
+        <label>Longitude:</label><br>
+        <input type="number" id="assetLng" step="0.0001" /><br><br>
+        <button id="submitAssetBtn" onclick="submitAsset()">Add</button>
+        <button onclick="hideAddAssetForm()">Cancel</button>
       </div>
-    </div>
 
-    <div id="map">
-      <script th:src="@{/js/map.js}"></script>
-    </div>
+      <div id="map">
+        <script th:src="@{/js/map.js}"></script>
+      </div>
+
+
 
   </section>
 

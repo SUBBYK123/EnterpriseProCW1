@@ -14,6 +14,8 @@ function initMap() {
         zoom: 12
     });
     console.log('Map initialized');
+
+    loadManualAssets();
 }
 
 // Fetch API key dynamically and load the Google Maps script
@@ -116,13 +118,19 @@ function parseJSON(jsonData, categoryName) {
 // Create filter checkboxes
 function createFilters() {
     const filtersContainer = document.getElementById("filters-container");
+
+    // Preserve existing manual asset entries
+    const existingManualAssets = Array.from(filtersContainer.querySelectorAll(".asset-sidebar-entry"));
+
+    // Clear only filter checkboxes and buttons, not manual entries
     filtersContainer.innerHTML = "";
 
     Object.keys(markersByCategory).forEach(category => {
+        // ✅ Remove this line: if (category === "Manual Asset") return;
+
         let filterDiv = document.createElement("div");
         filterDiv.classList.add("filter-item");
 
-        // Checkbox for toggling visibility
         let checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.classList.add("filter-checkbox");
@@ -134,7 +142,6 @@ function createFilters() {
         label.appendChild(checkbox);
         label.appendChild(document.createTextNode(` ${category}`));
 
-        // Upload button
         let uploadBtn = document.createElement("button");
         uploadBtn.textContent = "Upload";
         uploadBtn.classList.add("upload-btn");
@@ -144,9 +151,11 @@ function createFilters() {
         });
 
         filterDiv.appendChild(label);
-        filterDiv.appendChild(uploadBtn);
         filtersContainer.appendChild(filterDiv);
     });
+
+    // Re-append previously created manual asset entries
+    existingManualAssets.forEach(asset => filtersContainer.appendChild(asset));
 }
 
 function uploadDataset(categoryName) {
@@ -244,3 +253,184 @@ function toggleSelectAll() {
 
     updateMarkersVisibility();
 }
+
+function loadManualAssets() {
+    fetch("/api/assets/Manual Asset")
+        .then(res => res.json())
+        .then(data => {
+            if (!markersByCategory["Manual Asset"]) {
+                markersByCategory["Manual Asset"] = [];
+            }
+
+            // Clear old markers
+            markersByCategory["Manual Asset"].forEach(marker => marker.setMap(null));
+            markersByCategory["Manual Asset"] = [];
+
+            data.forEach(asset => {
+                const marker = new google.maps.Marker({
+                    position: { lat: asset.latitude, lng: asset.longitude },
+                    map: map,
+                    title: `Name: ${asset.name}\nLatitude: ${asset.latitude}\nLongitude: ${asset.longitude}`,
+                    icon: { url: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png" }
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<strong>${asset.name}</strong><br>Lat: ${asset.latitude}<br>Lng: ${asset.longitude}`
+                });
+
+                marker.assetId = asset.id;
+                marker.addListener("click", () => infoWindow.open(map, marker));
+
+                markersByCategory["Manual Asset"].push(marker);
+                addAssetToSidebar(asset.id, asset.name, asset.latitude, asset.longitude, marker);
+            });
+
+            createFilters();
+            updateMarkersVisibility();
+        })
+        .catch(error => {
+            console.error("Error loading manual assets:", error);
+        });
+}
+
+
+function addAssetToMap(name, lat, lng) {
+    const uploadedBy = document.getElementById("uploadedByHidden")?.value || "anonymous@example.com";
+    const asset = {
+        datasetName: "Manual Asset",
+        name: name,
+        latitude: lat,
+        longitude: lng,
+        createdBy: uploadedBy
+    };
+
+    fetch("/api/assets/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(asset)
+    })
+        .then(res => res.text())
+        .then(msg => {
+            console.log(msg);
+            if (msg.includes("✅")) {
+                loadManualAssets(); // Refresh map with new marker
+            } else {
+                alert("❌ Failed to add asset: " + msg);
+            }
+        })
+        .catch(err => {
+            console.error("API error:", err);
+            alert("❌ API failed. Check console.");
+        });
+}
+
+function addAssetToSidebar(id, name, lat, lng, marker) {
+    const container = document.getElementById("filters-container");
+    const existing = document.getElementById(id);
+    if (existing) existing.remove(); // prevent duplicate entries
+
+    const assetDiv = document.createElement("div");
+    assetDiv.id = id;
+    assetDiv.className = "asset-sidebar-entry";
+    assetDiv.style.marginTop = "5px";
+
+    const text = document.createElement("span");
+    text.innerText = `${name} (${lat}, ${lng})`;
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✎";
+    editBtn.style.marginLeft = "5px";
+    editBtn.onclick = () => {
+        document.getElementById("assetName").value = name;
+        document.getElementById("assetLat").value = lat;
+        document.getElementById("assetLng").value = lng;
+        document.getElementById("addAssetModal").dataset.editingId = id;
+        document.getElementById("submitAssetBtn").textContent = "Update";
+        showAddAssetForm();
+    };
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑";
+    deleteBtn.style.marginLeft = "5px";
+    deleteBtn.onclick = () => {
+        fetch(`/api/assets/delete/${id}`, { method: "DELETE" })
+            .then(res => res.text())
+            .then(() => {
+                marker.setMap(null);
+                assetDiv.remove();
+                markersByCategory["Manual Asset"] = markersByCategory["Manual Asset"].filter(m => m.assetId !== id);
+                updateMarkersVisibility();
+            });
+    };
+
+    assetDiv.appendChild(text);
+    assetDiv.appendChild(editBtn);
+    assetDiv.appendChild(deleteBtn);
+    container.appendChild(assetDiv);
+}
+
+function submitAsset() {
+    const name = document.getElementById("assetName").value;
+    const lat = parseFloat(document.getElementById("assetLat").value);
+    const lng = parseFloat(document.getElementById("assetLng").value);
+    const editingId = document.getElementById("addAssetModal").dataset.editingId;
+
+    if (!name || isNaN(lat) || isNaN(lng)) {
+        alert("Please fill in all fields with valid values.");
+        return;
+    }
+
+    if (editingId) {
+        const asset = {
+            id: parseInt(editingId),
+            name,
+            latitude: lat,
+            longitude: lng
+        };
+
+        fetch("/api/assets/update", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(asset)
+        })
+            .then(res => res.text())
+            .then(msg => {
+                console.log(msg);
+                loadManualAssets();
+            });
+
+        delete document.getElementById("addAssetModal").dataset.editingId;
+        document.getElementById("submitAssetBtn").textContent = "Add";
+    } else {
+        addAssetToMap(name, lat, lng);
+    }
+
+    hideAddAssetForm();
+}
+
+
+function showAddAssetForm() {
+    const modal = document.getElementById("addAssetModal");
+    if (modal) modal.style.display = "block";
+}
+
+function hideAddAssetForm() {
+    const modal = document.getElementById("addAssetModal");
+    if (modal) modal.style.display = "none";
+    document.getElementById("assetName").value = "";
+    document.getElementById("assetLat").value = "";
+    document.getElementById("assetLng").value = "";
+    delete modal.dataset.editingId;
+    document.getElementById("submitAssetBtn").textContent = "Add";
+}
+
+
+// Wait until DOM is loaded before attaching the button event
+window.addEventListener("DOMContentLoaded", () => {
+    const addAssetBtn = document.getElementById("addAssetButton");
+    if (addAssetBtn) {
+        addAssetBtn.addEventListener("click", showAddAssetForm);
+    }
+});
+
