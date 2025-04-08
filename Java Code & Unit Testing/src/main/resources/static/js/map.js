@@ -434,3 +434,79 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+function handleBulkUpload() {
+    const files = document.getElementById("fileInput").files;
+    if (!files.length) {
+        alert("Please select at least one file.");
+        return;
+    }
+
+    const uploadedBy = document.getElementById("uploadedByHidden")?.value || "anonymous@example.com";
+    const role = "Admin"; // or fetch dynamically
+    const department = "Geography"; // or fetch dynamically
+
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            const content = event.target.result;
+            const fileType = file.name.split('.').pop().toLowerCase();
+            const datasetName = file.name.split('.')[0];
+
+            let columns = [];
+            let datasetData = [];
+
+            if (fileType === "csv") {
+                const rows = content.trim().split("\n");
+                columns = rows[0].split(",").map(h => h.trim());
+                datasetData = rows.slice(1).map(row => {
+                    const values = row.split(",");
+                    const obj = {};
+                    columns.forEach((col, i) => obj[col] = values[i]?.trim());
+                    return obj;
+                });
+
+                parseCSV(content, datasetName); // Show on map
+            } else if (fileType === "json") {
+                const json = JSON.parse(content);
+                if (Array.isArray(json) && json.length > 0) {
+                    columns = Object.keys(json[0]);
+                    datasetData = json;
+
+                    parseJSON(content, datasetName); // Show on map
+                }
+            } else {
+                alert("Unsupported format: " + file.name);
+                return;
+            }
+
+            const requestBody = {
+                datasetName,
+                department,
+                uploadedBy,
+                role,
+                columns,
+                data: datasetData
+            };
+
+            fetch("/datasets/upload", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestBody)
+            })
+                .then(res => res.text())
+                .then(msg => {
+                    console.log(`${file.name}: ${msg}`);
+                    alert(`${file.name} uploaded successfully`);
+                })
+                .catch(err => {
+                    console.error("Upload error:", err);
+                    alert(`Error uploading ${file.name}`);
+                });
+        };
+
+        reader.readAsText(file);
+    });
+}
+
+
+
