@@ -4,46 +4,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script th:src="@{/js/validation.js}" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script th:src="@{/js/handlefileupload.js}" defer></script>
   <title>Index Page</title>
-   <script>
-    // Check local storage and apply colorblind mode before page renders
+
+  <script>
     if (localStorage.getItem("colorblindMode") === "true") {
       document.documentElement.classList.add("colorblind-mode");
     }
   </script>
-
   <style>
-    h3 {
-      font-family: Arial, sans-serif;
-    }
-
     .colorblind-mode {
       background-color: black !important;
       color: yellow !important;
     }
 
-    /* High-contrast Navigation */
-    .colorblind-mode .navbar {
-      background-color: #1e2021 !important;
-    }
-
-    /* High-contrast Footer */
-    .colorblind-mode .site-footer{
-      background-color: black !important;
-      color: white !important;
-    }
-
-
-    /* High-contrast Links */
     .colorblind-mode a,
     .colorblind-mode p {
       color: yellow !important;
+    }
+
+    .colorblind-mode .site-footer {
+      background-color: black !important;
+      color: white !important;
     }
 
     .colorblind-mode .home,
@@ -56,239 +42,192 @@
   </style>
 </head>
 
-<body>
-  <!-- Logo and Header -->
-  <div class="logo">
-    <a th:href="@{/}">
-      <img th:src="@{/images/logo.png}" alt="Website Logo" />
-    </a>
-  </div>
-  <div class="header-icons">
-    <a th:href="@{/profile}">
-      <img th:src="@{/images/user.png}" alt="User Profile" />
-    </a>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="search-bar">
-    <input type="text" placeholder="Search datasets"
-           style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
-  </div>
-
-  <!-- Accessibility Link -->
-  <div class="accessibility">
+<body class="bg-gray-100 min-h-screen text-gray-900">
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <a th:href="@{/}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
+  </a>
+  <div class="flex items-center gap-4">
+    <input type="text" placeholder="Search"
+           class="border px-3 py-2 rounded text-sm" />
     <button id="colorblind-toggle" onclick="toggleColorblindMode()"
-      style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
-    <script>
-      console.log("Accessibility script loaded!");
-
-      function toggleColorblindMode() {
-        console.log("Toggling colorblind mode...");
-        let body = document.body;
-        let isEnabled = body.classList.toggle("colorblind-mode");
-        console.log("Colorblind mode is now:", isEnabled);
-        localStorage.setItem("colorblindMode", isEnabled);
-      }
-
-      // Preserve user preference on reload
-      window.onload = function () {
-        console.log("Checking stored colorblind mode...");
-        if (localStorage.getItem("colorblindMode") === "true") {
-          document.body.classList.add("colorblind-mode");
-          console.log("Colorblind mode applied on load");
-        }
-      };
-    </script>
+            class="bg-gray-800 text-white px-3 py-1 rounded">Accessibility</button>
+    <a th:href="@{/profile}">
+      <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />
+    </a>
   </div>
+</header>
 
-  <!-- Navigation bar -->
-  <nav class="navbar">
-    <div style="background-color:#005192;" class="navdiv">
-      <ul>
-        <li><a style="color:white;" th:href="@{/index}">HOME</a></li>
-        <li><a style="color:white;" href="@{/reset}">RESET PASSWORD</a></li>
-        <li>
-          <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit" style="background:none; border:none; color:white; cursor:pointer;">LOGOUT</button>
-          </form>
-        </li>
-      </ul>
+  <script>
+    console.log("Accessibility script loaded!");
+
+    function toggleColorblindMode() {
+      console.log("Toggling colorblind mode...");
+      let body = document.body;
+      let isEnabled = body.classList.toggle("colorblind-mode");
+      console.log("Colorblind mode is now:", isEnabled);
+      localStorage.setItem("colorblindMode", isEnabled);
+    }
+
+    // Preserve user preference on reload
+    window.onload = function () {
+      console.log("Checking stored colorblind mode...");
+      if (localStorage.getItem("colorblindMode") === "true") {
+        document.body.classList.add("colorblind-mode");
+        console.log("Colorblind mode applied on load");
+      }
+    };
+  </script>
+
+<!-- Navigation -->
+<nav class="bg-blue-900 text-white">
+  <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
+    <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
+    <li><a th:href="@{/reset}" class="hover:underline">RESET PASSWORD</a></li>
+    <li>
+      <form th:action="@{/logout}" method="post">
+        <button type="submit" class="bg-transparent border-none text-white cursor-pointer hover:underline">LOGOUT</button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="flex flex-col lg:flex-row gap-6 p-6">
+  <input type="hidden" id="uploadedByHidden" th:value="${#authentication.name}" />
+
+  <!-- Controls -->
+  <aside class="w-full lg:w-1/3 space-y-6">
+    <section id="filter-section" class="bg-white shadow p-4 rounded">
+      <h3 class="font-bold text-lg mb-2">Filters</h3>
+      <button class="bg-blue-500 text-white px-2 py-1 rounded mb-2" onclick="toggleSelectAll()">Select All</button>
+      <div class="filter-options space-y-2" id="filters-container"></div>
+    </section>
+
+    <section id="dataset_section" class="bg-white shadow p-4 rounded">
+      <h3 class="font-bold text-lg mb-2">Upload Dataset Or Add an Asset</h3>
+      <input type="file" id="fileInput" multiple class="block mb-2" />
+      <button onclick="handleFileUpload()" class="bg-green-600 text-white px-3 py-1 rounded">Upload</button>
+      <br><br>
+      <button id="addAssetButton" class="bg-yellow-600 text-white px-3 py-1 rounded">Add an Asset</button>
+      <br><br>
+      <h3 class="font-bold text-lg mt-4">Search from Cloud</h3>
+      <button onclick="location.href='@{/logs}'" class="bg-blue-600 text-white px-3 py-1 rounded mt-2">Search</button>
+    </section>
+  </aside>
+
+  <!-- Map and Asset Modal -->
+  <div class="w-full lg:w-2/3 relative">
+    <div id="map" class="w-full h-[780px] rounded shadow"></div>
+
+    <div id="addAssetModal" class="hidden absolute top-20 left-1/4 bg-white border border-black p-4 z-50 rounded">
+      <h3 class="font-bold text-lg mb-2">Add New Asset</h3>
+      <label>Asset Name:</label>
+      <input type="text" id="assetName" class="border rounded w-full mb-2" />
+      <label>Latitude:</label>
+      <input type="number" id="assetLat" step="0.0001" class="border rounded w-full mb-2" />
+      <label>Longitude:</label>
+      <input type="number" id="assetLng" step="0.0001" class="border rounded w-full mb-2" />
+      <div class="flex justify-end gap-2">
+        <button id="submitAssetBtn" onclick="submitAsset()" class="bg-green-600 text-white px-3 py-1 rounded">Add</button>
+        <button onclick="hideAddAssetForm()" class="bg-gray-400 text-white px-3 py-1 rounded">Cancel</button>
+      </div>
     </div>
-  </nav>
-
-  <div style="background-color: white; width:100%; height: 1080px; float:left;">
-
-  <!-- Home content -->
-    <section class="home">
-
-      <!-- 👇 Hidden input for logged-in user's email -->
-      <input type="hidden" id="uploadedByHidden" th:value="${#authentication.name}" />
+  </div>
+</main>
 
 
-      <div id="controls" style="height:780px;">
-        <div id="filter-section" style="height:60%;">
-          <h3>Filters</h3>
-          <button class="select-all" onclick="toggleSelectAll()">Select All</button>
-          <div class="filter-options" id="filters-container"></div>
-        </div>
-
-        <div id="dataset_section" style="height:40%;">
-          <h3>Upload Dataset Or Add an Asset</h3>
-          <input type="file" id="fileInput" multiple>
-          <button onclick="handleFileUpload()">Upload</button>
-          <br><br>
-          <button id="addAssetButton">Add an Asset</button>
-          <br><br>
-          <h3>Search from Cloud</h3>
-          <button onclick="location.href='@{/logs}'">Search from cloud</button>
-        </div>
-      </div>
-
-      <div id="addAssetModal" style="display:none; position:fixed; top:20%; left:35%; background:white; border:1px solid black; padding:20px; z-index:1000;">
-        <h3>Add New Asset</h3>
-        <label>Asset Name:</label><br>
-        <input type="text" id="assetName" /><br><br>
-        <label>Latitude:</label><br>
-        <input type="number" id="assetLat" step="0.0001" /><br><br>
-        <label>Longitude:</label><br>
-        <input type="number" id="assetLng" step="0.0001" /><br><br>
-        <button id="submitAssetBtn" onclick="submitAsset()">Add</button>
-        <button onclick="hideAddAssetForm()">Cancel</button>
-      </div>
-
-      <div id="map">
-        <script th:src="@{/js/map.js}"></script>
-      </div>
+ <script th:src="@{/js/map.js}"></script>
 
 
 
   </section>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <p style="color:white">
-        Council Switchboard: 01274 432111<br><br>
-        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-        <a style="font-size: 20px; color: white;" href="https://www.bradford.gov.uk/contact-us/contact-us-now/contact-us-now/">Contact us now</a>
-      </p>
+<!-- Footer Section 1 -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+  <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="text-left">
+      <p class="text-sm">Council Switchboard: 01274 432111</p>
+      <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+      <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
     </div>
-  </footer>
-
-  <footer class="site-footer-blue">
-    <div class="footer-blue">
-      <div class="footer-legal">
-        <a th:href="@{/cookies}">Cookies</a>
-        <a th:href="@{/privacy}">Privacy Notice</a>
-        <a th:href="@{/atoz}">A to Z</a>
-        <a th:href="@{/accessibility}">Accessibility Statement</a>
-        <p style="font-size: 20px;" class="footer-copyright">
-          &copy; 2025 City of Bradford Metropolitan District Council
-        </p>
-      </div>
+    <div class="flex gap-3">
+      <a href="https://www.facebook.com/bradfordmdc">
+        <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
+      </a>
+      <a href="https://x.com/bradfordmdc">
+        <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
+      </a>
+      <a href="https://www.linkedin.com/company/bradford-council/">
+        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
+      </a>
+      <a href="https://www.instagram.com/bradfordmdc/">
+        <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
+      </a>
+      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
+      </a>
     </div>
-  </footer>
   </div>
-  <script>
-    document.getElementById("colorblind-toggle").addEventListener("click", function () {
-      console.log("Button clicked!");
-    });
-  </script>
+</footer>
 
-  <script>
-    function handleFileUpload() {
-      const fileInput = document.getElementById("fileInput");
-      const files = Array.from(fileInput.files);
+<!-- Footer Section 2 -->
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+  <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+  <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+  <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+  <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+  <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
 
-      const department = document.getElementById("departmentSelect")?.value || "Unknown";
-      const uploadedBy = document.getElementById("uploadedByHidden")?.value || "anonymous@example.com";
-      const role = document.getElementById("roleHidden")?.value || "ROLE_USER";
+<script>
+  document.getElementById("colorblind-toggle").addEventListener("click", function () {
+    console.log("Button clicked!");
+  });
+</script>
 
-      const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
-      if (uploadButton) {
-        uploadButton.disabled = true;
-        uploadButton.textContent = "Uploading...";
-      }
+<script>
+  function handleFileUpload() {
+    const fileInput = document.getElementById("fileInput");
+    const files = Array.from(fileInput.files);
 
-      if (files.length === 0) {
-        alert("Please select at least one file.");
-        resetUploadButton();
-        return;
-      }
+    const department = document.getElementById("departmentSelect")?.value || "Unknown";
+    const uploadedBy = document.getElementById("uploadedByHidden")?.value || "anonymous@example.com";
+    const role = document.getElementById("roleHidden")?.value || "ROLE_USER";
 
-      let completed = 0;
+    const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
+    if (uploadButton) {
+      uploadButton.disabled = true;
+      uploadButton.textContent = "Uploading...";
+    }
 
-      files.forEach(file => {
-        const datasetName = file.name.split('.')[0];
-        const fileType = file.name.split('.').pop().toLowerCase();
-        const reader = new FileReader();
+    if (files.length === 0) {
+      alert("Please select at least one file.");
+      resetUploadButton();
+      return;
+    }
 
-        reader.onload = function (event) {
-          const content = event.target.result;
+    let completed = 0;
 
-          // Large files use stream upload
-          if (file.size > 500 * 1024) {
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("datasetName", datasetName);
-            formData.append("department", department);
-            formData.append("uploadedBy", uploadedBy);
-            formData.append("role", role);
+    files.forEach(file => {
+      const datasetName = file.name.split('.')[0];
+      const fileType = file.name.split('.').pop().toLowerCase();
+      const reader = new FileReader();
 
-            fetch("/datasets/upload-stream", {
-              method: "POST",
-              body: formData
-            })
-                    .then(response => response.text())
-                    .then(message => {
-                      console.log(message);
-                      if (fileType === "csv") {
-                        parseCSV(content, datasetName);
-                      } else if (fileType === "json") {
-                        parseJSON(content, datasetName);
-                      }
-                      checkAllComplete();
-                    })
+      reader.onload = function (event) {
+        const content = event.target.result;
 
-            return;
-          }
-
-          // Smaller files handled in memory
-          let columns = [];
-          let datasetData = [];
-
-          if (fileType === "csv") {
-            const rows = content.trim().split("\n");
-            columns = rows[0].split(",").map(h => h.trim());
-
-            datasetData = rows.slice(1).map(row => {
-              const values = row.split(",");
-              const obj = {};
-              columns.forEach((col, i) => obj[col] = values[i]?.trim());
-              return obj;
-            });
-          } else if (fileType === "json") {
-            const json = JSON.parse(content);
-            if (Array.isArray(json) && json.length > 0) {
-              columns = Object.keys(json[0]);
-              datasetData = json;
-            }
-          } else {
-            alert("Unsupported file format for " + file.name);
-            checkAllComplete();
-            return;
-          }
-
+        // Large files use stream upload
+        if (file.size > 500 * 1024) {
           const formData = new FormData();
           formData.append("file", file);
           formData.append("datasetName", datasetName);
           formData.append("department", department);
           formData.append("uploadedBy", uploadedBy);
           formData.append("role", role);
-          formData.append("columns", JSON.stringify(columns));
-          formData.append("data", JSON.stringify(datasetData));
 
-          fetch("/datasets/upload", {
+          fetch("/datasets/upload-stream", {
             method: "POST",
             body: formData
           })
@@ -303,28 +242,81 @@
                     checkAllComplete();
                   })
 
-        };
-
-        reader.readAsText(file);
-      });
-
-      function checkAllComplete() {
-        completed++;
-        if (completed === files.length) {
-          alert("✅ All datasets uploaded.");
-          resetUploadButton();
+          return;
         }
-      }
-    }
 
-    function resetUploadButton() {
-      const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
-      if (uploadButton) {
-        uploadButton.disabled = false;
-        uploadButton.textContent = "Upload";
+        // Smaller files handled in memory
+        let columns = [];
+        let datasetData = [];
+
+        if (fileType === "csv") {
+          const rows = content.trim().split("\n");
+          columns = rows[0].split(",").map(h => h.trim());
+
+          datasetData = rows.slice(1).map(row => {
+            const values = row.split(",");
+            const obj = {};
+            columns.forEach((col, i) => obj[col] = values[i]?.trim());
+            return obj;
+          });
+        } else if (fileType === "json") {
+          const json = JSON.parse(content);
+          if (Array.isArray(json) && json.length > 0) {
+            columns = Object.keys(json[0]);
+            datasetData = json;
+          }
+        } else {
+          alert("Unsupported file format for " + file.name);
+          checkAllComplete();
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("datasetName", datasetName);
+        formData.append("department", department);
+        formData.append("uploadedBy", uploadedBy);
+        formData.append("role", role);
+        formData.append("columns", JSON.stringify(columns));
+        formData.append("data", JSON.stringify(datasetData));
+
+        fetch("/datasets/upload", {
+          method: "POST",
+          body: formData
+        })
+                .then(response => response.text())
+                .then(message => {
+                  console.log(message);
+                  if (fileType === "csv") {
+                    parseCSV(content, datasetName);
+                  } else if (fileType === "json") {
+                    parseJSON(content, datasetName);
+                  }
+                  checkAllComplete();
+                })
+
+      };
+
+      reader.readAsText(file);
+    });
+
+    function checkAllComplete() {
+      completed++;
+      if (completed === files.length) {
+        alert("✅ All datasets uploaded.");
+        resetUploadButton();
       }
     }
-  </script>
+  }
+
+  function resetUploadButton() {
+    const uploadButton = document.querySelector("button[onclick='handleFileUpload()']");
+    if (uploadButton) {
+      uploadButton.disabled = false;
+      uploadButton.textContent = "Upload";
+    }
+  }
+</script>
 
 
 
