@@ -42,7 +42,8 @@
   </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen text-gray-900">
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+
 <!-- Header -->
 <header class="flex justify-between items-center p-4 bg-white shadow">
   <a th:href="@{/}">
@@ -59,28 +60,20 @@
   </div>
 </header>
 
-  <script>
-    console.log("Accessibility script loaded!");
+<script>
+  function toggleColorblindMode() {
+    let isEnabled = document.body.classList.toggle("colorblind-mode");
+    localStorage.setItem("colorblindMode", isEnabled);
+  }
 
-    function toggleColorblindMode() {
-      console.log("Toggling colorblind mode...");
-      let body = document.body;
-      let isEnabled = body.classList.toggle("colorblind-mode");
-      console.log("Colorblind mode is now:", isEnabled);
-      localStorage.setItem("colorblindMode", isEnabled);
+  window.onload = function () {
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.body.classList.add("colorblind-mode");
     }
+  };
+</script>
 
-    // Preserve user preference on reload
-    window.onload = function () {
-      console.log("Checking stored colorblind mode...");
-      if (localStorage.getItem("colorblindMode") === "true") {
-        document.body.classList.add("colorblind-mode");
-        console.log("Colorblind mode applied on load");
-      }
-    };
-  </script>
-
-<!-- Navigation -->
+<!-- Navbar -->
 <nav class="bg-blue-900 text-white">
   <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
     <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
@@ -94,10 +87,11 @@
 </nav>
 
 <!-- Main Content -->
-<main class="flex flex-col lg:flex-row gap-6 p-6">
+<main class="flex-1 p-6 flex flex-col lg:flex-row gap-6 w-full max-w-[1600px] mx-auto">
+
   <input type="hidden" id="uploadedByHidden" th:value="${#authentication.name}" />
 
-  <!-- Controls -->
+  <!-- Controls Panel -->
   <aside class="w-full lg:w-1/3 space-y-6">
     <section id="filter-section" class="bg-white shadow p-4 rounded">
       <h3 class="font-bold text-lg mb-2">Filters</h3>
@@ -117,10 +111,11 @@
     </section>
   </aside>
 
-  <!-- Map and Asset Modal -->
-  <div class="w-full lg:w-2/3 relative">
-    <div id="map" class="w-full h-[780px] rounded shadow"></div>
+  <!-- Map Area -->
+  <div class="w-full lg:w-2/3 flex flex-col">
+    <div id="map" class="w-full min-h-[500px] flex-grow rounded shadow"></div>
 
+    <!-- Asset Modal -->
     <div id="addAssetModal" class="hidden absolute top-20 left-1/4 bg-white border border-black p-4 z-50 rounded">
       <h3 class="font-bold text-lg mb-2">Add New Asset</h3>
       <label>Asset Name:</label>
@@ -137,14 +132,9 @@
   </div>
 </main>
 
+<script th:src="@{/js/map.js}"></script>
 
- <script th:src="@{/js/map.js}"></script>
-
-
-
-  </section>
-
-<!-- Footer Section 1 -->
+<!-- Footer -->
 <footer class="bg-gray-800 text-white py-6 px-8">
   <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
     <div class="text-left">

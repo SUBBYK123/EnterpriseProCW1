@@ -337,7 +337,7 @@ function addAssetToSidebar(id, name, lat, lng, marker) {
     assetDiv.style.marginTop = "5px";
 
     const text = document.createElement("span");
-    text.innerText = `${name} (${lat}, ${lng})`;
+    text.innerText = `${name}`;
 
     const editBtn = document.createElement("button");
     editBtn.textContent = "✎";
