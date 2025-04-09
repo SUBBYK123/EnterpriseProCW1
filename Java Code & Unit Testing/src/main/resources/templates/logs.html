@@ -4,119 +4,155 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
-  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
-  <script src="./js/validation.js" defer></script>
+  <script src="@{/js/validation.js}" defer></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <title>Logs Page</title>
+  <script>
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.documentElement.classList.add("colorblind-mode");
+    }
+  </script>
+
+  <style>
+    .colorblind-mode {
+      background-color: black !important;
+      color: yellow !important;
+    }
+    .colorblind-mode a, .colorblind-mode p {
+      color: yellow !important;
+    }
+    .colorblind-mode .navbar,
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue,
+    .colorblind-mode .footer-copyright {
+      background-color: black !important;
+      color: white !important;
+    }
+  </style>
 </head>
 
-<body>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
 
-<!-- Logo and Header -->
-<div class="logo">
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow">
   <a th:href="@{/index}">
-    <img th:src="@{/images/logo.png}" alt="Website Logo" />
+    <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
   </a>
-</div>
-<div class="header-icons">
-  <a th:href="@{/profile}">
-    <img th:src="@{/images/user.png}" alt="User Profile" />
-  </a>
-
-  <!-- Search Bar -->
-  <div class="search-bar">
+  <div class="flex items-center gap-4">
+    <!-- Search -->
     <input type="text" placeholder="Search datasets"
-           style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
-  </div>
+           class="px-3 py-2 text-sm rounded border border-gray-300 focus:outline-none focus:ring focus:ring-blue-400" />
 
-  <!-- Accessibility Link -->
-  <div class="accessibility">
-    <a th:href="@{/accessibility}"
-       style="color: black; font-size: 20px; text-decoration: underline;">Accessibility</a>
-  </div>
-</div>
+    <!-- Accessibility -->
+    <button id="colorblind-toggle" onclick="toggleColorblindMode()"
+            class="bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700">
+      Accessibility
+    </button>
 
-
-<!-- Navigation Bar -->
-<nav class="navbar">
-  <div style="background-color:#005192;" class="navdiv">
-    <ul>
-      <li><a style="color:white;" th:href="@{/index}">HOME</a></li>
-      <li><a style="color:white;" th:href="@{/reset}">RESET PASSWORD</a></li>
-      <li><a style="color:white;" th:href="@{/logs}">LOGS</a></li>
-      <li><a style="color:white;" href="#">USER ACCESS CONTROL</a></li>
-      <li><a style="color:white;" href="#">PERMISSIONS</a></li>
-      <li><a style="color:white;" href="#">LOGOUT</a></li>
-    </ul>
+    <!-- Profile Icon -->
+    <a th:href="@{/profile}">
+      <img th:src="@{/images/user.png}" alt="User Profile"
+           class="h-10 w-10 rounded-full border border-gray-300" />
+    </a>
   </div>
+</header>
+
+<script>
+  console.log("Accessibility script loaded!");
+
+  function toggleColorblindMode() {
+    console.log("Toggling colorblind mode...");
+    let body = document.body;
+    let isEnabled = body.classList.toggle("colorblind-mode");
+    console.log("Colorblind mode is now:", isEnabled);
+    localStorage.setItem("colorblindMode", isEnabled);
+  }
+
+  // Preserve user preference on reload
+  window.onload = function () {
+    console.log("Checking stored colorblind mode...");
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.body.classList.add("colorblind-mode");
+      console.log("Colorblind mode applied on load");
+    }
+  };
+</script>
+
+<!-- Navigation -->
+<nav class="bg-blue-800 text-white">
+  <ul class="flex justify-center gap-10 py-3 text-lg">
+    <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
+    <li><a th:href="@{/reset}" class="hover:underline">RESET PASSWORD</a></li>
+    <li><a th:href="@{/logs}" class="hover:underline">LOGS</a></li>
+    <li><a href="#" class="hover:underline">USER ACCESS CONTROL</a></li>
+    <li><a href="#" class="hover:underline">PERMISSIONS</a></li>
+    <li><a href="#" class="hover:underline">LOGOUT</a></li>
+  </ul>
 </nav>
 
+<!-- Logs Section -->
+<main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
+  <h2 class="text-2xl font-semibold mb-6 text-center">User Logs</h2>
 
-<div id="log-list" class="log-section">
-  <h2>User Logs</h2>
-  <table>
-    <thead>
-    <tr>
-      <th>Timestamp</th>
-      <th>Email</th>
-      <th>Action</th>
-      <th>Status</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="log : ${logs}">
-      <td th:text="${#temporals.format(log.timeStamp, 'yyyy-MM-dd HH:mm')}"></td>
-      <td th:text="${log.emailAddress}"></td>
-      <td th:text="${log.action}"></td>
-      <td th:text="${log.status}"></td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+  <div class="overflow-x-auto">
+    <table class="w-full border border-gray-300 text-sm shadow rounded">
+      <thead class="bg-gray-200">
+      <tr>
+        <th class="p-3 text-left">Timestamp</th>
+        <th class="p-3 text-left">Email</th>
+        <th class="p-3 text-left">Action</th>
+        <th class="p-3 text-left">Status</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="log : ${logs}" class="even:bg-gray-50">
+        <td class="p-3" th:text="${#temporals.format(log.timeStamp, 'yyyy-MM-dd HH:mm')}"></td>
+        <td class="p-3" th:text="${log.emailAddress}"></td>
+        <td class="p-3" th:text="${log.action}"></td>
+        <td class="p-3" th:text="${log.status}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
 
-<!-- Footer Section 1 -->
-<footer class="site-footer">
-  <div class="footer-content">
-    <p style="color:white">Council Switchboard: 01274 432111<br><br>
-      Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-      <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
-    </p>
 
-    <div class="footer-social">
+<!-- Footer 1 -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+  <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="text-left">
+      <p class="text-sm">Council Switchboard: 01274 432111</p>
+      <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+      <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
+    </div>
+    <div class="flex gap-3">
       <a href="https://www.facebook.com/bradfordmdc">
-        <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
+        <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
       </a>
       <a href="https://x.com/bradfordmdc">
-        <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
+        <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
       </a>
       <a href="https://www.linkedin.com/company/bradford-council/">
-        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
+        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
       </a>
       <a href="https://www.instagram.com/bradfordmdc/">
-        <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
+        <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
       </a>
       <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
+        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
       </a>
     </div>
   </div>
 </footer>
 
-<!-- Footer Section 2 -->
-<footer class="site-footer-blue">
-  <div class="footer-blue">
-    <div class="footer-legal">
-      <a th:href="@{/cookies}">Cookies</a>
-      <a th:href="@{/privacy}">Privacy Notice</a>
-      <a th:href="@{/atoz}">A to Z</a>
-      <a th:href="@{/accessibility}">Accessibility Statement</a>
-      <p style="font-size: 20px;" class="footer-copyright">
-        &copy; 2025 City of Bradford Metropolitan District Council
-      </p>
-    </div>
-  </div>
+<!-- Footer 2 -->
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+  <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+  <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+  <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+  <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+  <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
 </footer>
 
 </body>
-
 </html>

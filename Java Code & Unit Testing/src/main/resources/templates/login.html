@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
-  <link rel="scriptFunction" href="./javaScript.js" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="./js/validation.js" defer></script>
   <title>Login Page</title>
@@ -18,78 +16,38 @@
   </script>
 
   <style>
-    h3 {
-      font-family: Arial, sans-serif;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    th, td {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
-
-    th {
-      background-color: #f2f2f2;
-    }
-
     .colorblind-mode {
       background-color: black !important;
       color: yellow !important;
     }
-
-    /* High-contrast Navigation */
-    .colorblind-mode .navbar {
-      background-color: #1e2021 !important;
-    }
-
-    /* High-contrast Footer */
-    .colorblind-mode .site-footer,
-    .colorblind-mode .site-footer-blue {
-      background-color: black !important;
-      color: white !important;
-    }
-
-    .colorblind-mode .footer-copyright {
-      background-color: black !important;
-    }
-
-    /* High-contrast Links */
-    .colorblind-mode a,
-    .colorblind-mode p {
+    .colorblind-mode a, .colorblind-mode p {
       color: yellow !important;
     }
-
-    .colorblind-mode .home,
-    .colorblind-mode #controls,
-    .colorblind-mode .filter-options,
-    .colorblind-mode .filter-section {
+    .colorblind-mode .navbar,
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue,
+    .colorblind-mode .footer-copyright {
       background-color: black !important;
+      color: white !important;
     }
   </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
+<!-- Header with Logo and Profile -->
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <a th:href="@{/login}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
+  </a>
+  <div class="flex items-center space-x-4">
 
-  <!-- Logo and Header -->
-  <div class="logo">
-    <a th:href="@{#}">
-      <img th:src="@{/images/logo.png}" alt="Website Logo" />
-    </a>
+    <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
+      Accessibility
+    </button>
   </div>
-  <div class="header-icons">
-    <a th:href="@{/profile}">
-      <img th:src="@{/images/user.png}" alt="User Profile" />
-    </a>
+</header>
 
     <!-- Accessibility Link -->
-    <div class="accessibility">
-      <button id="colorblind-toggle" onclick="toggleColorblindMode()"
-        style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
       <script>
         console.log("Accessibility script loaded!");
 
@@ -113,95 +71,80 @@
     </div>
   </div>
 
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div style="background-color:#005192;" class="navdiv">
-      <ul>
-        <li><a style="color:white;" href="#"></a></li>
-      </ul>
+
+
+<main class="flex-grow flex flex-col items-center justify-center px-4">
+  <h1 class="text-4xl font-bold mb-8">Login</h1>
+
+  <form th:action="@{/process-login}" method="post" class="w-full max-w-md bg-white p-6 rounded-lg shadow space-y-6">
+    <p th:if="${errorMessage}" class="text-red-500 text-center">[[${errorMessage}]]</p>
+
+    <div>
+      <label for="emailAddress" class="block text-sm font-medium">Email</label>
+      <input type="email" id="emailErrorMsg" name="emailAddress" required
+             class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+             placeholder="Enter your Email Address" />
     </div>
-  </nav>
 
-  <!-- Login Form -->
-  <h1 style="margin-top: 100px; margin-bottom: 50px; ">Login</h1>
-
-
-<form th:action="@{/process-login}" method="post" style="margin-bottom: 130px;">
-  <p th:if="${errorMessage}" style="color:red;">[[${errorMessage}]]</p>
-
-
-    <div class="form-group">
-      <label for="emailAddress">Email</label>
-      <input type="email" id="emailErrorMsg" name="emailAddress" required="required"
-        placeholder="Enter your Email Address" />
+    <div>
+      <label for="password" class="block text-sm font-medium">Password</label>
+      <input type="password" id="passwordErrorMsg" name="password" required
+             class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+             placeholder="Enter your Password" />
     </div>
-    <br>
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input type="password" id="passwordErrorMsg" name="password" required="required"
-        placeholder="Enter your Password" />
-    </div>
-    <br>
 
-    <button type="submit">Login</button>
-    <br>
-    <br>
-    <!-- Reset password Link -->
-    <a th:href="@{/reset}" style="color: black; font-size: 20px; text-decoration: underline;">Reset Password</a>
-    <br>
-    <br>
-    <!-- Signup Link -->
-    <a th:href="@{/signup}" style="color: black; font-size: 20px; text-decoration: underline;">or Sign-up</a>
+    <button type="submit"
+            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+      Login
+    </button>
+
+    <div class="text-center space-y-2">
+      <a th:href="@{/reset}" class="text-blue-700 underline">Reset Password</a><br>
+      <a th:href="@{/signup}" class="text-blue-700 underline">Sign-up</a>
+    </div>
   </form>
+</main>
 
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+  <div class="w-full flex justify-between items-center">
 
-
-  <!-- Footer Section 1 -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <!-- Contact Information -->
-      <p style="color:white">Council Switchboard: 01274 432111<br><br>
-        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-        <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
-      </p>
-
-      <!-- Social Media Links -->
-      <div class="footer-social">
-        <a href="https://www.facebook.com/bradfordmdc">
-          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://x.com/bradfordmdc">
-          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.linkedin.com/company/bradford-council/">
-          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.instagram.com/bradfordmdc/">
-          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
-        </a>
-      </div>
+    <!-- Far Left: Contact Info -->
+    <div class="text-left">
+      <p class="text-sm">Council Switchboard: 01274 432111</p>
+      <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+      <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
     </div>
-  </footer>
 
-  <!-- Footer Section 2 -->
-  <footer class="site-footer-blue">
-    <div class="footer-blue">
-      <!-- Legal Links -->
-      <div class="footer-legal">
-        <a th:href="@{/cookies}">Cookies</a>
-        <a th:href="@{/privacy}">Privacy Notice</a>
-        <a th:href="@{/atoz}">A to Z</a>
-        <a th:href="@{/accessibility}">Accessibility Statement<br></a>
-        <!-- Copyright Notice -->
-        <p style="font-size: 20px;" class="footer-copyright">
-          &copy; 2025 City of Bradford Metropolitan District Council
-        </p>
-      </div>
+    <!-- Far Right: Social Media Icons -->
+    <div class="flex gap-3">
+      <a href="https://www.facebook.com/bradfordmdc">
+        <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
+      </a>
+      <a href="https://x.com/bradfordmdc">
+        <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
+      </a>
+      <a href="https://www.linkedin.com/company/bradford-council/">
+        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
+      </a>
+      <a href="https://www.instagram.com/bradfordmdc/">
+        <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
+      </a>
+      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
+      </a>
     </div>
-  </footer>
+
+  </div>
+</footer>
+
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+  <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+  <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+  <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+  <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+  <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
   <!-- Java script for the form to make sure there is no incorrect information being sent to the backend database -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {

@@ -4,75 +4,46 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" th:href="@{/css/CSS.css}" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="@{/js/validation.js}" defer></script>
   <title>Sign Up Page</title>
 
   <script>
-    // Check local storage and apply colorblind mode before page renders
     if (localStorage.getItem("colorblindMode") === "true") {
       document.documentElement.classList.add("colorblind-mode");
     }
   </script>
 
   <style>
-    h3 {
-      font-family: Arial, sans-serif;
-    }
-
     .colorblind-mode {
       background-color: black !important;
       color: yellow !important;
     }
-
-    /* High-contrast Navigation */
-    .colorblind-mode .navbar {
-      background-color: #1e2021 !important;
-    }
-
-    /* High-contrast Footer */
-    .colorblind-mode .site-footer,
-    .colorblind-mode .site-footer-blue {
-      background-color: black !important;
-      color: white !important;
-    }
-
-    .colorblind-mode .footer-copyright {
-      background-color: black !important;
-    }
-
-    /* High-contrast Links */
-    .colorblind-mode a,
-    .colorblind-mode p {
+    .colorblind-mode a, .colorblind-mode p {
       color: yellow !important;
     }
-
-    .colorblind-mode .home,
-    .colorblind-mode #controls,
-    .colorblind-mode .filter-options,
-    .colorblind-mode .filter-section {
+    .colorblind-mode .navbar,
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue,
+    .colorblind-mode .footer-copyright {
       background-color: black !important;
+      color: white !important;
     }
   </style>
 </head>
 
-<body>
-  <!-- Logo and Header -->
-  <div class="logo">
-    <a th:href="@{#}">
-      <img th:src="@{/images/logo.png}" alt="Website Logo" />
-    </a>
-  </div>
-  <div class="header-icons">
-    <a th:href="@{/profile}">
-      <img th:src="@{/images/user.png}" alt="User Profile" />
-    </a>
+<body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <a th:href="@{/login}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
+  </a>
+  <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
+    Accessibility
+  </button>
+</header>
 
-    <!-- Accessibility Link -->
-    <div class="accessibility">
-      <button id="colorblind-toggle" onclick="toggleColorblindMode()"
-        style="position: absolute; top: 0px; right: 50px; padding: 5px;">accessibility</button>
       <script>
         console.log("Accessibility script loaded!");
 
@@ -93,134 +64,100 @@
           }
         };
       </script>
-    </div>
-  </div>
 
-  <!-- Navigation Bar -->
-  <nav class="navbar">
-    <div style="background-color:#005192;" class="navdiv">
-      <ul>
-        <li><a style="color:#005192;" href="#"></a></li>
-      </ul>
-    </div>
-  </nav>
 
-  <!-- Signup Form -->
-  <h1 style="margin-top: 40px; margin-bottom: -20px;">Sign Up</h1>
 
-  <form id="signup" th:action="@{/signup}" th:object="${user}" method="post">
-    <!-- Error Messages -->
-    <div th:if="${errorMessage}" style="color: red;">
+<!-- Signup Form -->
+<main class="flex-grow flex flex-col items-center justify-center px-4 py-12">
+  <h1 class="text-4xl font-bold mb-6">Sign Up</h1>
+
+  <form id="signup" th:action="@{/signup}" th:object="${user}" method="post" class="w-full max-w-md bg-white p-6 rounded-lg shadow space-y-4">
+    <div th:if="${errorMessage}" class="text-red-500 text-center">
       <p th:text="${errorMessage}"></p>
     </div>
 
-    <!-- First Name -->
     <div>
-      <label for="firstName">First Name</label>
-      <input style="margin-bottom: -20px;" type="text" id="firstName" th:field="*{firstName}" required />
+      <label for="firstName" class="block text-sm font-medium">First Name</label>
+      <input type="text" id="firstName" th:field="*{firstName}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
-    <br />
 
-    <!-- Last Name -->
     <div>
-      <label for="lastName">Last Name</label>
-      <input style="margin-bottom: -20px;" type="text" id="lastName" th:field="*{lastName}" required />
+      <label for="lastName" class="block text-sm font-medium">Last Name</label>
+      <input type="text" id="lastName" th:field="*{lastName}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
-    <br />
 
-    <!-- Department -->
     <div>
-      <label for="department">Department</label>
-      <select id="department" th:field="*{department}"
-        style="width: 107%; padding: 12px; font-size: 14px; border-radius: 4px; border: 1px solid #CCCCCC;" required>
+      <label for="department" class="block text-sm font-medium">Department</label>
+      <select id="department" th:field="*{department}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
         <option value="">Select Department</option>
-        <option value="adult">Adult</option>
-        <option value="child">Child</option>
+        <option value="Department of Adult Social Care">Department of Adult Social Care</option>
+        <option value="Department of Children’s Services">Department of Children’s Services</option>
+        <option value="Department of Corporate Resources">Department of Corporate Resources</option>
+        <option value="Department of Place">Department of Place</option>
       </select>
     </div>
-    <br />
 
-    <!-- Email Address -->
     <div>
-      <label for="emailAddress">Email Address</label>
-      <input style="margin-bottom: -20px;" type="email" id="emailAddress" th:field="*{emailAddress}" required />
+      <label for="emailAddress" class="block text-sm font-medium">Email Address</label>
+      <input type="email" id="emailAddress" th:field="*{emailAddress}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
-    <br />
 
-    <!-- Password -->
     <div>
-      <label for="password">Password</label>
-      <input style="margin-bottom: -20px;" type="password" id="password" th:field="*{password}" required />
+      <label for="password" class="block text-sm font-medium">Password</label>
+      <input type="password" id="password" th:field="*{password}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
-    <br />
 
-    <!-- Confirm Password -->
     <div>
-      <label for="password_confirmation">Re-enter Password</label>
-      <input type="password" id="password_confirmation" name="password_confirmation" required />
+      <label for="password_confirmation" class="block text-sm font-medium">Re-enter Password</label>
+      <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
     </div>
 
-    <!-- Submit Button -->
-    <div class="container">
-      <div class="center">
-        <div id="signupbtn" style="width: 307%;">
-          <button type="submit">Sign Up</button>
-        </div>
-      </div>
-    </div>
+    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+      Sign Up
+    </button>
 
-    <!-- Login Link -->
-    <a th:href="@{/login}" style="color: black; font-size: 20px; text-decoration: underline;">or login</a>
+    <div class="text-center">
+      <a th:href="@{/login}" class="text-blue-700 underline">or login</a>
+    </div>
   </form>
+</main>
 
-
-  <!-- Footer Section 1 -->
-  <footer class="site-footer">
-    <div class="footer-content">
-      <!-- Contact Information -->
-      <p style="color:white">Council Switchboard: 01274 432111<br><br>
-        Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-        <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
-      </p>
-
-      <!-- Social Media Links -->
-      <div class="footer-social">
-        <a href="https://www.facebook.com/bradfordmdc">
-          <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://x.com/bradfordmdc">
-          <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.linkedin.com/company/bradford-council/">
-          <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.instagram.com/bradfordmdc/">
-          <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;" />
-        </a>
-        <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-          <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;" />
-        </a>
-      </div>
+<!-- Footer Section 1 -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+  <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+    <div class="text-left">
+      <p class="text-sm">Council Switchboard: 01274 432111</p>
+      <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+      <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
     </div>
-  </footer>
-
-  <!-- Footer Section 2 -->
-  <footer class="site-footer-blue">
-    <div class="footer-blue">
-      <!-- Legal Links -->
-      <div class="footer-legal">
-        <a th:href="@{/cookies}">Cookies</a>
-        <a th:href="@{/privacy}">Privacy Notice</a>
-        <a th:href="@{/atoz}">A to Z</a>
-        <a th:href="@{/accessibility}">Accessibility Statement<br></a>
-        <!-- Copyright Notice -->
-        <p style="font-size: 20px;" class="footer-copyright">
-          &copy; 2025 City of Bradford Metropolitan District Council
-        </p>
-      </div>
+    <div class="flex gap-3">
+      <a href="https://www.facebook.com/bradfordmdc">
+        <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
+      </a>
+      <a href="https://x.com/bradfordmdc">
+        <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
+      </a>
+      <a href="https://www.linkedin.com/company/bradford-council/">
+        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
+      </a>
+      <a href="https://www.instagram.com/bradfordmdc/">
+        <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
+      </a>
+      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
+      </a>
     </div>
-  </footer>
+  </div>
+</footer>
 
+<!-- Footer Section 2 -->
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+  <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+  <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+  <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+  <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+  <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
 
   <!-- JavaScript Validation -->
   <script>

@@ -1,138 +1,173 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Dataset List</title>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link rel="stylesheet" th:href="@{/css/CSS.css}"/>
-    <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
-    <script src="./js/validation.js" defer></script>
+
+    <!-- Accessibility Mode Setup -->
+    <script>
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.documentElement.classList.add("colorblind-mode");
+        }
+    </script>
+
+    <style>
+        .colorblind-mode {
+            background-color: black !important;
+            color: yellow !important;
+        }
+
+        .colorblind-mode a,
+        .colorblind-mode p {
+            color: yellow !important;
+        }
+
+        .colorblind-mode .site-footer,
+        .colorblind-mode .site-footer-blue {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        .colorblind-mode .footer-copyright {
+            background-color: black !important;
+        }
+    </style>
 </head>
 
-<body>
+<body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
 
-<!-- Logo and Header -->
-<div class="logo">
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow relative">
     <a th:href="@{/index}">
-        <img th:src="@{/images/logo.png}" alt="Website Logo"/>
+        <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
-</div>
-<div class="header-icons">
-    <a th:href="@{/profile}">
-        <img th:src="@{/images/user.png}" alt="User Profile"/>
-    </a>
-
-    <!-- Search Bar -->
-    <div class="search-bar">
+    <div class="flex items-center gap-4">
         <input type="text" placeholder="Search datasets"
-               style="width: 10%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #cccccc; float:right;">
+               class="border border-gray-300 rounded px-3 py-2 text-sm" />
+        <button id="colorblind-toggle"
+                onclick="toggleColorblindMode()"
+                class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+            Accessibility
+        </button>
+        <a th:href="@{/profile}">
+            <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />
+        </a>
     </div>
+</header>
 
-    <!-- Accessibility Link -->
-    <div class="accessibility">
-        <a th:href="@{/accessibility}"
-           style="color: black; font-size: 20px; text-decoration: underline;">Accessibility</a>
-    </div>
-</div>
+<!-- Accessibility Toggle Script -->
+<script>
+    function toggleColorblindMode() {
+        const body = document.body;
+        const isEnabled = body.classList.toggle("colorblind-mode");
+        localStorage.setItem("colorblindMode", isEnabled);
+    }
 
-<!-- Navigation Bar -->
-<nav class="navbar">
-    <div style="background-color:#005192;" class="navdiv">
-        <ul>
-            <li><a style="color:white;" th:href="@{/index}">HOME</a></li>
-            <li><a style="color:white;" th:href="@{/reset}">RESET PASSWORD</a></li>
-            <li><a style="color:white;" th:href="@{/logs}">LOGS</a></li>
-            <li><a style="color:white;" href="#">USER ACCESS CONTROL</a></li>
-            <li><a style="color:white;" href="#">PERMISSIONS</a></li>
-            <li><a style="color:white;" href="#">LOGOUT</a></li>
-        </ul>
-    </div>
+    window.onload = () => {
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.body.classList.add("colorblind-mode");
+        }
+    };
+</script>
+
+<!-- Navigation -->
+<nav class="bg-blue-900 text-white">
+    <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
+        <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
+        <li><a th:href="@{/reset}" class="hover:underline">RESET PASSWORD</a></li>
+        <li><a th:href="@{/logs}" class="hover:underline">LOGS</a></li>
+        <li><a th:href="@{/access-control}" class="hover:underline">USER ACCESS CONTROL</a></li>
+        <li><a th:href="@{/permissions}" class="hover:underline">PERMISSIONS</a></li>
+        <li><a th:href="@{/logout}" class="hover:underline">LOGOUT</a></li>
+    </ul>
 </nav>
 
-<!-- Dataset Table Section -->
-<div id="dataset-list" class="log-section">
-    <h2>All Uploaded Datasets</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Dataset Name</th>
-            <th>Department</th>
-            <th>Uploaded By</th>
-            <th>Role</th>
-            <th>Upload Date</th>
-            <th>Action</th> <!-- One action column only -->
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dataset : ${datasets}">
-            <td th:text="${dataset.datasetName}"></td>
-            <td th:text="${dataset.department}"></td>
-            <td th:text="${dataset.uploadedBy}"></td>
-            <td th:text="${dataset.role}"></td>
-            <td th:text="${dataset.uploadDate}"></td>
-            <td>
-                    <span th:if="${dataset.approved}">
-                        <a th:href="@{/datasets/download/{name}(name=${dataset.datasetName})}" class="btn btn-success">Download</a>
-                    </span>
-                <span th:if="${!dataset.approved}">
-                        <span th:if="${dataset.requested}">
-                            <button disabled class="btn btn-secondary">Awaiting Approval</button>
-                        </span>
-                        <span th:if="${!dataset.requested}">
-                            <form th:action="@{/permissions/access/request}" method="post">
-                                <input type="hidden" name="datasetName" th:value="${dataset.datasetName}" />
-                                <button type="submit" class="btn btn-primary">Request Access</button>
-                            </form>
-                        </span>
-                    </span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+<!-- Main Content -->
+<main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
+    <h2 class="text-2xl font-semibold text-center mb-6">All Uploaded Datasets</h2>
 
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm border border-gray-300 bg-white shadow-md rounded">
+            <thead class="bg-gray-200 text-left">
+            <tr>
+                <th class="p-3">Dataset Name</th>
+                <th class="p-3">Department</th>
+                <th class="p-3">Uploaded By</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Upload Date</th>
+                <th class="p-3">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dataset : ${datasets}" class="even:bg-gray-50">
+                <td class="p-3" th:text="${dataset.datasetName}"></td>
+                <td class="p-3" th:text="${dataset.department}"></td>
+                <td class="p-3" th:text="${dataset.uploadedBy}"></td>
+                <td class="p-3" th:text="${dataset.role}"></td>
+                <td class="p-3" th:text="${dataset.uploadDate}"></td>
+                <td class="p-3">
+            <span th:if="${dataset.approved}">
+              <a th:href="@{/datasets/download/{name}(name=${dataset.datasetName})}"
+                 class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">Download</a>
+            </span>
+                    <span th:if="${!dataset.approved}">
+              <span th:if="${dataset.requested}">
+                <button disabled class="bg-gray-400 text-white px-3 py-1 rounded text-sm">Awaiting Approval</button>
+              </span>
+              <span th:if="${!dataset.requested}">
+                <form th:action="@{/permissions/access/request}" method="post" class="inline">
+                  <input type="hidden" name="datasetName" th:value="${dataset.datasetName}" />
+                  <button type="submit"
+                          class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">
+                    Request Access
+                  </button>
+                </form>
+              </span>
+            </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
 
 <!-- Footer Section 1 -->
-<footer class="site-footer">
-    <div class="footer-content">
-        <p style="color:white">Council Switchboard: 01274 432111<br><br>
-            Council Address: Britannia House, Hall Ings, Bradford BD1 HW<br><br>
-            <a th:href="@{/contact}" style="font-size: 20px; color: white;">Contact us now</a>
-        </p>
-
-        <div class="footer-social">
+<footer class="bg-gray-800 text-white py-6 px-8">
+    <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-left">
+            <p class="text-sm">Council Switchboard: 01274 432111</p>
+            <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+            <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
+        </div>
+        <div class="flex gap-3">
             <a href="https://www.facebook.com/bradfordmdc">
-                <img th:src="@{/images/facebook.png}" alt="Facebook" style="width:65px; height:60px;"/>
+                <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
             </a>
             <a href="https://x.com/bradfordmdc">
-                <img th:src="@{/images/twitter.png}" alt="Twitter" style="width:65px; height:60px;"/>
+                <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
             </a>
             <a href="https://www.linkedin.com/company/bradford-council/">
-                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" style="width:65px; height:60px;"/>
+                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
             </a>
             <a href="https://www.instagram.com/bradfordmdc/">
-                <img th:src="@{/images/Instagram.png}" alt="Instagram" style="width:65px; height:60px;"/>
+                <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
             </a>
             <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" style="width:65px; height:60px;"/>
+                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
             </a>
         </div>
     </div>
 </footer>
 
 <!-- Footer Section 2 -->
-<footer class="site-footer-blue">
-    <div class="footer-blue">
-        <div class="footer-legal">
-            <a th:href="@{/cookies}">Cookies</a>
-            <a th:href="@{/privacy}">Privacy Notice</a>
-            <a th:href="@{/atoz}">A to Z</a>
-            <a th:href="@{/accessibility}">Accessibility Statement</a>
-            <p style="font-size: 20px;" class="footer-copyright">
-                &copy; 2025 City of Bradford Metropolitan District Council
-            </p>
-        </div>
-    </div>
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+    <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+    <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+    <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+    <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+    <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
 </footer>
 
 </body>
