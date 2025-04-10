@@ -86,14 +86,11 @@
 
 <!-- Main Content -->
 <main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
-    <form th:action="@{/datasets/search}" method="get" class="mb-6 flex flex-wrap gap-4 items-center justify-center">
+    <form th:action="@{/datasets/search}" method="get" class="flex flex-wrap items-end gap-3 mb-6 justify-center">
+        <input type="text" name="keyword" placeholder="Search dataset name or uploaded by"
+               class="border border-gray-300 rounded px-3 py-2 text-sm" />
 
-        <!-- Keyword Search -->
-        <input type="text" name="keyword" placeholder="Search by keyword"
-               class="border border-gray-300 px-3 py-2 rounded text-sm w-60" />
-
-        <!-- Department Filter -->
-        <select name="department" class="border border-gray-300 px-3 py-2 rounded text-sm w-72">
+        <select name="department" class="px-3 py-2 border rounded text-sm">
             <option value="">All Departments</option>
             <option value="Department of Adult Social Care">Department of Adult Social Care</option>
             <option value="Department of Children’s Services">Department of Children’s Services</option>
@@ -101,8 +98,7 @@
             <option value="Department of Place">Department of Place</option>
         </select>
 
-        <!-- Role Filter -->
-        <select name="role" class="border border-gray-300 px-3 py-2 rounded text-sm w-40">
+        <select name="role" class="px-3 py-2 border rounded text-sm">
             <option value="">All Roles</option>
             <option value="Admin">Admin</option>
             <option value="ROLE_USER">User</option>
@@ -112,6 +108,11 @@
                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
             Filter
         </button>
+
+        <a th:href="@{/datasets/list}"
+           class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-sm text-center">
+            Reset Filters
+        </a>
     </form>
 
 

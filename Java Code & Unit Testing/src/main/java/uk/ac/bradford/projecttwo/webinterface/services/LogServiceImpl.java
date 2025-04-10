@@ -28,4 +28,9 @@ public class LogServiceImpl implements LogService{
     public List<LogModel> getLogs() {
         return logRepository.getAllLogs();
     }
+
+    @Override
+    public List<LogModel> filterLogs(String email, String action, String status) {
+        return logRepository.filterLogs(email, action, status);
+    }
 }

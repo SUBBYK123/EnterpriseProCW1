@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import uk.ac.bradford.projecttwo.webinterface.models.LogModel;
 import uk.ac.bradford.projecttwo.webinterface.services.LogService;
 
@@ -23,4 +24,18 @@ public class LogController {
         model.addAttribute("logs", logService.getLogs());
         return "logs"; // logs.html
     }
+
+    @GetMapping("/logs/search")
+    public String filterLogs(
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String action,
+            @RequestParam(required = false) String status,
+            Model model
+    ) {
+        List<LogModel> filteredLogs = logService.filterLogs(email, action, status);
+        model.addAttribute("logs", filteredLogs);
+        return "logs";
+    }
+
+
 }

@@ -63,4 +63,50 @@ public class LogRepositoryImpl implements LogRepository{
         return logs;
 
     }
+
+    @Override
+    public List<LogModel> filterLogs(String email, String action, String status) {
+        List<LogModel> logs = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM logs WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (email != null && !email.isBlank()) {
+            sql.append(" AND email LIKE ?");
+            params.add("%" + email + "%");
+        }
+        if (action != null && !action.isBlank()) {
+            sql.append(" AND action LIKE ?");
+            params.add("%" + action + "%");
+        }
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+
+        sql.append(" ORDER BY timestamp DESC");
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                logs.add(new LogModel(
+                        rs.getInt("id"),
+                        rs.getString("email"),
+                        rs.getString("action"),
+                        rs.getString("status"),
+                        rs.getTimestamp("timestamp").toLocalDateTime()
+                ));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return logs;
+    }
 }

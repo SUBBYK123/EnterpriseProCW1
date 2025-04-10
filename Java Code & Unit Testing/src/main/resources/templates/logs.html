@@ -92,6 +92,27 @@
 
 <!-- Logs Section -->
 <main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
+
+  <!-- 🔍 Log Filter Form -->
+  <form th:action="@{/logs/search}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
+    <input type="text" name="email" placeholder="Email" class="px-3 py-2 border rounded" />
+    <input type="text" name="action" placeholder="Action" class="px-3 py-2 border rounded" />
+    <select name="status" class="px-3 py-2 border rounded">
+      <option value="">All Statuses</option>
+      <option value="SUCCESS">SUCCESS</option>
+      <option value="FAILED">FAILED</option>
+    </select>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
+
+    <!-- 🔁 Reset Filters -->
+    <a th:href="@{/logs}" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 text-center">
+      Reset Filters
+    </a>
+  </form>
+
+
+
   <h2 class="text-2xl font-semibold mb-6 text-center">User Logs</h2>
 
   <div class="overflow-x-auto">

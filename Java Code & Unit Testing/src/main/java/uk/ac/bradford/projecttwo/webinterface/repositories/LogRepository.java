@@ -7,4 +7,5 @@ import java.util.List;
 public interface LogRepository {
     void saveLog(LogModel log);
     List<LogModel> getAllLogs();
+    List<LogModel> filterLogs(String email, String action, String status);
 }
