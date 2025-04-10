@@ -9,4 +9,5 @@ public interface DatasetMetadataRepository {
     List<DatasetMetadataModel> getAllMetadata();
     DatasetMetadataModel findByName(String datasetName);
     DatasetMetadataModel findByNameAndUploader(String datasetName, String uploadedBy);
+    List<DatasetMetadataModel> searchAndFilter(String search, String department, String role);
 }

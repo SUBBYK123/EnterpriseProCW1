@@ -41,12 +41,28 @@ public class PermissionController {
      * Show both dataset and role/department permission requests
      */
     @GetMapping
-    public String showPermissionRequests(Model model,
-                                         @RequestParam(value = "success", required = false) String success,
-                                         @RequestParam(value = "error", required = false) String error) {
+    public String showPermissionRequests(
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "dataset", required = false) String dataset,
+            @RequestParam(value = "department", required = false) String department,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "success", required = false) String success,
+            @RequestParam(value = "error", required = false) String error,
+            Model model
+    ) {
+        List<DatasetAccessRequestModel> datasetRequests;
+        List<PermissionRequestModel> roleRequests;
 
-        List<DatasetAccessRequestModel> datasetRequests = accessRequestService.getAllAccessRequests();
-        List<PermissionRequestModel> roleRequests = permissionRequestService.getAllRequests();
+        boolean hasFilters = email != null || dataset != null || department != null || status != null;
+
+        // If filters are present, search using them; otherwise, fetch all
+        if (hasFilters) {
+            datasetRequests = accessRequestService.searchDatasetRequests(email, dataset, department, status);
+            roleRequests = permissionRequestService.searchPermissionRequests(email, dataset, department, status);
+        } else {
+            datasetRequests = accessRequestService.getAllAccessRequests();
+            roleRequests = permissionRequestService.getAllRequests();
+        }
 
         model.addAttribute("datasetRequests", datasetRequests);
         model.addAttribute("roleRequests", roleRequests);
@@ -56,6 +72,7 @@ public class PermissionController {
 
         return "permissions";
     }
+
 
     /**
      * Approve dataset access request
@@ -161,4 +178,6 @@ public class PermissionController {
         redirectAttributes.addFlashAttribute("success", "Access request submitted successfully.");
         return "redirect:/datasets/list";
     }
+
+
 }

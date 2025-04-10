@@ -11,6 +11,6 @@ public interface DatasetAccessRequestRepository {
     boolean existsByDatasetAndUser(String datasetName, String userEmail);
     DatasetAccessRequestModel findByDatasetNameAndEmail(String datasetName, String email);
     String getRequestEmailById(int requestId);
-
+    List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status);
 
 }

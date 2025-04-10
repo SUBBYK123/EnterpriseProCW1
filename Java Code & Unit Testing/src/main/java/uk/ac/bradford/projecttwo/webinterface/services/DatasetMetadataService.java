@@ -33,4 +33,8 @@ public class DatasetMetadataService {
         return repository.findByNameAndUploader(datasetName, uploadedBy) != null;
     }
 
+    public List<DatasetMetadataModel> searchAndFilter(String search, String department, String role) {
+        return repository.searchAndFilter(search, department, role);
+    }
+
 }

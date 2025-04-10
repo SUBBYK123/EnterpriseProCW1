@@ -12,4 +12,6 @@ public interface PermissionRequestRepository {
     PermissionRequestModel getRequestById(int requestId);
     String getRequestEmailById(int requestId);
     boolean saveDatasetAccessRequest(String email,String department, String datasetList);
+    List<PermissionRequestModel> searchPermissionRequests(String email, String datasetName, String department, String status);
+
 }

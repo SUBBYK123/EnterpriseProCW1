@@ -176,6 +176,51 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
 
     }
 
+    @Override
+    public List<PermissionRequestModel> searchPermissionRequests(String email, String datasetName, String department, String status) {
+        List<PermissionRequestModel> results = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM permission_requests WHERE 1=1");
+
+        List<Object> parameters = new ArrayList<>();
+
+        if (email != null && !email.isBlank()) {
+            sql.append(" AND email LIKE ?");
+            parameters.add("%" + email + "%");
+        }
+        if (datasetName != null && !datasetName.isBlank()) {
+            sql.append(" AND accessible_datasets LIKE ?");
+            parameters.add("%" + datasetName + "%");
+        }
+        if (department != null && !department.isBlank()) {
+            sql.append(" AND department = ?");
+            parameters.add(department);
+        }
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND status = ?");
+            parameters.add(status.toUpperCase());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                PermissionRequestModel req = extractRequestFromResultSet(rs);
+                results.add(req);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+
     private boolean updateStatus(int requestId, String newStatus) {
         String sql = "UPDATE permission_requests SET status = ? WHERE request_id = ? AND status = 'PENDING'";
         try (Connection connection = getConnection();

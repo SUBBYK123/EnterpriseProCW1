@@ -88,4 +88,9 @@ public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestServ
         return request != null && "APPROVED".equalsIgnoreCase(request.getStatus());
     }
 
+    @Override
+    public List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status) {
+        return repository.searchDatasetRequests(email, datasetName, department, status);
+    }
+
 }

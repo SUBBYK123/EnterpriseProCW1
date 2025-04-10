@@ -13,6 +13,7 @@ public interface DatasetAccessRequestService {
     DatasetAccessRequestModel getRequestByDatasetAndEmail(String datasetName, String email);
     String getRequestEmailById(int requestId);
     boolean isApproved(String datasetName, String userEmail);
+    List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status);
 
 
 }

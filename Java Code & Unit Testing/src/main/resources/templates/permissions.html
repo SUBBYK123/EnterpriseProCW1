@@ -89,6 +89,30 @@
 <!-- Main Content -->
 <main class="flex-grow p-6 max-w-7xl mx-auto">
 
+    <!-- 🔍 Search & Filter Form -->
+    <form th:action="@{/permissions}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
+        <input type="text" name="email" placeholder="Search by email" class="px-3 py-2 border rounded" />
+
+        <input type="text" name="dataset" placeholder="Dataset name" class="px-3 py-2 border rounded" />
+
+        <select name="department" class="px-3 py-2 border rounded">
+            <option value="">All Departments</option>
+            <option value="Department of Adult Social Care">Department of Adult Social Care</option>
+            <option value="Department of Children’s Services">Department of Children’s Services</option>
+            <option value="Department of Corporate Resources">Department of Corporate Resources</option>
+            <option value="Department of Place">Department of Place</option>
+        </select>
+
+        <select name="status" class="px-3 py-2 border rounded">
+            <option value="">All Statuses</option>
+            <option value="PENDING">Pending</option>
+            <option value="APPROVED">Approved</option>
+            <option value="DENIED">Denied</option>
+        </select>
+
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
+    </form>
+
     <h1 class="text-3xl font-bold text-center mb-8">Permissions Management</h1>
 
     <div th:if="${success}" class="bg-green-100 text-green-800 p-4 rounded mb-6 text-center font-semibold" th:text="${success}"></div>

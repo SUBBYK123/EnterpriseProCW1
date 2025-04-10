@@ -120,6 +120,54 @@ public class DatasetMetadataRepositoryImpl implements DatasetMetadataRepository 
         return null;
     }
 
+    @Override
+    public List<DatasetMetadataModel> searchAndFilter(String search, String department, String role) {
+        List<DatasetMetadataModel> results = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM dataset_metadata WHERE 1=1");
+        if (search != null && !search.isEmpty()) {
+            sql.append(" AND (dataset_name LIKE ? OR uploaded_by LIKE ?)");
+        }
+        if (department != null && !department.isEmpty()) {
+            sql.append(" AND department = ?");
+        }
+        if (role != null && !role.isEmpty()) {
+            sql.append(" AND role = ?");
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            int index = 1;
+            if (search != null && !search.isEmpty()) {
+                stmt.setString(index++, "%" + search + "%");
+                stmt.setString(index++, "%" + search + "%");
+            }
+            if (department != null && !department.isEmpty()) {
+                stmt.setString(index++, department);
+            }
+            if (role != null && !role.isEmpty()) {
+                stmt.setString(index++, role);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                DatasetMetadataModel meta = new DatasetMetadataModel();
+                meta.setDatasetName(rs.getString("dataset_name"));
+                meta.setDepartment(rs.getString("department"));
+                meta.setUploadedBy(rs.getString("uploaded_by"));
+                meta.setRole(rs.getString("role"));
+                meta.setUploadDate(rs.getTimestamp("upload_date").toLocalDateTime());
+                results.add(meta);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
     private DatasetMetadataModel mapRowToModel(ResultSet rs) throws SQLException {
         DatasetMetadataModel model = new DatasetMetadataModel();
         model.setId(rs.getInt("id"));

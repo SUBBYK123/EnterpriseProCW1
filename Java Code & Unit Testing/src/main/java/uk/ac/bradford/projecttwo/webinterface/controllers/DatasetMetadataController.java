@@ -243,4 +243,17 @@ public class DatasetMetadataController {
         }
     }
 
+    @GetMapping("/search")
+    public String searchDatasets(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String department,
+            @RequestParam(required = false) String role,
+            Model model
+    ) {
+        List<DatasetMetadataModel> filtered = datasetMetadataService.searchAndFilter(keyword, department, role);
+        model.addAttribute("datasets", filtered);
+        return "dataset_list"; // Use same template to display
+    }
+
+
 }

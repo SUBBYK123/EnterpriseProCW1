@@ -2,6 +2,7 @@ package uk.ac.bradford.projecttwo.webinterface.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.ac.bradford.projecttwo.webinterface.models.DatasetAccessRequestModel;
 import uk.ac.bradford.projecttwo.webinterface.models.PermissionRequestModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.PermissionRequestRepository;
 
@@ -53,4 +54,10 @@ public class PermissionRequestServiceImpl implements PermissionRequestService{
     public String getRequestEmailById(int requestId) {
         return permissionRequestRepository.getRequestEmailById(requestId);
     }
+
+    @Override
+    public List<PermissionRequestModel> searchPermissionRequests(String email, String datasetName, String department, String status) {
+        return permissionRequestRepository.searchPermissionRequests(email,datasetName,department,status);
+    }
+
 }

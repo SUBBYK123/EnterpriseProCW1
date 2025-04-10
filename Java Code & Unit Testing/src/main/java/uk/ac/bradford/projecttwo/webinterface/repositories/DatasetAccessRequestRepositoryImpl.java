@@ -146,4 +146,55 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         }
         return null;
     }
+
+    @Override
+    public List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status) {
+        List<DatasetAccessRequestModel> results = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM dataset_access_requests WHERE 1=1");
+
+        List<Object> parameters = new ArrayList<>();
+
+        if (email != null && !email.isBlank()) {
+            sql.append(" AND requested_by LIKE ?");
+            parameters.add("%" + email + "%");
+        }
+        if (datasetName != null && !datasetName.isBlank()) {
+            sql.append(" AND dataset_name LIKE ?");
+            parameters.add("%" + datasetName + "%");
+        }
+        if (department != null && !department.isBlank()) {
+            sql.append(" AND department = ?");
+            parameters.add(department);
+        }
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND status = ?");
+            parameters.add(status.toUpperCase());
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                DatasetAccessRequestModel request = new DatasetAccessRequestModel();
+                request.setId(rs.getInt("id"));
+                request.setRequestedBy(rs.getString("requested_by"));
+                request.setDepartment(rs.getString("department"));
+                request.setDatasetName(rs.getString("dataset_name"));
+                request.setRole(rs.getString("role"));
+                request.setStatus(rs.getString("status"));
+                request.setRequestDate(rs.getTimestamp("request_date").toLocalDateTime());
+                results.add(request);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
 }
