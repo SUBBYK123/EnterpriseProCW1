@@ -248,12 +248,35 @@ public class DatasetMetadataController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String role,
-            Model model
+            Model model,
+            Principal principal
     ) {
         List<DatasetMetadataModel> filtered = datasetMetadataService.searchAndFilter(keyword, department, role);
-        model.addAttribute("datasets", filtered);
-        return "dataset_list"; // Use same template to display
-    }
 
+        String userEmail = null;
+
+        if (principal != null) {
+            userEmail = principal.getName();
+            RegistrationModel user = registrationRepository.findUserByEmail(userEmail);
+            if (user != null) {
+                model.addAttribute("loggedEmail", user.getEmailAddress());
+                model.addAttribute("loggedDepartment", user.getDepartment());
+            }
+        }
+
+        // 🔁 Re-assign access flags on filtered list
+        if (userEmail != null) {
+            for (DatasetMetadataModel metadata : filtered) {
+                boolean accessGranted = datasetAccessRequestService.isApproved(metadata.getDatasetName(), userEmail);
+                boolean alreadyRequested = datasetAccessRequestService.hasUserAlreadyRequested(metadata.getDatasetName(), userEmail);
+
+                metadata.setApproved(accessGranted);
+                metadata.setRequested(alreadyRequested);
+            }
+        }
+
+        model.addAttribute("datasets", filtered);
+        return "dataset_list";
+    }
 
 }
