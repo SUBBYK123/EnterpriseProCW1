@@ -31,27 +31,75 @@ fetch('/api/maps-key')
     .catch(error => console.error("Error fetching API key:", error));
 
 
-// Parse CSV Data
 function parseCSV(csvData, categoryName) {
-    const rows = csvData.split("\n");
-    const headers = rows[0].replace("\uFEFF", "").split(",").map(h => h.trim());
-
-
-    const latIndex = headers.findIndex(header => header.toLowerCase() === "latitude");
-    const lngIndex = headers.findIndex(header => header.toLowerCase() === "longitude");
-
-    if (latIndex === -1 || lngIndex === -1) {
-        alert("No Latitude or Longitude columns found.");
+    const rows = csvData.split("\n").filter(row => row.trim() !== "");
+    if (rows.length < 2) {
+        alert("CSV has insufficient data.");
         return;
     }
-    var errorInDataset = 0;
+
+    const smartCSVsplit = (row) => {
+        const values = [];
+        let current = '';
+        let insideQuotes = false;
+
+        for (let char of row) {
+            if (char === '"') {
+                insideQuotes = !insideQuotes;
+            } else if (char === ',' && !insideQuotes) {
+                values.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        values.push(current.trim());
+        return values;
+    };
+
+    const headers = smartCSVsplit(rows[0]).map(h => h.replace("\uFEFF", "").trim().toLowerCase());
+
+    const latIndex = headers.findIndex(h => ["latitude", "lat", "y"].includes(h));
+    const lngIndex = headers.findIndex(h => ["longitude", "lng", "long", "x"].includes(h));
+    const eastingIndex = headers.findIndex(h => ["easting", "x"].includes(h));
+    const northingIndex = headers.findIndex(h => ["northing", "y"].includes(h));
+    const nameIndex = headers.findIndex(h => ["location", "place", "placename", "name", "address", "site", "landmark", "description","country"].includes(h));
+
+    let useEastingNorthing = latIndex === -1 || lngIndex === -1;
+    if (useEastingNorthing && (eastingIndex === -1 || northingIndex === -1)) {
+        alert("No valid Latitude/Longitude or Easting/Northing columns found.");
+        return;
+    }
+
+    // Set up projection (British National Grid to WGS84)
+    proj4.defs("EPSG:27700", "+proj=tmerc +lat_0=49 +lon_0=-2 " +
+        "+k=0.9996012717 +x_0=400000 +y_0=-100000 " +
+        "+ellps=airy +datum=OSGB36 +units=m +no_defs");
+    proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
+
     const markerColor = markerColors[currentColorIndex % markerColors.length];
     currentColorIndex++;
 
+    let errorInDataset = 0;
+
     const newMarkers = rows.slice(1).map(row => {
-        const columns = row.split(",");
-        const lat = parseFloat(columns[latIndex]);
-        const lng = parseFloat(columns[lngIndex]);
+        const columns = smartCSVsplit(row);
+        let lat, lng;
+
+        if (!useEastingNorthing) {
+            lat = parseFloat(columns[latIndex]);
+            lng = parseFloat(columns[lngIndex]);
+        } else {
+            const easting = parseFloat(columns[eastingIndex]);
+            const northing = parseFloat(columns[northingIndex]);
+            if (!isNaN(easting) && !isNaN(northing)) {
+                const converted = proj4("EPSG:27700", "EPSG:4326", [easting, northing]);
+                lng = converted[0];
+                lat = converted[1];
+            }
+        }
+
+        const name = nameIndex !== -1 ? columns[nameIndex] : "";
 
         if (!isNaN(lat) && !isNaN(lng)) {
             const marker = new google.maps.Marker({
@@ -61,8 +109,14 @@ function parseCSV(csvData, categoryName) {
                 icon: { url: `http://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png` }
             });
 
+            const infoWindowContent = `
+                ${name ? `<strong>Name:</strong> ${name}<br>` : ""}
+                <strong>Latitude:</strong> ${lat}<br>
+                <strong>Longitude:</strong> ${lng}
+            `;
+
             const infoWindow = new google.maps.InfoWindow({
-                content: `<strong>Latitude:</strong> ${lat}<br><strong>Longitude:</strong> ${lng}`
+                content: infoWindowContent
             });
 
             marker.addListener("click", () => {
@@ -71,15 +125,17 @@ function parseCSV(csvData, categoryName) {
 
             return marker;
         } else {
-            errorInDataset += 1;
+            errorInDataset++;
         }
     }).filter(marker => marker !== undefined);
 
     markersByCategory[categoryName] = newMarkers;
     createFilters();
     updateMarkersVisibility();
-    alert(`Dataset successfully added with ${errorInDataset} errors.`);
+    alert(`✅ ${categoryName} added to map with ${errorInDataset} skipped rows.`);
 }
+
+
 
 // Parse JSON Data
 function parseJSON(jsonData, categoryName) {
@@ -161,29 +217,26 @@ function createFilters() {
 
 function uploadDataset(categoryName) {
     const markers = markersByCategory[categoryName];
-
     if (!markers || markers.length === 0) {
         alert("No data available for upload.");
         return;
     }
 
-    // These can be dynamic from user session or form inputs
     const uploadedBy = "admin@bradford.gov.uk";
     const role = "Admin";
     const department = "Geography";
 
+    // Infer columns from marker titles
     const firstMarker = markers[0];
     const infoWindowContent = firstMarker.getTitle();
     let columns = [];
-    let sampleData = {};
 
     if (infoWindowContent.includes("\n")) {
         let rows = infoWindowContent.split("\n");
         rows.forEach(row => {
-            let [key, value] = row.split(":").map(item => item.trim());
-            if (key && value) {
+            let [key] = row.split(":").map(item => item.trim());
+            if (key) {
                 columns.push(key.toLowerCase());
-                sampleData[key.toLowerCase()] = value;
             }
         });
     }
@@ -202,34 +255,41 @@ function uploadDataset(categoryName) {
         return rowData;
     });
 
-    const requestBody = {
-        datasetName: categoryName,
-        department: department,
-        uploadedBy: uploadedBy,
-        role: role,
-        columns: columns,
-        data: datasetData
-    };
+    // Construct CSV as text
+    const csvRows = [];
+    csvRows.push(columns.join(","));
+    datasetData.forEach(row => {
+        const values = columns.map(col => row[col] || "");
+        csvRows.push(values.join(","));
+    });
 
-    console.log("Uploading dataset:", requestBody);
+    const csvContent = csvRows.join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const file = new File([blob], categoryName + ".csv", { type: "text/csv" });
 
-    fetch("/datasets/upload", {
+    // Use FormData to POST to /datasets/upload-stream
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("datasetName", categoryName);
+    formData.append("department", department);
+    formData.append("uploadedBy", uploadedBy);
+    formData.append("role", role);
+
+    fetch("/datasets/upload-stream", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(requestBody)
+        body: formData
     })
-        .then(response => {
-            if (!response.ok) throw new Error("Upload failed");
-            return response.text();
+        .then(response => response.text())
+        .then(message => {
+            console.log("✅", message);
+            alert(message);
         })
-        .then(message => alert(message))
         .catch(error => {
-            console.error("Error uploading dataset:", error);
-            alert("Error uploading dataset: " + error.message);
+            console.error("❌ Upload error:", error);
+            alert("❌ Error uploading dataset: " + error.message);
         });
 }
+
 
 // Update marker visibility based on checkbox selection
 function updateMarkersVisibility() {

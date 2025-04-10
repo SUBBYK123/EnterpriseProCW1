@@ -172,7 +172,9 @@ public class DatasetMetadataController {
         }
 
         // Path to the dataset file (assumes it's saved in a local 'datasets' folder)
-        Path path = Paths.get("datasets", datasetName + ".csv");
+        Path path = Paths.get("src/main/resources/datasets/download", datasetName + ".csv");
+        System.out.println("📥 Downloading from: " + path.toAbsolutePath());
+
 
         if (!Files.exists(path)) {
             return ResponseEntity.status(404).body("Dataset not found.");

@@ -4,8 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.bradford.projecttwo.webinterface.models.UploadDatasetModel;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.*;
 import java.util.Arrays;
 import java.util.Map;
@@ -25,15 +24,21 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
     @Override
     public boolean uploadDataset(UploadDatasetModel model) {
         String tableName = model.getDatasetName().replaceAll("[^a-zA-Z0-9_]", "_");
-        String createSQL = "CREATE TABLE IF NOT EXISTS " + tableName + " (id INT AUTO_INCREMENT PRIMARY KEY, " +
-                model.getColumns().stream().map(col -> col + " VARCHAR(255)").collect(Collectors.joining(", ")) + ")";
+
+        // ✅ Quote columns using backticks to handle special characters
+        String createSQL = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (id INT AUTO_INCREMENT PRIMARY KEY, " +
+                model.getColumns().stream()
+                        .map(col -> "`" + col + "` VARCHAR(255)")
+                        .collect(Collectors.joining(", ")) + ")";
 
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute(createSQL);
 
             for (Map<String, Object> row : model.getData()) {
-                String insertSQL = "INSERT INTO " + tableName + " (" +
-                        String.join(", ", model.getColumns()) + ") VALUES (" +
+                // ✅ Quote column names in INSERT query too
+                String insertSQL = "INSERT INTO `" + tableName + "` (" +
+                        model.getColumns().stream().map(col -> "`" + col + "`").collect(Collectors.joining(", ")) +
+                        ") VALUES (" +
                         model.getColumns().stream().map(c -> "?").collect(Collectors.joining(", ")) + ")";
 
                 try (PreparedStatement pstmt = conn.prepareStatement(insertSQL)) {
@@ -61,15 +66,37 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         return false;
     }
 
+
     @Override
     public boolean uploadDatasetStreamed(String datasetName, String department, String uploadedBy, String role, MultipartFile file) {
-        String tableName = datasetName.replaceAll("[^a-zA-Z0-9_]", "_");
+
+        System.out.println("📥 uploadDatasetStreamed() called for: " + datasetName);
+
+        String normalisedName = datasetName.trim().replaceAll("[^a-zA-Z0-9_]", "_").toLowerCase();
 
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
+            // ✅ Save the file to 'datasets' directory BEFORE using the stream
+            File outputDir = new File("src/main/resources/datasets/download");
+            if (!outputDir.exists()) outputDir.mkdirs();
+
+            File outputFile = new java.io.File(outputDir, datasetName + ".csv");
+            System.out.println("✅ Trying to write dataset to: " + outputFile.getAbsolutePath());
+
+            try (InputStream in = file.getInputStream();
+                 OutputStream out = new FileOutputStream(outputFile)) {
+                in.transferTo(out);
+                System.out.println("✅ File saved successfully.");
+            }
+            catch(Exception e){
+                System.err.println("❌ Failed to save file: " + e.getMessage());
+                e.printStackTrace();
+            }
+
             // 1. Read the file
-            BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(outputFile)));
+
             String headerLine = reader.readLine(); // e.g. "name,latitude,longitude"
             if (headerLine == null) return false;
 
@@ -80,7 +107,7 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
             }
 
             // 2. Create table if it doesn't exist
-            String createSQL = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (id INT AUTO_INCREMENT PRIMARY KEY, " +
+            String createSQL = "CREATE TABLE IF NOT EXISTS `" + normalisedName + "` (id INT AUTO_INCREMENT PRIMARY KEY, " +
                     Arrays.stream(columns)
                             .map(col -> "`" + col.trim() + "` VARCHAR(255)")
                             .collect(Collectors.joining(", ")) +
@@ -90,7 +117,7 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
             }
 
             // 3. Prepare insert statement
-            String insertSQL = "INSERT INTO `" + tableName + "` (" +
+            String insertSQL = "INSERT INTO `" + normalisedName + "` (" +
                     Arrays.stream(columns).map(String::trim).collect(Collectors.joining(", ")) +
                     ") VALUES (" +
                     Arrays.stream(columns).map(col -> "?").collect(Collectors.joining(", ")) +
@@ -142,7 +169,7 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
 
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
 }
