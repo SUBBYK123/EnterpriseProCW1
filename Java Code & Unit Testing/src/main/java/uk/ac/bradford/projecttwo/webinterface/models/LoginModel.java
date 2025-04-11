@@ -16,6 +16,9 @@ public class LoginModel {
 
     private String role;
 
+
+
+
     /**
      * Constructor to initialize the login model with email and password.
      *

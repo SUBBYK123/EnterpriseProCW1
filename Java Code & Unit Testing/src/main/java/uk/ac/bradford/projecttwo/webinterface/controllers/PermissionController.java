@@ -17,6 +17,10 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Controller for managing permission requests in the admin section.
+ * This class handles viewing, approving, and denying dataset access and role/department permission requests.
+ */
 @Controller
 @RequestMapping("/admin/permissions")
 public class PermissionController {
@@ -26,6 +30,14 @@ public class PermissionController {
     private final LogServiceImpl logService;
     private final PermissionRequestService permissionRequestService;
 
+    /**
+     * Constructor for initializing the PermissionController with required services.
+     *
+     * @param accessRequestService Service to manage dataset access requests.
+     * @param registrationRepository Repository to access user registration data.
+     * @param logService Service to log actions performed in the system.
+     * @param permissionRequestService Service to manage role/department permission requests.
+     */
     @Autowired
     public PermissionController(DatasetAccessRequestService accessRequestService,
                                 RegistrationRepositoryImpl registrationRepository,
@@ -38,7 +50,17 @@ public class PermissionController {
     }
 
     /**
-     * Show both dataset and role/department permission requests
+     * Displays both dataset and role/department permission requests.
+     * Allows filtering by email, dataset, department, and status.
+     *
+     * @param email Filter by email address (optional).
+     * @param dataset Filter by dataset name (optional).
+     * @param department Filter by department (optional).
+     * @param status Filter by status (optional).
+     * @param success Message for successful actions (optional).
+     * @param error Message for errors (optional).
+     * @param model The model object to pass data to the view.
+     * @return The name of the view template to render ("admin/permissions").
      */
     @GetMapping
     public String showPermissionRequests(
@@ -70,12 +92,15 @@ public class PermissionController {
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
 
-        return "admin/permissions";
+        return "admin/permissions"; // Render the permissions view
     }
 
-
     /**
-     * Approve dataset access request
+     * Approves a dataset access request.
+     *
+     * @param requestId The ID of the request to approve.
+     * @param redirectAttributes The attributes used to redirect and show success/error messages.
+     * @return Redirects to the permissions page with a success or error message.
      */
     @PostMapping("/approve-dataset/{id}")
     public String approveDatasetRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
@@ -88,9 +113,16 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error approving dataset access.");
         }
-        return "redirect:/admin/permissions"; // ✅
+        return "redirect:/admin/permissions"; // Redirect back to the permissions page
     }
 
+    /**
+     * Denies a dataset access request.
+     *
+     * @param requestId The ID of the request to deny.
+     * @param redirectAttributes The attributes used to redirect and show success/error messages.
+     * @return Redirects to the permissions page with a success or error message.
+     */
     @PostMapping("/deny-dataset/{id}")
     public String denyDatasetRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -102,9 +134,16 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error denying dataset access.");
         }
-        return "redirect:/admin/permissions"; // ✅
+        return "redirect:/admin/permissions"; // Redirect back to the permissions page
     }
 
+    /**
+     * Approves a role/department permission request.
+     *
+     * @param requestId The ID of the request to approve.
+     * @param redirectAttributes The attributes used to redirect and show success/error messages.
+     * @return Redirects to the permissions page with a success or error message.
+     */
     @PostMapping("/approve/{id}")
     public String approveRoleRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -116,9 +155,16 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error approving role/department request.");
         }
-        return "redirect:/admin/permissions"; // ✅
+        return "redirect:/admin/permissions"; // Redirect back to the permissions page
     }
 
+    /**
+     * Denies a role/department permission request.
+     *
+     * @param requestId The ID of the request to deny.
+     * @param redirectAttributes The attributes used to redirect and show success/error messages.
+     * @return Redirects to the permissions page with a success or error message.
+     */
     @PostMapping("/deny/{id}")
     public String denyRoleRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -130,8 +176,6 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error denying role/department request.");
         }
-        return "redirect:/admin/permissions"; // ✅
+        return "redirect:/admin/permissions"; // Redirect back to the permissions page
     }
-
-
 }

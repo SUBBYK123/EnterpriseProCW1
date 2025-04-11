@@ -21,6 +21,9 @@ public class GoogleMapsController {
     /**
      * Provides the Google Maps API key via a REST endpoint.
      *
+     * This endpoint is used by the frontend to access the Google Maps API
+     * for map-related features like geospatial asset visualization.
+     *
      * @return The Google Maps API key as a string.
      */
     @GetMapping("/api/maps-key")

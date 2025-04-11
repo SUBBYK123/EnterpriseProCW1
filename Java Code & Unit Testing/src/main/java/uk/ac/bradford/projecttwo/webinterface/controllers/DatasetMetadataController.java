@@ -21,7 +21,6 @@ import uk.ac.bradford.projecttwo.webinterface.services.UploadDatasetService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,26 +31,49 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller to manage dataset-related operations for the users and admin,
+ * including uploading datasets, searching datasets, downloading datasets, and handling dataset access requests.
+ */
 @Controller
 @RequestMapping("/datasets")
 public class DatasetMetadataController {
 
+    private final UploadDatasetService uploadDatasetService;
+    private final DatasetMetadataService datasetMetadataService;
+    private final LoginServiceImpl loginService;
+    private final RegistrationRepositoryImpl registrationRepository;
+    private final DatasetAccessRequestServiceImpl datasetAccessRequestService;
+
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param uploadDatasetService Service for dataset uploads.
+     * @param datasetMetadataService Service for handling dataset metadata.
+     * @param loginService Service for managing login operations.
+     * @param registrationRepository Repository for user registration data.
+     * @param datasetAccessRequestService Service for handling dataset access requests.
+     */
     @Autowired
-    private UploadDatasetService uploadDatasetService;
+    public DatasetMetadataController(UploadDatasetService uploadDatasetService,
+                                     DatasetMetadataService datasetMetadataService,
+                                     LoginServiceImpl loginService,
+                                     RegistrationRepositoryImpl registrationRepository,
+                                     DatasetAccessRequestServiceImpl datasetAccessRequestService) {
+        this.uploadDatasetService = uploadDatasetService;
+        this.datasetMetadataService = datasetMetadataService;
+        this.loginService = loginService;
+        this.registrationRepository = registrationRepository;
+        this.datasetAccessRequestService = datasetAccessRequestService;
+    }
 
-    @Autowired
-    private DatasetMetadataService datasetMetadataService;
-
-    @Autowired
-    private LoginServiceImpl loginService;
-
-    @Autowired
-    private RegistrationRepositoryImpl registrationRepository;
-
-    @Autowired
-    private DatasetAccessRequestServiceImpl datasetAccessRequestService;
-
-
+    /**
+     * Displays the index page of datasets for the user, including user details if logged in.
+     *
+     * @param model The model to hold attributes for the view.
+     * @param principal The currently authenticated user.
+     * @return The name of the view to display the datasets index.
+     */
     @GetMapping("/index")
     public String indexPage(Model model, Principal principal) {
         if (principal != null) {
@@ -69,6 +91,19 @@ public class DatasetMetadataController {
         return "index";
     }
 
+    /**
+     * Handles the uploading of a dataset, including processing the dataset metadata and content.
+     *
+     * @param datasetName The name of the dataset.
+     * @param department The department associated with the dataset.
+     * @param uploadedBy The user uploading the dataset.
+     * @param role The role of the user uploading the dataset.
+     * @param columnsJson JSON string containing dataset column names.
+     * @param dataJson JSON string containing dataset content.
+     * @param file The file containing the dataset.
+     * @param principal The currently authenticated user.
+     * @return A ResponseEntity with the result of the upload process.
+     */
     @PostMapping("/upload")
     @ResponseBody
     public ResponseEntity<String> uploadDataset(
@@ -134,11 +169,19 @@ public class DatasetMetadataController {
         }
     }
 
+    /**
+     * Handles the downloading of a dataset for an authorized user.
+     * Verifies that the user has been granted access to the dataset.
+     *
+     * @param datasetName The name of the dataset to download.
+     * @param principal The currently authenticated user.
+     * @return A ResponseEntity containing the dataset file if the user has access, otherwise an error message.
+     */
     @GetMapping("/download/{datasetName}")
     public ResponseEntity<?> downloadDataset(@PathVariable String datasetName, Principal principal) {
         String userEmail = principal.getName();
 
-        // Check if the user has approved access (you must have this method implemented)
+        // Check if the user has approved access
         DatasetAccessRequestModel request = datasetAccessRequestService.getRequestByDatasetAndEmail(datasetName, userEmail);
 
         if (request == null || !"APPROVED".equalsIgnoreCase(request.getStatus())) {
@@ -147,9 +190,6 @@ public class DatasetMetadataController {
 
         // Path to the dataset file (assumes it's saved in a local 'datasets' folder)
         Path path = Paths.get("src/main/resources/datasets/download", datasetName + ".csv");
-        System.out.println("📥 Downloading from: " + path.toAbsolutePath());
-
-
         if (!Files.exists(path)) {
             return ResponseEntity.status(404).body("Dataset not found.");
         }
@@ -168,6 +208,17 @@ public class DatasetMetadataController {
         }
     }
 
+    /**
+     * Handles the upload of a dataset using streaming.
+     *
+     * @param file The file containing the dataset.
+     * @param datasetName The name of the dataset.
+     * @param department The department associated with the dataset.
+     * @param uploadedBy The user uploading the dataset.
+     * @param role The role of the user uploading the dataset.
+     * @param principal The currently authenticated user.
+     * @return A ResponseEntity indicating the result of the upload operation.
+     */
     @PostMapping("/upload-stream")
     @ResponseBody
     public ResponseEntity<String> uploadDatasetStream(
@@ -193,7 +244,6 @@ public class DatasetMetadataController {
 
             boolean success = uploadDatasetService.uploadDatasetStreamed(datasetName, finalDepartment, finalEmail, role, file);
 
-
             if (success) {
                 DatasetMetadataModel metadata = new DatasetMetadataModel();
                 metadata.setDatasetName(datasetName);
@@ -217,6 +267,16 @@ public class DatasetMetadataController {
         }
     }
 
+    /**
+     * Searches and filters datasets based on keyword, department, and role.
+     *
+     * @param keyword The keyword to search for in dataset names.
+     * @param department The department to filter datasets by.
+     * @param role The role to filter datasets by.
+     * @param model The model to hold attributes for the view.
+     * @param principal The currently authenticated user.
+     * @return The view name to display the filtered list of datasets.
+     */
     @GetMapping("/search")
     public String searchDatasets(
             @RequestParam(required = false) String keyword,
@@ -253,6 +313,14 @@ public class DatasetMetadataController {
         return "user/dataset_list";
     }
 
+    /**
+     * Handles the request for access to a dataset by the user.
+     *
+     * @param datasetName The name of the dataset to request access for.
+     * @param principal The currently authenticated user.
+     * @param redirectAttributes The redirect attributes to hold flash messages.
+     * @return Redirects to the dataset list view.
+     */
     @PostMapping("/request-access")
     public String handleAccessRequest(
             @RequestParam("datasetName") String datasetName,
@@ -290,6 +358,4 @@ public class DatasetMetadataController {
 
         return "redirect:/user/datasets/list";
     }
-
-
 }
