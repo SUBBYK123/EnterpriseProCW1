@@ -32,7 +32,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
                 response.sendRedirect("/admin/dashboard");
                 return;
             } else if (authority.getAuthority().equals("USER")) {
-                response.sendRedirect("/user/dashboard");
+                response.sendRedirect("/user/home");
                 return;
             }
         }
