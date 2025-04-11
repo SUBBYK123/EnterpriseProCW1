@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Dataset List</title>
+
+    <!-- Accessibility Mode Setup -->
+    <script>
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.documentElement.classList.add("colorblind-mode");
+        }
+    </script>
+
+    <style>
+        .colorblind-mode {
+            background-color: black !important;
+            color: yellow !important;
+        }
+
+        .colorblind-mode a,
+        .colorblind-mode p {
+            color: yellow !important;
+        }
+
+        .colorblind-mode .site-footer,
+        .colorblind-mode .site-footer-blue {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        .colorblind-mode .footer-copyright {
+            background-color: black !important;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
+
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow relative">
+    <a th:href="@{/index}">
+        <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
+    </a>
+    <div class="flex items-center gap-4">
+        <input type="text" placeholder="Search datasets"
+               class="border border-gray-300 rounded px-3 py-2 text-sm" />
+        <button id="colorblind-toggle"
+                onclick="toggleColorblindMode()"
+                class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+            Accessibility
+        </button>
+        <a th:href="@{/profile}">
+            <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />
+        </a>
+    </div>
+</header>
+
+<!-- Accessibility Toggle Script -->
+<script>
+    function toggleColorblindMode() {
+        const body = document.body;
+        const isEnabled = body.classList.toggle("colorblind-mode");
+        localStorage.setItem("colorblindMode", isEnabled);
+    }
+
+    window.onload = () => {
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.body.classList.add("colorblind-mode");
+        }
+    };
+</script>
+
+<!-- Navigation -->
+<nav class="bg-blue-900 text-white">
+    <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
+        <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
+        <li><a th:href="@{/reset}" class="hover:underline">RESET PASSWORD</a></li>
+        <li><a th:href="@{/logs}" class="hover:underline">LOGS</a></li>
+        <li><a th:href="@{/access-control}" class="hover:underline">USER ACCESS CONTROL</a></li>
+        <li><a th:href="@{/permissions}" class="hover:underline">PERMISSIONS</a></li>
+        <li><a th:href="@{/logout}" class="hover:underline">LOGOUT</a></li>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
+    <form th:action="@{/datasets/search}" method="get" class="flex flex-wrap items-end gap-3 mb-6 justify-center">
+        <input type="text" name="keyword" placeholder="Search dataset name or uploaded by"
+               class="border border-gray-300 rounded px-3 py-2 text-sm" />
+
+        <select name="department" class="px-3 py-2 border rounded text-sm">
+            <option value="">All Departments</option>
+            <option value="Department of Adult Social Care">Department of Adult Social Care</option>
+            <option value="Department of Children’s Services">Department of Children’s Services</option>
+            <option value="Department of Corporate Resources">Department of Corporate Resources</option>
+            <option value="Department of Place">Department of Place</option>
+        </select>
+
+        <select name="role" class="px-3 py-2 border rounded text-sm">
+            <option value="">All Roles</option>
+            <option value="Admin">Admin</option>
+            <option value="ROLE_USER">User</option>
+        </select>
+
+        <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+            Filter
+        </button>
+
+        <a th:href="@{/datasets/list}"
+           class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-sm text-center">
+            Reset Filters
+        </a>
+    </form>
+
+
+    <h2 class="text-2xl font-semibold text-center mb-6">All Uploaded Datasets</h2>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm border border-gray-300 bg-white shadow-md rounded">
+            <thead class="bg-gray-200 text-left">
+            <tr>
+                <th class="p-3">Dataset Name</th>
+                <th class="p-3">Department</th>
+                <th class="p-3">Uploaded By</th>
+                <th class="p-3">Role</th>
+                <th class="p-3">Upload Date</th>
+                <th class="p-3">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="dataset : ${datasets}" class="even:bg-gray-50">
+                <td class="p-3" th:text="${dataset.datasetName}"></td>
+                <td class="p-3" th:text="${dataset.department}"></td>
+                <td class="p-3" th:text="${dataset.uploadedBy}"></td>
+                <td class="p-3" th:text="${dataset.role}"></td>
+                <td class="p-3" th:text="${dataset.uploadDate}"></td>
+                <td class="p-3 flex flex-wrap gap-2">
+                    <a th:href="@{'/user/datasets/view/' + ${dataset.datasetName}}"
+                       class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm">View</a>
+
+                    <!-- Download Button if approved -->
+                    <a th:if="${dataset.approved}" th:href="@{'/datasets/download/' + ${dataset.datasetName}}">
+                        <button class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">Download</button>
+                    </a>
+
+                    <!-- Request Access Form if not requested -->
+                    <form th:if="${!dataset.approved and !dataset.requested}" method="post" th:action="@{/datasets/request-access}" class="inline">
+                        <input type="hidden" name="datasetName" th:value="${dataset.datasetName}" />
+                        <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">Request Access</button>
+                    </form>
+
+                    <!-- Pending Text if already requested but not approved -->
+                    <span th:if="${!dataset.approved and dataset.requested}" class="text-yellow-600 font-medium px-3 py-1">Access Request Pending...</span>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Footer Section 1 -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+    <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-left">
+            <p class="text-sm">Council Switchboard: 01274 432111</p>
+            <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+            <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
+        </div>
+        <div class="flex gap-3">
+            <a href="https://www.facebook.com/bradfordmdc">
+                <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
+            </a>
+            <a href="https://x.com/bradfordmdc">
+                <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
+            </a>
+            <a href="https://www.linkedin.com/company/bradford-council/">
+                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
+            </a>
+            <a href="https://www.instagram.com/bradfordmdc/">
+                <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
+            </a>
+            <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
+            </a>
+        </div>
+    </div>
+</footer>
+
+<!-- Footer Section 2 -->
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+    <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+    <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+    <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+    <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+    <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
+
+</body>
+</html>

@@ -168,6 +168,43 @@ public class DatasetMetadataRepositoryImpl implements DatasetMetadataRepository 
         return results;
     }
 
+    @Override
+    public void updateMetadata(String oldName, DatasetMetadataModel updated) {
+        String sql = "UPDATE dataset_metadata SET dataset_name = ?, department = ?, uploaded_by = ?, role = ? WHERE dataset_name = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, updated.getDatasetName());
+            stmt.setString(2, updated.getDepartment());
+            stmt.setString(3, updated.getUploadedBy());
+            stmt.setString(4, updated.getRole());
+            stmt.setString(5, oldName);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteByName(String datasetName) {
+        String sql = "DELETE FROM dataset_metadata WHERE dataset_name = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, datasetName);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     private DatasetMetadataModel mapRowToModel(ResultSet rs) throws SQLException {
         DatasetMetadataModel model = new DatasetMetadataModel();
         model.setId(rs.getInt("id"));

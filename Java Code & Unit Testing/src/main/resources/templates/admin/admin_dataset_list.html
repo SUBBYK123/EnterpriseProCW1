@@ -137,25 +137,21 @@
                 <td class="p-3" th:text="${dataset.uploadedBy}"></td>
                 <td class="p-3" th:text="${dataset.role}"></td>
                 <td class="p-3" th:text="${dataset.uploadDate}"></td>
-                <td class="p-3">
-            <span th:if="${dataset.approved}">
-              <a th:href="@{/datasets/download/{name}(name=${dataset.datasetName})}"
-                 class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">Download</a>
-            </span>
-                    <span th:if="${!dataset.approved}">
-              <span th:if="${dataset.requested}">
-                <button disabled class="bg-gray-400 text-white px-3 py-1 rounded text-sm">Awaiting Approval</button>
-              </span>
-              <span th:if="${!dataset.requested}">
-                <form th:action="@{/permissions/access/request}" method="post" class="inline">
-                  <input type="hidden" name="datasetName" th:value="${dataset.datasetName}" />
-                  <button type="submit"
-                          class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">
-                    Request Access
-                  </button>
-                </form>
-              </span>
-            </span>
+                <td class="p-3 flex gap-2 flex-wrap">
+                    <a th:href="@{'/admin/datasets/view/' + ${dataset.datasetName}}"
+                       class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm">View</a>
+
+                    <a th:href="@{'/admin/datasets/edit/' + ${dataset.datasetName}}"
+                       class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm">Edit</a>
+
+                    <form th:action="@{'/admin/datasets/delete/' + ${dataset.datasetName}}" method="post"
+                          class="inline"
+                          onsubmit="return confirm('Are you sure you want to delete this dataset?');">
+                        <button type="submit"
+                                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
             </tbody>

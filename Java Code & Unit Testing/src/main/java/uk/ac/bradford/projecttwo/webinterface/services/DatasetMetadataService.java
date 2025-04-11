@@ -37,4 +37,15 @@ public class DatasetMetadataService {
         return repository.searchAndFilter(search, department, role);
     }
 
+
+    public void deleteDatasetByName(String datasetName) {
+        repository.deleteByName(datasetName);
+    }
+
+
+    public void updateDatasetMetadata(String oldName, DatasetMetadataModel updated) {
+        repository.updateMetadata(oldName, updated);
+    }
+
+
 }

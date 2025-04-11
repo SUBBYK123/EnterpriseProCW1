@@ -19,13 +19,13 @@ public class LogController {
         this.logService = logService;
     }
 
-    @GetMapping("/logs")
+    @GetMapping("/admin/logs")
     public String showLogs(Model model) {
         model.addAttribute("logs", logService.getLogs());
-        return "logs"; // logs.html
+        return "admin/logs"; // logs.html
     }
 
-    @GetMapping("/logs/search")
+    @GetMapping("/admin/logs/search")
     public String filterLogs(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String action,
@@ -34,7 +34,7 @@ public class LogController {
     ) {
         List<LogModel> filteredLogs = logService.filterLogs(email, action, status);
         model.addAttribute("logs", filteredLogs);
-        return "logs";
+        return "admin/logs";
     }
 
 

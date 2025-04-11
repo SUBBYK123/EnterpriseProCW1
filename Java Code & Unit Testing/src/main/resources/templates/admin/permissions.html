@@ -49,7 +49,7 @@
         </button>
 
         <!-- Profile Icon -->
-        <a th:href="@{/profile}" title="Profile">
+        <a th:href="@{/admin/dashboard}" title="Profile">
             <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border border-gray-300" />
         </a>
     </div>
@@ -90,7 +90,7 @@
 <main class="flex-grow p-6 max-w-7xl mx-auto">
 
     <!-- 🔍 Search & Filter Form -->
-    <form th:action="@{/permissions}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
+    <form th:action="@{/admin/permissions}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
         <input type="text" name="email" placeholder="Search by email" class="px-3 py-2 border rounded" />
         <input type="text" name="dataset" placeholder="Dataset name" class="px-3 py-2 border rounded" />
 
@@ -112,7 +112,7 @@
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
 
         <!-- 🔁 Reset Filters Button -->
-        <a th:href="@{/permissions}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-center">
+        <a th:href="@{/admin/permissions}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-center">
             Reset Filters
         </a>
     </form>
@@ -147,10 +147,10 @@
                 <td class="p-2" th:text="${#temporals.format(request.requestDate, 'dd MMM yyyy HH:mm')}"></td>
                 <td class="p-2">
                     <div th:if="${request.status == 'PENDING'}" class="flex flex-col gap-1">
-                        <form th:action="@{/permissions/approve-dataset/{id}(id=${request.id})}" method="post">
+                        <form th:action="@{/admin/permissions/approve-dataset/{id}(id=${request.id})}" method="post">
                             <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
                         </form>
-                        <form th:action="@{/permissions/deny-dataset/{id}(id=${request.id})}" method="post">
+                        <form th:action="@{/admin/permissions/deny-dataset/{id}(id=${request.id})}" method="post">
                             <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
                         </form>
                     </div>
@@ -191,11 +191,13 @@
                 <td class="p-2" th:text="${req.status}"></td>
                 <td class="p-2">
                     <div th:if="${req.status == 'PENDING'}" class="flex flex-col gap-1">
-                        <form th:action="@{/permissions/approve/{id}(id=${req.requestId})}" method="post">
-                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
+                        <form th:action="@{/admin/permissions/approve/{id}(id=${req.requestId})}" method="post">
+
+                        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
                         </form>
-                        <form th:action="@{/permissions/deny/{id}(id=${req.requestId})}" method="post">
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
+                        <form th:action="@{/admin/permissions/deny/{id}(id=${req.requestId})}" method="post">
+
+                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
                         </form>
                     </div>
                 </td>

@@ -6,8 +6,7 @@ import uk.ac.bradford.projecttwo.webinterface.models.UploadDatasetModel;
 
 import java.io.*;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -172,4 +171,40 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         }
         return false;
     }
+
+    @Override
+    public List<Map<String, Object>> getDatasetContent(String datasetName) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        String query = "SELECT * FROM `" + datasetName + "`";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int columnCount = meta.getColumnCount();
+
+            while (rs.next()) {
+                Map<String, Object> row = new LinkedHashMap<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.put(meta.getColumnName(i), rs.getObject(i));
+                }
+                rows.add(row);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
+
+    @Override
+    public void deleteDatasetFile(String datasetName) {
+        File file = new File("src/main/resources/datasets/download/" + datasetName + ".csv");
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
 }

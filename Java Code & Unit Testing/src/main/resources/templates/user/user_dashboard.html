@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen">
+
+<header class="bg-blue-700 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">User Dashboard</h1>
+    <a th:href="@{/logout}" class="bg-white text-blue-700 px-4 py-2 rounded hover:bg-gray-100">Logout</a>
+</header>
+
+<main class="max-w-4xl mx-auto p-6">
+    <h2 class="text-2xl font-semibold mb-4">Welcome, User!</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <a href="/datasets/list" class="bg-white p-4 shadow rounded hover:shadow-lg transition">
+            <h3 class="text-lg font-medium mb-2">View Datasets</h3>
+            <p class="text-sm text-gray-600">Search and filter available datasets.</p>
+        </a>
+        <a href="/permissions" class="bg-white p-4 shadow rounded hover:shadow-lg transition">
+            <h3 class="text-lg font-medium mb-2">My Requests</h3>
+            <p class="text-sm text-gray-600">Check status of your access requests.</p>
+        </a>
+    </div>
+</main>
+
+</body>
+</html>

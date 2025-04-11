@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Viewing: ' + ${datasetName}">Dataset View</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-900 px-6 py-10">
+
+<div class="max-w-screen-xl mx-auto">
+    <h1 class="text-2xl font-semibold mb-6" th:text="'Viewing Dataset: ' + ${datasetName}"></h1>
+
+    <div th:if="${data != null and !data.isEmpty()}" class="overflow-x-auto bg-white shadow-md rounded">
+        <table class="min-w-full border text-sm">
+            <thead class="bg-gray-200 text-left">
+            <tr>
+                <th th:each="header : ${data[0].keySet()}" th:text="${header}" class="p-3 border">Header</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="row : ${data}" class="even:bg-gray-50">
+                <td th:each="cell : ${row.values()}" th:text="${cell}" class="p-3 border">Value</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${data == null or data.isEmpty()}" class="bg-yellow-100 text-yellow-800 p-4 rounded shadow">
+        <p>No data found for this dataset.</p>
+    </div>
+
+    <div class="mt-6">
+        <a th:href="@{/admin/datasets}" class="text-blue-600 hover:underline">&larr; Back to Dataset List</a>
+    </div>
+</div>
+
+</body>
+</html>

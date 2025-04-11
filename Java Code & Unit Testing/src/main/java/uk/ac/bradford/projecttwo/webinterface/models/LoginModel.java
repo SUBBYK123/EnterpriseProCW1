@@ -14,15 +14,18 @@ public class LoginModel {
     // Password of the user (used for authentication)
     private String password;
 
+    private String role;
+
     /**
      * Constructor to initialize the login model with email and password.
      *
      * @param emailAddress The email address of the user.
      * @param password The password of the user.
      */
-    public LoginModel(String emailAddress, String password) {
+    public LoginModel(String emailAddress, String password, String role) {
         this.emailAddress = emailAddress;
         this.password = password;
+        this.role = role;
     }
 
     /**
@@ -77,5 +80,13 @@ public class LoginModel {
      */
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

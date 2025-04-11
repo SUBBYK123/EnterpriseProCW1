@@ -84,7 +84,8 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
 
     @Override
     public boolean existsByDatasetAndUser(String datasetName, String userEmail) {
-        String query = "SELECT COUNT(*) FROM dataset_access_requests WHERE dataset_name = ? AND requested_by = ?";
+        String query = "SELECT COUNT(*) FROM dataset_access_requests " +
+                "WHERE dataset_name = ? AND requested_by = ? AND status = 'PENDING'";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -132,7 +133,8 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
 
     @Override
     public String getRequestEmailById(int requestId) {
-        String sql = "SELECT requested_by FROM dataset_access_requests WHERE request_id = ?";
+        String sql = "SELECT requested_by FROM dataset_access_requests WHERE id = ?";
+        ;
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

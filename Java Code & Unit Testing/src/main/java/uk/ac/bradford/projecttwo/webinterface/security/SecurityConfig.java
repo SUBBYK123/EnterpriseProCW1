@@ -52,7 +52,8 @@ public class SecurityConfig {
                         // Publicly accessible endpoints (login, signup, static resources, reset password)
                         .requestMatchers("/login", "/", "/index", "/signup", "/css/**", "/js/**", "/images/**", "/reset").permitAll()
                         // Restrict access to the admin dashboard to users with ADMIN authority
-                        .requestMatchers("/admin/dashboard").hasAuthority("ADMIN")
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/user/**").hasAuthority("USER")
 
                         .requestMatchers("/api/assets/add", "/api/assets/**").authenticated()
                         // All other requests require authentication

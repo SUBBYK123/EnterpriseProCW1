@@ -40,7 +40,7 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public LoginModel findUserByEmail(String email) {
-        String sqlQuery = "SELECT email_address, password_hash FROM user WHERE email_address = ?";
+        String sqlQuery = "SELECT email_address, password_hash, role FROM user WHERE email_address = ?";
 
         try (Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery)) {
@@ -51,7 +51,8 @@ public class UserRepositoryImpl implements UserRepository {
                 if (resultSet.next()) {
                     return new LoginModel(
                             resultSet.getString("email_address"),
-                            resultSet.getString("password_hash") // Ensure proper password security handling
+                            resultSet.getString("password_hash"),// Ensure proper password security handling
+                            resultSet.getString("role")
                     );
                 }
             }
@@ -70,7 +71,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<LoginModel> getAllUsers() {
         List<LoginModel> users = new ArrayList<>();
-        String sqlQuery = "SELECT email_address, password_hash FROM user";
+        String sqlQuery = "SELECT email_address, password_hash, role FROM user";
 
         try (Connection connection = getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -79,7 +80,8 @@ public class UserRepositoryImpl implements UserRepository {
             while (resultSet.next()) {
                 users.add(new LoginModel(
                         resultSet.getString("email_address"),
-                        resultSet.getString("password_hash") // Ensure passwords are securely managed
+                        resultSet.getString("password_hash"),// Ensure passwords are securely managed
+                        resultSet.getString("role")
                 ));
             }
 

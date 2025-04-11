@@ -25,7 +25,7 @@ public class GmailService {
 
     private static final String APPLICATION_NAME = "Password Reset Service";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "/tokens";
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     // Scope required for sending emails via Gmail API
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);

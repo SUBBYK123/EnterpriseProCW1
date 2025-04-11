@@ -1,6 +1,7 @@
 package uk.ac.bradford.projecttwo.webinterface.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -35,6 +37,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException(username);
         }
 
-        return new User(loginModel.getEmailAddress(), loginModel.getPassword(), new ArrayList<>());
+        return new User(
+                loginModel.getEmailAddress(),
+                loginModel.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority(loginModel.getRole()))
+        );
     }
 }

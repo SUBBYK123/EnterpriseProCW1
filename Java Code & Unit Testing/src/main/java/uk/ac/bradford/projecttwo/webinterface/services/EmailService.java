@@ -96,7 +96,7 @@ public class EmailService {
                     + "http://localhost:8080/permissions";
 
                                             //Add admin email
-        MimeMessage email = createEmail(userEmail,"mustafakamran491@gmail.com",subject,body);
+        MimeMessage email = createEmail("mustafakamran491@gmail.com","mustafakamran491@gmail.com",subject,body);
         sendMessage(email);
     }
 

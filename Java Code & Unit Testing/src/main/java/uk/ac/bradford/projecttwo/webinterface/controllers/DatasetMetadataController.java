@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import uk.ac.bradford.projecttwo.webinterface.models.DatasetAccessRequestModel;
 import uk.ac.bradford.projecttwo.webinterface.models.DatasetMetadataModel;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
@@ -49,33 +50,6 @@ public class DatasetMetadataController {
 
     @Autowired
     private DatasetAccessRequestServiceImpl datasetAccessRequestService;
-
-    @GetMapping("/list")
-    public String listDatasets(Model model, Principal principal) {
-        List<DatasetMetadataModel> datasets = datasetMetadataService.fetchAllMetadata();
-        model.addAttribute("datasets", datasets);
-
-        String userEmail = null;
-
-        if (principal != null) {
-            userEmail = principal.getName();
-            RegistrationModel user = registrationRepository.findUserByEmail(userEmail);
-            if (user != null) {
-                model.addAttribute("loggedEmail", user.getEmailAddress());
-                model.addAttribute("loggedDepartment", user.getDepartment());
-            }
-        }
-
-        // Mark dataset as approved if user has permission
-        if (userEmail != null) {
-            for (DatasetMetadataModel metadata : datasets) {
-                boolean accessGranted = datasetAccessRequestService.isApproved(metadata.getDatasetName(), userEmail);
-                metadata.setApproved(accessGranted);
-            }
-        }
-
-        return "dataset_list";
-    }
 
 
     @GetMapping("/index")
@@ -276,7 +250,46 @@ public class DatasetMetadataController {
         }
 
         model.addAttribute("datasets", filtered);
-        return "dataset_list";
+        return "user/dataset_list";
     }
+
+    @PostMapping("/request-access")
+    public String handleAccessRequest(
+            @RequestParam("datasetName") String datasetName,
+            Principal principal,
+            RedirectAttributes redirectAttributes
+    ) {
+        if (principal == null) {
+            redirectAttributes.addFlashAttribute("error", "Please log in to request access.");
+            return "redirect:/user/datasets/list";
+        }
+
+        String email = principal.getName();
+        RegistrationModel user = registrationRepository.findUserByEmail(email);
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "User not found.");
+            return "redirect:/user/datasets/list";
+        }
+
+        boolean alreadyRequested = datasetAccessRequestService.hasUserAlreadyRequested(datasetName, email);
+        if (alreadyRequested) {
+            redirectAttributes.addFlashAttribute("error", "Access already requested for this dataset.");
+            return "redirect:/user/datasets/list";
+        }
+
+        DatasetAccessRequestModel request = new DatasetAccessRequestModel();
+        request.setRequestedBy(email);
+        request.setDatasetName(datasetName);
+        request.setDepartment(user.getDepartment());
+        request.setRole("ROLE_USER");
+        request.setStatus("PENDING");
+        request.setRequestDate(LocalDateTime.now());
+
+        datasetAccessRequestService.saveAccessRequest(request);
+        redirectAttributes.addFlashAttribute("success", "Access request submitted successfully.");
+
+        return "redirect:/user/datasets/list";
+    }
+
 
 }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen">
+
+<header class="bg-blue-800 text-white p-4 flex justify-between items-center shadow">
+    <h1 class="text-xl font-bold">Admin Dashboard</h1>
+    <a th:href="@{/logout}" class="bg-white text-blue-800 px-4 py-2 rounded hover:bg-gray-100">Logout</a>
+</header>
+
+<main class="max-w-5xl mx-auto p-6">
+    <h2 class="text-2xl font-semibold mb-4">Welcome, Admin!</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/permissions" class="bg-white p-4 shadow rounded hover:shadow-lg transition">
+            <h3 class="text-lg font-medium mb-2">Manage Permissions</h3>
+            <p class="text-sm text-gray-600">Review and approve dataset access requests.</p>
+        </a>
+        <a href="/logs" class="bg-white p-4 shadow rounded hover:shadow-lg transition">
+            <h3 class="text-lg font-medium mb-2">View Logs</h3>
+            <p class="text-sm text-gray-600">Monitor user actions and events.</p>
+        </a>
+        <a href="/user-access" class="bg-white p-4 shadow rounded hover:shadow-lg transition">
+            <h3 class="text-lg font-medium mb-2">User Access Control</h3>
+            <p class="text-sm text-gray-600">Edit roles and department-based permissions.</p>
+        </a>
+    </div>
+</main>
+
+</body>
+</html>

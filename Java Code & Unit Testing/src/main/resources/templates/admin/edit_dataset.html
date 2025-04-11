@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Dataset</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-100 text-gray-900 px-6 py-10">
+
+<div class="max-w-md mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-xl font-semibold mb-6">Edit Dataset Metadata</h1>
+
+    <form th:action="@{'/admin/datasets/edit/' + ${dataset.datasetName}}" th:object="${dataset}" method="post" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">Dataset Name</label>
+            <input type="text" th:field="*{datasetName}" class="w-full border px-3 py-2 rounded" required />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Department</label>
+            <select th:field="*{department}" class="w-full border px-3 py-2 rounded">
+                <option value="Department of Adult Social Care">Department of Adult Social Care</option>
+                <option value="Department of Children’s Services">Department of Children’s Services</option>
+                <option value="Department of Corporate Resources">Department of Corporate Resources</option>
+                <option value="Department of Place">Department of Place</option>
+            </select>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Uploaded By</label>
+            <input type="text" th:field="*{uploadedBy}" class="w-full border px-3 py-2 rounded" readonly />
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Role</label>
+            <input type="text" th:field="*{role}" class="w-full border px-3 py-2 rounded" readonly />
+        </div>
+
+        <div class="flex justify-between mt-6">
+            <a th:href="@{/admin/datasets}" class="text-sm text-blue-600 hover:underline">Cancel</a>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -32,7 +32,7 @@ public class ResetController {
      */
     @GetMapping("/reset_verify")
     public String showVerifyPage() {
-        return "redirect:/reset_verify"; // Make sure reset_verify.html exists in src/main/resources/templates/
+        return "reset_verify"; // Make sure reset_verify.html exists in src/main/resources/templates/
     }
 
     /**
@@ -53,24 +53,6 @@ public class ResetController {
         }
     }
 
-    /**
-     * Handles OTP verification submission.
-     * @param email The email address associated with the OTP.
-     * @param otp The OTP to be verified.
-     * @param model The model to add success or error messages.
-     * @return The name of the template to be rendered next.
-     */
-    @PostMapping("/verify")
-    public String verifyOtp(@RequestParam("emailAddress") String email, @RequestParam("otp") String otp, Model model) {
-        if (resetPasswordService.verifyOtp(email, otp)) {
-            model.addAttribute("email", email);
-            model.addAttribute("otp", otp);
-            return "reset_password"; // Forward to the password reset page
-        } else {
-            model.addAttribute("errorMessage", "Invalid or expired OTP.");
-            return "reset_verify"; // Reload the OTP verification page with an error
-        }
-    }
 
     /**
      * Handles password reset submission.
@@ -85,12 +67,16 @@ public class ResetController {
                                 @RequestParam("otp") String otp,
                                 @RequestParam("newPassword") String newPassword,
                                 Model model) {
-        if (resetPasswordService.resetPassword(email, otp, newPassword)) {
+
+        boolean isResetSuccessful = resetPasswordService.resetPassword(email, otp, newPassword);
+
+        if (isResetSuccessful) {
             model.addAttribute("successMessage", "Password reset successfully. You can now log in.");
-            return "login"; // Redirect to the login page
+            return "login"; // Redirect to login page
         } else {
             model.addAttribute("errorMessage", "Invalid OTP or expired.");
-            return "reset_password"; // Reload password reset page with an error
+            model.addAttribute("email", email); // to pre-fill email
+            return "reset_verify"; // return to same form with error
         }
     }
 }

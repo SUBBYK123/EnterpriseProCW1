@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-@RequestMapping("/permissions")
+@RequestMapping("/admin/permissions")
 public class PermissionController {
 
     private final DatasetAccessRequestService accessRequestService;
@@ -70,7 +70,7 @@ public class PermissionController {
         if (success != null) model.addAttribute("success", success);
         if (error != null) model.addAttribute("error", error);
 
-        return "permissions";
+        return "admin/permissions";
     }
 
 
@@ -88,12 +88,9 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error approving dataset access.");
         }
-        return "redirect:/permissions";
+        return "redirect:/admin/permissions"; // ✅
     }
 
-    /**
-     * Deny dataset access request
-     */
     @PostMapping("/deny-dataset/{id}")
     public String denyDatasetRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -105,12 +102,9 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error denying dataset access.");
         }
-        return "redirect:/permissions";
+        return "redirect:/admin/permissions"; // ✅
     }
 
-    /**
-     * Approve role/department permission request
-     */
     @PostMapping("/approve/{id}")
     public String approveRoleRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -122,12 +116,9 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error approving role/department request.");
         }
-        return "redirect:/permissions";
+        return "redirect:/admin/permissions"; // ✅
     }
 
-    /**
-     * Deny role/department permission request
-     */
     @PostMapping("/deny/{id}")
     public String denyRoleRequest(@PathVariable("id") int requestId, RedirectAttributes redirectAttributes) {
         try {
@@ -139,44 +130,7 @@ public class PermissionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Error denying role/department request.");
         }
-        return "redirect:/permissions";
-    }
-
-    /**
-     * Request dataset access
-     */
-    @PostMapping("/access/request")
-    public String requestAccess(@RequestParam("datasetName") String datasetName, Principal principal, RedirectAttributes redirectAttributes) {
-        if (principal == null) {
-            redirectAttributes.addFlashAttribute("error", "You must be logged in to request access.");
-            return "redirect:/datasets/list";
-        }
-
-        String email = principal.getName();
-        RegistrationModel user = registrationRepository.findUserByEmail(email);
-
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "User not found.");
-            return "redirect:/datasets/list";
-        }
-
-        boolean alreadyRequested = accessRequestService.hasUserAlreadyRequested(datasetName, email);
-        if (alreadyRequested) {
-            redirectAttributes.addFlashAttribute("error", "You've already requested access to this dataset.");
-            return "redirect:/datasets/list";
-        }
-
-        DatasetAccessRequestModel request = new DatasetAccessRequestModel();
-        request.setRequestedBy(user.getEmailAddress());
-        request.setDepartment(user.getDepartment());
-        request.setRole("ROLE_USER");
-        request.setDatasetName(datasetName);
-        request.setStatus("PENDING");
-        request.setRequestDate(LocalDateTime.now());
-
-        accessRequestService.saveAccessRequest(request);
-        redirectAttributes.addFlashAttribute("success", "Access request submitted successfully.");
-        return "redirect:/datasets/list";
+        return "redirect:/admin/permissions"; // ✅
     }
 
 

@@ -10,4 +10,7 @@ public interface DatasetMetadataRepository {
     DatasetMetadataModel findByName(String datasetName);
     DatasetMetadataModel findByNameAndUploader(String datasetName, String uploadedBy);
     List<DatasetMetadataModel> searchAndFilter(String search, String department, String role);
+    void updateMetadata(String oldName, DatasetMetadataModel updated);
+    void deleteByName(String datasetName);
+
 }
