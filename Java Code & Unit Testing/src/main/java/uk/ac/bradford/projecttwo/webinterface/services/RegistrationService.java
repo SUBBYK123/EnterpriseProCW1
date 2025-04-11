@@ -20,10 +20,10 @@ public class RegistrationService {
 
     // Encryptor for securely hashing passwords (Autowired for dependency injection)
     @Autowired
-    private Encryptor encryptor;
+    public Encryptor encryptor;
 
     @Autowired
-    private EmailService emailService;
+    public EmailService emailService;
 
     // Password encoder instance for hashing and verifying passwords
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

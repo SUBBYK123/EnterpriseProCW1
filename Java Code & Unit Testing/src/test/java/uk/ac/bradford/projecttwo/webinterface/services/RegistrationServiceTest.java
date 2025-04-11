@@ -1,105 +1,106 @@
 package uk.ac.bradford.projecttwo.webinterface.services;
 
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.mockito.Mockito;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import uk.ac.bradford.projecttwo.webinterface.models.RegistrationModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.RegistrationRepositoryImpl;
 import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class RegistrationServiceTest {
+public class RegistrationServiceTest {
 
-    @Mock
-    private RegistrationRepositoryImpl registrationRepository;
-
-    @Mock
-    private Encryptor encryptor; // Not directly used in your service logic but included for completeness
-
-    @InjectMocks
-    private RegistrationService registrationService;
+    private RegistrationRepositoryImpl repository;
+    private Encryptor encryptor;
+    private EmailService emailService;
+    private RegistrationService service;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        repository = mock(RegistrationRepositoryImpl.class);
+        encryptor = mock(Encryptor.class);
+        emailService = mock(EmailService.class);
+
+        service = new RegistrationService(repository);
+        service.encryptor = encryptor;
+        service.emailService = emailService;
     }
 
     @Test
-    void registerUser_shouldReturnFalse_whenEmailAlreadyExists() {
+    void testRegisterUser_SuccessfulRegistration() throws Exception {
+        RegistrationModel newUser = new RegistrationModel();
+        newUser.setEmailAddress("new@example.com");
+        newUser.setFirstName("Test");
+        newUser.setLastName("User");
+
+        // Simulate: user does not exist
+        when(repository.findUserByEmail("new@example.com")).thenReturn(null);
+        when(repository.savePendingUser(newUser)).thenReturn(true);
+
+        boolean result = service.registerUser(newUser);
+
+        assertTrue(result);
+        verify(repository).savePendingUser(newUser);
+        verify(emailService).sendSignupNotificationToAdmin("Test User", "new@example.com");
+    }
+
+    @Test
+    void testRegisterUser_EmailAlreadyExists() throws IOException, MessagingException {
         RegistrationModel existingUser = new RegistrationModel();
-        existingUser.setEmailAddress("test@example.com");
+        existingUser.setEmailAddress("existing@example.com");
 
-        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(existingUser);
+        when(repository.findUserByEmail("existing@example.com")).thenReturn(existingUser);
 
-        RegistrationModel newUser = new RegistrationModel();
-        newUser.setEmailAddress("test@example.com");
-        newUser.setPassword("password123");
-
-        boolean result = registrationService.registerUser(newUser);
+        boolean result = service.registerUser(existingUser);
 
         assertFalse(result);
-        verify(registrationRepository, never()).registerUser(any());
+        verify(repository, never()).savePendingUser(any());
+        verify(emailService, never()).sendSignupNotificationToAdmin(any(), any());
     }
 
     @Test
-    void registerUser_shouldRegisterSuccessfully_whenEmailIsUnique() {
-        when(registrationRepository.findUserByEmail("unique@example.com")).thenReturn(null);
-        when(registrationRepository.registerUser(any(RegistrationModel.class))).thenReturn(true);
+    void testAuthenticateUser_SuccessfulMatch() {
+        String email = "login@example.com";
+        String rawPasswordConvertsIntoHashedPasswordFromSignupModel = "secret123";
 
-        RegistrationModel newUser = new RegistrationModel();
-        newUser.setEmailAddress("unique@example.com");
-        newUser.setPassword("password123");
+        ;
 
-        boolean result = registrationService.registerUser(newUser);
+        RegistrationModel mockUser = new RegistrationModel();
+        mockUser.setEmailAddress(email);
+        mockUser.setPassword(rawPasswordConvertsIntoHashedPasswordFromSignupModel);
 
-        assertTrue(result);
-        verify(registrationRepository).registerUser(argThat(user ->
-                user.getEmailAddress().equals("unique@example.com") &&
-                        !user.getPassword().equals("password123") // password should be encoded
-        ));
-    }
+        when(repository.findUserByEmail(email)).thenReturn(mockUser);
 
-    @Test
-    void authenticateUser_shouldReturnFalse_whenUserDoesNotExist() {
-        when(registrationRepository.findUserByEmail("notfound@example.com")).thenReturn(null);
-
-        boolean result = registrationService.authenticateUser("notfound@example.com", "password");
-
-        assertFalse(result);
-    }
-
-
-    //Test isn't working atm
-    @Test
-    void authenticateUser_shouldReturnTrue_whenPasswordMatches() {
-        String rawPassword = "mypassword";
-        String hashedPassword = new BCryptPasswordEncoder().encode(rawPassword);
-
-        RegistrationModel user = new RegistrationModel();
-        user.setEmailAddress("test@example.com");
-        user.setPassword(hashedPassword);
-
-        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(user);
-
-        boolean result = registrationService.authenticateUser("test@example.com", rawPassword);
-
+        boolean result = service.authenticateUser(email, rawPasswordConvertsIntoHashedPasswordFromSignupModel);
         assertTrue(result);
     }
 
+
+
     @Test
-    void authenticateUser_shouldReturnFalse_whenPasswordDoesNotMatch() {
+    void testAuthenticateUser_Failure_WrongPassword() {
+        String email = "login@example.com";
+
         RegistrationModel user = new RegistrationModel();
-        user.setEmailAddress("test@example.com");
-        user.setPassword(new BCryptPasswordEncoder().encode("correctPassword"));
+        user.setEmailAddress(email);
+        user.setPassword(org.springframework.security.crypto.bcrypt.BCrypt.hashpw("correctpassword", org.springframework.security.crypto.bcrypt.BCrypt.gensalt()));
 
-        when(registrationRepository.findUserByEmail("test@example.com")).thenReturn(user);
+        when(repository.findUserByEmail(email)).thenReturn(user);
 
-        boolean result = registrationService.authenticateUser("test@example.com", "wrongPassword");
+        boolean result = service.authenticateUser(email, "wrongpassword");
+        assertFalse(result);
+    }
 
+    @Test
+    void testAuthenticateUser_Failure_UserNotFound() {
+        when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(null);
+        boolean result = service.authenticateUser("nonexistent@example.com", "any");
         assertFalse(result);
     }
 }

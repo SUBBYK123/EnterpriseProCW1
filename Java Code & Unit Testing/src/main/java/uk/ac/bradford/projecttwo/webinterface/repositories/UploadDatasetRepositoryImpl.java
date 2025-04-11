@@ -1,5 +1,6 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import uk.ac.bradford.projecttwo.webinterface.models.UploadDatasetModel;
@@ -12,9 +13,19 @@ import java.util.stream.Collectors;
 @Repository
 public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
 
+    private final UploadDatasetRepository uploadDatasetRepository;
+
+
+
+
     private final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private final String JDBC_USER = "root";
     private final String JDBC_PASSWORD = "Pakistan@1";
+
+    @Autowired
+    public UploadDatasetRepositoryImpl(UploadDatasetRepository uploadDatasetRepository) {
+        this.uploadDatasetRepository = uploadDatasetRepository;
+    }
 
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);

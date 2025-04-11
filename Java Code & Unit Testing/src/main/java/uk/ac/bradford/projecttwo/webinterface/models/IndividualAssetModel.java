@@ -11,6 +11,17 @@ public class IndividualAssetModel {
     private String createdBy;
     private LocalDateTime createdAt;
 
+    public IndividualAssetModel() {}
+
+    public IndividualAssetModel(int id, String datasetName, String name, double latitude, double longitude, String createdBy, LocalDateTime createdAt) {
+        this.id = id;
+        this.datasetName = datasetName;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+    }
     public String getDatasetName() {
         return datasetName;
     }

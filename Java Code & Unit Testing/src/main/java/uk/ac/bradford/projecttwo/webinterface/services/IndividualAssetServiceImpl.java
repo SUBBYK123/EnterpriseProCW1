@@ -11,7 +11,7 @@ import java.util.List;
 public class IndividualAssetServiceImpl implements IndividualAssetService {
 
     @Autowired
-    private IndividualAssetRepository assetRepo;
+    public IndividualAssetRepository assetRepo;
 
     @Override
     public boolean addAsset(IndividualAssetModel asset) {

@@ -4,17 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
-  <script src="./js/validation.js" defer></script>
   <title>Login Page</title>
 
+  <!-- Colorblind Setup -->
   <script>
-    // Check local storage and apply colorblind mode before page renders
     if (localStorage.getItem("colorblindMode") === "true") {
       document.documentElement.classList.add("colorblind-mode");
     }
   </script>
-
   <style>
     .colorblind-mode {
       background-color: black !important;
@@ -34,70 +31,62 @@
 </head>
 
 <body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
-<!-- Header with Logo and Profile -->
+<!-- Header -->
 <header class="flex justify-between items-center p-4 bg-white shadow">
   <a th:href="@{/login}">
     <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
   </a>
-  <div class="flex items-center space-x-4">
-
-    <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
-      Accessibility
-    </button>
-  </div>
+  <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
+    Accessibility
+  </button>
 </header>
 
-    <!-- Accessibility Link -->
-      <script>
-        console.log("Accessibility script loaded!");
+<!-- Accessibility Script -->
+<script>
+  function toggleColorblindMode() {
+    let isEnabled = document.body.classList.toggle("colorblind-mode");
+    localStorage.setItem("colorblindMode", isEnabled);
+  }
 
-        function toggleColorblindMode() {
-          console.log("Toggling colorblind mode...");
-          let body = document.body;
-          let isEnabled = body.classList.toggle("colorblind-mode");
-          console.log("Colorblind mode is now:", isEnabled);
-          localStorage.setItem("colorblindMode", isEnabled);
-        }
+  window.onload = function () {
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.body.classList.add("colorblind-mode");
+    }
+  };
+</script>
 
-        // Preserve user preference on reload
-        window.onload = function () {
-          console.log("Checking stored colorblind mode...");
-          if (localStorage.getItem("colorblindMode") === "true") {
-            document.body.classList.add("colorblind-mode");
-            console.log("Colorblind mode applied on load");
-          }
-        };
-      </script>
-    </div>
-  </div>
-
-
-
+<!-- Main -->
 <main class="flex-grow flex flex-col items-center justify-center px-4">
   <h1 class="text-4xl font-bold mb-8">Login</h1>
 
-  <form th:action="@{/process-login}" method="post" class="w-full max-w-md bg-white p-6 rounded-lg shadow space-y-6">
+  <form id="login" th:action="@{/process-login}" method="post" class="w-full max-w-md bg-white p-6 rounded-lg shadow space-y-6">
     <p th:if="${errorMessage}" class="text-red-500 text-center">[[${errorMessage}]]</p>
 
+    <!-- Email -->
     <div>
       <label for="emailAddress" class="block text-sm font-medium">Email</label>
-      <input type="email" id="emailErrorMsg" name="emailAddress" required
+      <input type="email" id="emailAddress" name="emailAddress" required
              class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
              placeholder="Enter your Email Address" />
+      <p id="emailErrorMsg" class="text-red-500 text-sm mt-1"></p>
     </div>
 
+    <!-- Password -->
     <div>
       <label for="password" class="block text-sm font-medium">Password</label>
-      <input type="password" id="passwordErrorMsg" name="password" required
+      <input type="password" id="password" name="password" required
              class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
              placeholder="Enter your Password" />
+      <p id="passwordErrorMsg" class="text-red-500 text-sm mt-1"></p>
     </div>
 
+    <!-- Submit -->
     <button type="submit"
             class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
       Login
     </button>
 
+    <!-- Links -->
     <div class="text-center space-y-2">
       <a th:href="@{/reset}" class="text-blue-700 underline">Reset Password</a><br>
       <a th:href="@{/signup}" class="text-blue-700 underline">Sign-up</a>
@@ -108,33 +97,18 @@
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-6 px-8">
   <div class="w-full flex justify-between items-center">
-
-    <!-- Far Left: Contact Info -->
     <div class="text-left">
       <p class="text-sm">Council Switchboard: 01274 432111</p>
       <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
       <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
     </div>
-
-    <!-- Far Right: Social Media Icons -->
     <div class="flex gap-3">
-      <a href="https://www.facebook.com/bradfordmdc">
-        <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
-      </a>
-      <a href="https://x.com/bradfordmdc">
-        <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
-      </a>
-      <a href="https://www.linkedin.com/company/bradford-council/">
-        <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
-      </a>
-      <a href="https://www.instagram.com/bradfordmdc/">
-        <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
-      </a>
-      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-        <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
-      </a>
+      <a href="https://www.facebook.com/bradfordmdc"><img th:src="@{/images/facebook.png}" class="w-10 h-10" /></a>
+      <a href="https://x.com/bradfordmdc"><img th:src="@{/images/twitter.png}" class="w-10 h-10" /></a>
+      <a href="https://www.linkedin.com/company/bradford-council/"><img th:src="@{/images/linkedin.png}" class="w-10 h-10" /></a>
+      <a href="https://www.instagram.com/bradfordmdc/"><img th:src="@{/images/Instagram.png}" class="w-10 h-10" /></a>
+      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P"><img th:src="@{/images/Whatsapp.png}" class="w-10 h-10" /></a>
     </div>
-
   </div>
 </footer>
 
@@ -145,54 +119,46 @@
   <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
   <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
 </footer>
-  <!-- Java script for the form to make sure there is no incorrect information being sent to the backend database -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('login');
-      const errorMessages = {
-        emailAddress: document.getElementById('emailErrorMsg'),
-        password: document.getElementById('passwordErrorMsg')
-      };
 
-      function validateForm() {
-        let isValid = true;
+<!-- Validation Script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('login');
+    const errorMessages = {
+      emailAddress: document.getElementById('emailErrorMsg'),
+      password: document.getElementById('passwordErrorMsg')
+    };
 
-        // Validate Email
-        const emailAddress = form.emailAddress.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailAddress)) {
-          errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
-          isValid = false;
-        } else {
-          errorMessages.emailAddress.textContent = '';
-        }
+    function validateForm() {
+      let isValid = true;
 
-        // Validate Password
-        const password = form.password.value;
-        if (password.length < 8) {
-          errorMessages.password.textContent = 'Password must be at least 8 characters long';
-          isValid = false;
-        } else {
-          errorMessages.password.textContent = '';
-        }
-
-        return isValid;
+      const email = form.emailAddress.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMessages.emailAddress.textContent = 'Invalid email format';
+        isValid = false;
+      } else {
+        errorMessages.emailAddress.textContent = '';
       }
 
-      form.addEventListener('submit', function (event) {
-        if (!validateForm()) {
-          event.preventDefault(); // Prevent form submission if validation fails
-        }
-      });
-    });
-  </script>
+      const password = form.password.value;
+      if (password.length < 8) {
+        errorMessages.password.textContent = 'Password must be at least 8 characters long';
+        isValid = false;
+      } else {
+        errorMessages.password.textContent = '';
+      }
 
-  <script>
-    document.getElementById("colorblind-toggle").addEventListener("click", function () {
-      console.log("Button clicked!");
+      return isValid;
+    }
+
+    form.addEventListener('submit', function (event) {
+      if (!validateForm()) {
+        event.preventDefault();
+      }
     });
-  </script>
+  });
+</script>
 
 </body>
-
 </html>

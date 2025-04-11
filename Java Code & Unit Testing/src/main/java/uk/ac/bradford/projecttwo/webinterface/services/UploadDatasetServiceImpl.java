@@ -15,6 +15,10 @@ public class UploadDatasetServiceImpl implements UploadDatasetService{
     @Autowired
     private UploadDatasetRepository uploadDatasetRepository;
 
+    public UploadDatasetServiceImpl(UploadDatasetRepository repository) {
+        this.uploadDatasetRepository = repository;
+    }
+
     @Override
     public boolean processDatasetUpload(UploadDatasetModel model) {
         return uploadDatasetRepository.uploadDataset(model);

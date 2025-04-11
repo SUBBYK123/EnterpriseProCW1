@@ -20,10 +20,10 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
     private final Map<String, ResetPasswordModel> otpStorage = new HashMap<>();
 
     @Autowired
-    private EmailService emailService;
+    public EmailService emailService;
 
     @Autowired
-    private LoginServiceImpl loginService;
+    protected LoginServiceImpl loginService;
 
     /**
      * Generates an OTP, stores it, and sends it to the specified email address.
