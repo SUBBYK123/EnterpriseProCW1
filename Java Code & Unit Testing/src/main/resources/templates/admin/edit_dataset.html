@@ -3,46 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <title>Edit Dataset</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Accessibility Toggle -->
+    <script>
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.documentElement.classList.add("colorblind-mode");
+        }
+    </script>
+
+    <style>
+        .colorblind-mode {
+            background-color: black !important;
+            color: yellow !important;
+        }
+        .colorblind-mode a, .colorblind-mode p {
+            color: yellow !important;
+        }
+        .colorblind-mode .site-footer,
+        .colorblind-mode .site-footer-blue {
+            background-color: black !important;
+            color: white !important;
+        }
+    </style>
 </head>
-<body class="min-h-screen bg-gray-100 text-gray-900 px-6 py-10">
 
-<div class="max-w-md mx-auto bg-white p-8 rounded shadow">
-    <h1 class="text-xl font-semibold mb-6">Edit Dataset Metadata</h1>
+<body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
 
-    <form th:action="@{'/admin/datasets/edit/' + ${dataset.datasetName}}" th:object="${dataset}" method="post" class="space-y-4">
-        <div>
-            <label class="block text-sm font-medium mb-1">Dataset Name</label>
-            <input type="text" th:field="*{datasetName}" class="w-full border px-3 py-2 rounded" required />
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow">
+    <a th:href="@{/index}">
+        <img th:src="@{/images/logo.png}" alt="Logo" class="h-14" />
+    </a>
+    <div class="flex items-center gap-4">
+        <input type="text" placeholder="Search datasets" class="border border-gray-300 px-3 py-2 rounded text-sm" />
+        <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+            Accessibility
+        </button>
+        <a th:href="@{/admin/dashboard}">
+            <img th:src="@{/images/user.png}" alt="Admin Profile" class="h-10 w-10 rounded-full border" />
+        </a>
+    </div>
+</header>
+
+<!-- Accessibility Script -->
+<script>
+    function toggleColorblindMode() {
+        const body = document.body;
+        const isEnabled = body.classList.toggle("colorblind-mode");
+        localStorage.setItem("colorblindMode", isEnabled);
+    }
+    window.onload = () => {
+        if (localStorage.getItem("colorblindMode") === "true") {
+            document.body.classList.add("colorblind-mode");
+        }
+    };
+</script>
+
+<!-- Navigation -->
+<nav class="bg-blue-900 text-white">
+    <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
+        <li><a th:href="@{/admin/dashboard}" class="hover:underline">DASHBOARD</a></li>
+        <li><a th:href="@{/admin/permissions}" class="hover:underline">PERMISSIONS</a></li>
+        <li><a th:href="@{/logs}" class="hover:underline">LOGS</a></li>
+        <li><a th:href="@{/admin/datasets}" class="hover:underline">DATASETS</a></li>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="bg-transparent border-none text-white cursor-pointer hover:underline">LOGOUT</button>
+        </form>
+    </ul>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow px-6 py-10 max-w-2xl mx-auto w-full">
+    <div class="bg-white p-8 rounded shadow">
+        <h1 class="text-xl font-semibold mb-6">Edit Dataset Metadata</h1>
+
+        <form th:action="@{'/admin/datasets/edit/' + ${dataset.datasetName}}" th:object="${dataset}" method="post" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Dataset Name</label>
+                <input type="text" th:field="*{datasetName}" class="w-full border px-3 py-2 rounded" required />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Department</label>
+                <select th:field="*{department}" class="w-full border px-3 py-2 rounded">
+                    <option value="Department of Adult Social Care">Department of Adult Social Care</option>
+                    <option value="Department of Children’s Services">Department of Children’s Services</option>
+                    <option value="Department of Corporate Resources">Department of Corporate Resources</option>
+                    <option value="Department of Place">Department of Place</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Uploaded By</label>
+                <input type="text" th:field="*{uploadedBy}" class="w-full border px-3 py-2 rounded bg-gray-100" readonly />
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Role</label>
+                <input type="text" th:field="*{role}" class="w-full border px-3 py-2 rounded bg-gray-100" readonly />
+            </div>
+
+            <div class="flex justify-between pt-6">
+                <a th:href="@{/admin/datasets}" class="text-sm text-blue-600 hover:underline">← Cancel</a>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- Footer Section 1 -->
+<footer class="bg-gray-800 text-white py-6 px-8">
+    <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="text-left">
+            <p class="text-sm">Council Switchboard: 01274 432111</p>
+            <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+            <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
         </div>
-
-        <div>
-            <label class="block text-sm font-medium mb-1">Department</label>
-            <select th:field="*{department}" class="w-full border px-3 py-2 rounded">
-                <option value="Department of Adult Social Care">Department of Adult Social Care</option>
-                <option value="Department of Children’s Services">Department of Children’s Services</option>
-                <option value="Department of Corporate Resources">Department of Corporate Resources</option>
-                <option value="Department of Place">Department of Place</option>
-            </select>
+        <div class="flex gap-3">
+            <a href="https://www.facebook.com/bradfordmdc">
+                <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
+            </a>
+            <a href="https://x.com/bradfordmdc">
+                <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
+            </a>
+            <a href="https://www.linkedin.com/company/bradford-council/">
+                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
+            </a>
+            <a href="https://www.instagram.com/bradfordmdc/">
+                <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
+            </a>
+            <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
+                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
+            </a>
         </div>
+    </div>
+</footer>
 
-        <div>
-            <label class="block text-sm font-medium mb-1">Uploaded By</label>
-            <input type="text" th:field="*{uploadedBy}" class="w-full border px-3 py-2 rounded" readonly />
-        </div>
+<!-- Footer Section 2 -->
+<footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+    <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+    <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+    <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+    <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+    <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
 
-        <div>
-            <label class="block text-sm font-medium mb-1">Role</label>
-            <input type="text" th:field="*{role}" class="w-full border px-3 py-2 rounded" readonly />
-        </div>
-
-        <div class="flex justify-between mt-6">
-            <a th:href="@{/admin/datasets}" class="text-sm text-blue-600 hover:underline">Cancel</a>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">
-                Save Changes
-            </button>
-        </div>
-    </form>
-</div>
 </body>
 </html>

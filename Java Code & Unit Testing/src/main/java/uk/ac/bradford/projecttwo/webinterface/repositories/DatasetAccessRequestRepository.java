@@ -12,5 +12,5 @@ public interface DatasetAccessRequestRepository {
     DatasetAccessRequestModel findByDatasetNameAndEmail(String datasetName, String email);
     String getRequestEmailById(int requestId);
     List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status);
-
+    List<DatasetAccessRequestModel> findRequestsByEmail(String email);
 }

@@ -199,4 +199,26 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
 
         return results;
     }
+
+    @Override
+    public List<DatasetAccessRequestModel> findRequestsByEmail(String email) {
+        List<DatasetAccessRequestModel> list = new ArrayList<>();
+        String sql = "SELECT * FROM dataset_access_requests WHERE requested_by = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                DatasetAccessRequestModel r = new DatasetAccessRequestModel();
+                r.setId(rs.getInt("id"));
+                r.setDatasetName(rs.getString("dataset_name"));
+                r.setStatus(rs.getString("status"));
+                r.setRequestDate(rs.getTimestamp("request_date").toLocalDateTime());
+                list.add(r);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

@@ -75,12 +75,13 @@
 <!-- Navigation -->
 <nav class="bg-blue-900 text-white">
     <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
-        <li><a th:href="@{/index}" class="hover:underline">HOME</a></li>
-        <li><a th:href="@{/reset}" class="hover:underline">RESET PASSWORD</a></li>
-        <li><a th:href="@{/logs}" class="hover:underline">LOGS</a></li>
-        <li><a th:href="@{/access-control}" class="hover:underline">USER ACCESS CONTROL</a></li>
-        <li><a th:href="@{/permissions}" class="hover:underline">PERMISSIONS</a></li>
-        <li><a th:href="@{/logout}" class="hover:underline">LOGOUT</a></li>
+        <li><a th:href="@{/user/home}" class="hover:underline">HOME</a></li>
+        <li><a th:href="@{/user/datasets/list}" class="hover:underline">DATASETS</a></li>
+        <li><a th:href="@{/user/my-requests}" class="hover:underline">REQUESTS</a></li>
+        <li><a th:href="@{/user/dashboard}" class="hover:underline">DASHBOARD</a></li>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="bg-transparent border-none text-white cursor-pointer hover:underline">LOGOUT</button>
+        </form>
     </ul>
 </nav>
 

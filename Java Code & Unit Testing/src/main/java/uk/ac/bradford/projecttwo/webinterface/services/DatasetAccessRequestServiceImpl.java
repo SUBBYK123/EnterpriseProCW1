@@ -93,4 +93,9 @@ public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestServ
         return repository.searchDatasetRequests(email, datasetName, department, status);
     }
 
+    @Override
+    public List<DatasetAccessRequestModel> getRequestsByEmail(String email) {
+        return repository.findRequestsByEmail(email);
+    }
+
 }
