@@ -106,6 +106,8 @@ Setup Instructions
 5. Run the application:
    ./mvnw spring-boot:run
 6. Access at http://localhost:8080
+7. Admin Details(Remember to change): email:    mustafakamran46@hotmail.com
+                                      password: password
 
 
 
