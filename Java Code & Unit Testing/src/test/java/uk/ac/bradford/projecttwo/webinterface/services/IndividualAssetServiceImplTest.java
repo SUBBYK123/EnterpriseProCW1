@@ -11,11 +11,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link IndividualAssetServiceImpl}, which handles CRUD operations
+ * for individual assets linked to datasets.
+ */
 class IndividualAssetServiceImplTest {
 
     private IndividualAssetRepository mockRepo;
     private IndividualAssetServiceImpl assetService;
 
+    /**
+     * Sets up a mocked repository and injects it into the service before each test.
+     */
     @BeforeEach
     void setUp() {
         mockRepo = mock(IndividualAssetRepository.class);
@@ -23,6 +30,9 @@ class IndividualAssetServiceImplTest {
         assetService.assetRepo = mockRepo; // field injection
     }
 
+    /**
+     * Tests successful addition of a new asset using the service.
+     */
     @Test
     void testAddAsset_Success() {
         IndividualAssetModel asset = new IndividualAssetModel(1, "dataset1", "Bench", 53.79, -1.75, "admin", null);
@@ -33,6 +43,9 @@ class IndividualAssetServiceImplTest {
         verify(mockRepo).saveAsset(asset);
     }
 
+    /**
+     * Tests retrieval of all assets linked to a specific dataset name.
+     */
     @Test
     void testGetAssetsByDataset_ReturnsCorrectList() {
         List<IndividualAssetModel> mockAssets = Arrays.asList(
@@ -47,6 +60,9 @@ class IndividualAssetServiceImplTest {
         assertEquals("Bench", result.get(0).getName());
     }
 
+    /**
+     * Tests successful updating of an asset's details.
+     */
     @Test
     void testUpdateAsset_Success() {
         IndividualAssetModel updatedAsset = new IndividualAssetModel(1, "dataset1", "New Bench", 53.79, -1.75, "admin", null);
@@ -57,6 +73,9 @@ class IndividualAssetServiceImplTest {
         verify(mockRepo).updateAsset(updatedAsset);
     }
 
+    /**
+     * Tests successful deletion of an asset by ID.
+     */
     @Test
     void testDeleteAsset_Success() {
         int id = 1;

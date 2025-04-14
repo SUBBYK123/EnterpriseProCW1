@@ -13,24 +13,34 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link ResetPasswordServiceImpl}, verifying OTP generation,
+ * validation, and password reset workflows.
+ */
 public class ResetPasswordServiceImplTest {
 
     private ResetPasswordServiceImpl service;
     private EmailService emailService;
     private LoginServiceImpl loginService;
 
+    /**
+     * Sets up mocked dependencies and injects them into the ResetPasswordServiceImpl instance.
+     */
     @BeforeEach
     void setUp() {
         emailService = mock(EmailService.class);
         loginService = mock(LoginServiceImpl.class);
         service = new ResetPasswordServiceImpl();
 
-        // Inject mocks manually since fields are private
+        // Use spy to inject mocks into private fields
         service = spy(service);
         service.emailService = emailService;
         service.loginService = loginService;
     }
 
+    /**
+     * Verifies that OTP is generated, stored, and an email is sent to the user.
+     */
     @Test
     void testGenerateAndSendOtpStoresOtpAndSendsEmail() throws Exception {
         String email = "test@example.com";
@@ -39,7 +49,7 @@ public class ResetPasswordServiceImplTest {
 
         verify(emailService, times(1)).sendOtpEmail(eq(email), anyString());
 
-        // Check if OTP is stored internally
+        // Reflectively access private otpStorage field to confirm storage
         var otpField = ResetPasswordServiceImpl.class.getDeclaredField("otpStorage");
         otpField.setAccessible(true);
         var storage = (Map<String, ResetPasswordModel>) otpField.get(service);
@@ -48,6 +58,9 @@ public class ResetPasswordServiceImplTest {
         assertNotNull(storage.get(email).getOtp());
     }
 
+    /**
+     * Tests OTP verification success when correct and unexpired OTP is used.
+     */
     @Test
     void testVerifyOtpSuccess() throws Exception {
         String email = "user@example.com";
@@ -64,6 +77,9 @@ public class ResetPasswordServiceImplTest {
         assertTrue(result);
     }
 
+    /**
+     * Tests OTP verification failure when incorrect OTP is used.
+     */
     @Test
     void testVerifyOtpFailsOnWrongOtp() throws Exception {
         String email = "user@example.com";
@@ -80,6 +96,9 @@ public class ResetPasswordServiceImplTest {
         assertFalse(result);
     }
 
+    /**
+     * Tests successful password reset when correct OTP is provided.
+     */
     @Test
     void testResetPasswordSuccess() throws Exception {
         String email = "user@example.com";
@@ -99,6 +118,9 @@ public class ResetPasswordServiceImplTest {
         verify(loginService).updateUserPassword(email, newPassword);
     }
 
+    /**
+     * Tests failure of password reset when incorrect OTP is provided.
+     */
     @Test
     void testResetPasswordFailsWithInvalidOtp() throws Exception {
         String email = "user@example.com";

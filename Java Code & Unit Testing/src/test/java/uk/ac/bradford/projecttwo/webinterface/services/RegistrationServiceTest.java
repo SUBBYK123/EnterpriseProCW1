@@ -14,6 +14,10 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link RegistrationService}, which handles logic
+ * related to user registration, email uniqueness checking, and authentication.
+ */
 public class RegistrationServiceTest {
 
     private RegistrationRepositoryImpl repository;
@@ -21,6 +25,9 @@ public class RegistrationServiceTest {
     private EmailService emailService;
     private RegistrationService service;
 
+    /**
+     * Initializes the service with mocked dependencies before each test.
+     */
     @BeforeEach
     void setUp() {
         repository = mock(RegistrationRepositoryImpl.class);
@@ -32,6 +39,12 @@ public class RegistrationServiceTest {
         service.emailService = emailService;
     }
 
+    /**
+     * Tests successful user registration:
+     * - Email does not already exist
+     * - User is saved as pending
+     * - Admin notification is sent
+     */
     @Test
     void testRegisterUser_SuccessfulRegistration() throws Exception {
         RegistrationModel newUser = new RegistrationModel();
@@ -39,7 +52,6 @@ public class RegistrationServiceTest {
         newUser.setFirstName("Test");
         newUser.setLastName("User");
 
-        // Simulate: user does not exist
         when(repository.findUserByEmail("new@example.com")).thenReturn(null);
         when(repository.savePendingUser(newUser)).thenReturn(true);
 
@@ -50,6 +62,10 @@ public class RegistrationServiceTest {
         verify(emailService).sendSignupNotificationToAdmin("Test User", "new@example.com");
     }
 
+    /**
+     * Tests that registration is blocked when the email is already taken.
+     * Ensures no save or email operations occur.
+     */
     @Test
     void testRegisterUser_EmailAlreadyExists() throws IOException, MessagingException {
         RegistrationModel existingUser = new RegistrationModel();
@@ -64,25 +80,27 @@ public class RegistrationServiceTest {
         verify(emailService, never()).sendSignupNotificationToAdmin(any(), any());
     }
 
+    /**
+     * Tests that a user is successfully authenticated when the email and password match.
+     */
     @Test
     void testAuthenticateUser_SuccessfulMatch() {
         String email = "login@example.com";
-        String rawPasswordConvertsIntoHashedPasswordFromSignupModel = "secret123";
-
-        ;
+        String password = "secret123";
 
         RegistrationModel mockUser = new RegistrationModel();
         mockUser.setEmailAddress(email);
-        mockUser.setPassword(rawPasswordConvertsIntoHashedPasswordFromSignupModel);
+        mockUser.setPassword(password); // Simulated plain text password (for test scenario)
 
         when(repository.findUserByEmail(email)).thenReturn(mockUser);
 
-        boolean result = service.authenticateUser(email, rawPasswordConvertsIntoHashedPasswordFromSignupModel);
+        boolean result = service.authenticateUser(email, password);
         assertTrue(result);
     }
 
-
-
+    /**
+     * Tests that authentication fails when the password does not match the stored hash.
+     */
     @Test
     void testAuthenticateUser_Failure_WrongPassword() {
         String email = "login@example.com";
@@ -97,6 +115,9 @@ public class RegistrationServiceTest {
         assertFalse(result);
     }
 
+    /**
+     * Tests that authentication fails when no user is found by email.
+     */
     @Test
     void testAuthenticateUser_Failure_UserNotFound() {
         when(repository.findUserByEmail("nonexistent@example.com")).thenReturn(null);

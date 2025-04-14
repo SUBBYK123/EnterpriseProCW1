@@ -14,11 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for the {@link EmailService} class.
+ * This class verifies that email creation and sending logic works correctly and handles exceptions gracefully.
+ */
 class EmailServiceTest {
 
     private Gmail gmailMock;
     private EmailService emailService;
 
+    /**
+     * Sets up a mocked Gmail service and injects it into a test subclass of EmailService before each test.
+     * Overrides the sendMessage method to prevent actual email sending.
+     */
     @BeforeEach
     void setUp() throws Exception {
         // Mock Gmail service
@@ -43,6 +51,9 @@ class EmailServiceTest {
         };
     }
 
+    /**
+     * Ensures that sending an OTP email does not throw any exceptions.
+     */
     @Test
     void testSendOtpEmailDoesNotThrow() {
         assertDoesNotThrow(() -> {
@@ -50,6 +61,9 @@ class EmailServiceTest {
         });
     }
 
+    /**
+     * Verifies that a MimeMessage is created successfully with the correct subject.
+     */
     @Test
     void testCreateEmailSuccess() throws MessagingException {
         MimeMessage msg = emailService.createEmail(
@@ -62,6 +76,9 @@ class EmailServiceTest {
         assert msg.getSubject().equals("Subject Line");
     }
 
+    /**
+     * Ensures that sending a signup notification to the admin does not throw any exceptions.
+     */
     @Test
     void testSendSignupNotificationToAdmin() {
         assertDoesNotThrow(() -> {
@@ -69,6 +86,9 @@ class EmailServiceTest {
         });
     }
 
+    /**
+     * Ensures that sending an approval notification to the user does not throw any exceptions.
+     */
     @Test
     void testSendApprovalNotification() {
         assertDoesNotThrow(() -> {

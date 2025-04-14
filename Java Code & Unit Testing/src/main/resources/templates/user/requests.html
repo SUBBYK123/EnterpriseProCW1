@@ -5,33 +5,41 @@
     <title>My Access Requests</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 min-h-screen flex flex-col text-gray-800">
 
-<!-- Header -->
+<!-- ================= HEADER ================= -->
 <header class="flex justify-between items-center p-4 bg-white shadow relative">
+    <!-- Logo -->
     <a th:href="@{/user/home}">
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
+
+    <!-- Search bar, Accessibility toggle, Profile link -->
     <div class="flex items-center gap-4">
         <input type="text" placeholder="Search datasets"
                class="border border-gray-300 rounded px-3 py-2 text-sm" />
+
         <button id="colorblind-toggle"
                 onclick="toggleColorblindMode()"
                 class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
             Accessibility
         </button>
+
         <a th:href="@{/user/dashboard}">
             <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />
         </a>
     </div>
 </header>
 
+<!-- =============== Accessibility Script =============== -->
 <script>
     function toggleColorblindMode() {
         const body = document.body;
         const isEnabled = body.classList.toggle("colorblind-mode");
         localStorage.setItem("colorblindMode", isEnabled);
     }
+
     window.onload = () => {
         if (localStorage.getItem("colorblindMode") === "true") {
             document.body.classList.add("colorblind-mode");
@@ -39,7 +47,7 @@
     };
 </script>
 
-<!-- Navigation -->
+<!-- =============== NAVIGATION =============== -->
 <nav class="bg-blue-900 text-white">
     <ul class="flex justify-center gap-6 py-3 text-sm md:text-base">
         <li><a th:href="@{/user/home}" class="hover:underline">HOME</a></li>
@@ -52,15 +60,17 @@
     </ul>
 </nav>
 
-<!-- Main -->
+<!-- =============== MAIN CONTENT =============== -->
 <main class="flex-grow p-6 max-w-screen-xl w-full mx-auto">
+    <!-- Page Title -->
     <h2 class="text-2xl font-semibold mb-6 text-center">My Access Requests</h2>
 
+    <!-- Back to datasets link -->
     <a th:href="@{/user/datasets/list}" class="text-blue-600 hover:underline mb-4 inline-block">
         ← Back to Datasets
     </a>
 
-
+    <!-- Table of user's dataset access requests -->
     <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-300 rounded shadow text-sm">
             <thead class="bg-blue-200 text-left">
@@ -71,6 +81,7 @@
             </tr>
             </thead>
             <tbody>
+            <!-- Loop through each request -->
             <tr th:each="req : ${requests}" class="even:bg-gray-50">
                 <td class="p-4" th:text="${req.datasetName}"></td>
                 <td class="p-4" th:text="${req.status}"></td>
@@ -81,7 +92,7 @@
     </div>
 </main>
 
-<!-- Footer Section 1 -->
+<!-- =============== FOOTER SECTION 1 (Contact & Socials) =============== -->
 <footer class="bg-gray-800 text-white py-6 px-8">
     <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-left">
@@ -89,6 +100,7 @@
             <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
             <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
         </div>
+        <!-- Social Media Links -->
         <div class="flex gap-3">
             <a href="https://www.facebook.com/bradfordmdc">
                 <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
@@ -109,7 +121,7 @@
     </div>
 </footer>
 
-<!-- Footer Section 2 -->
+<!-- =============== FOOTER SECTION 2 (Legal links) =============== -->
 <footer class="bg-blue-900 text-white py-4 text-center space-x-4">
     <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
     <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>

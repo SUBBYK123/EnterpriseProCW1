@@ -10,13 +10,15 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the UploadDatasetRepository interface.
+ * Handles logic for uploading datasets (inline and streamed), creating corresponding
+ * tables dynamically, storing metadata, retrieving dataset content, and deleting dataset files.
+ */
 @Repository
-public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
+public class UploadDatasetRepositoryImpl implements UploadDatasetRepository {
 
     private final UploadDatasetRepository uploadDatasetRepository;
-
-
-
 
     private final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private final String JDBC_USER = "root";
@@ -31,11 +33,18 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
     }
 
+    /**
+     * Uploads a dataset provided via structured UploadDatasetModel.
+     * Creates a table dynamically based on column names and inserts data row-wise.
+     * Also inserts metadata into the dataset_metadata table.
+     *
+     * @param model The dataset model containing name, columns, rows, and metadata.
+     * @return true if the upload and insertion succeed; false otherwise.
+     */
     @Override
     public boolean uploadDataset(UploadDatasetModel model) {
         String tableName = model.getDatasetName().replaceAll("[^a-zA-Z0-9_]", "_");
 
-        // ✅ Quote columns using backticks to handle special characters
         String createSQL = "CREATE TABLE IF NOT EXISTS `" + tableName + "` (id INT AUTO_INCREMENT PRIMARY KEY, " +
                 model.getColumns().stream()
                         .map(col -> "`" + col + "` VARCHAR(255)")
@@ -45,7 +54,6 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
             stmt.execute(createSQL);
 
             for (Map<String, Object> row : model.getData()) {
-                // ✅ Quote column names in INSERT query too
                 String insertSQL = "INSERT INTO `" + tableName + "` (" +
                         model.getColumns().stream().map(col -> "`" + col + "`").collect(Collectors.joining(", ")) +
                         ") VALUES (" +
@@ -76,75 +84,63 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         return false;
     }
 
-
+    /**
+     * Uploads a dataset using a MultipartFile stream. Dynamically creates a table,
+     * saves the file locally, parses it line by line, and inserts the rows.
+     * Also stores dataset metadata conditionally.
+     *
+     * @param datasetName Name of the dataset (used for table and file naming).
+     * @param department Department associated with the upload.
+     * @param uploadedBy Email of the uploader.
+     * @param role Role of the uploader.
+     * @param file Multipart file uploaded by the user (CSV).
+     * @return true if upload and processing are successful; false otherwise.
+     */
     @Override
     public boolean uploadDatasetStreamed(String datasetName, String department, String uploadedBy, String role, MultipartFile file) {
-
-        System.out.println("📥 uploadDatasetStreamed() called for: " + datasetName);
-
         String normalisedName = datasetName.trim().replaceAll("[^a-zA-Z0-9_]", "_").toLowerCase();
 
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
-            // ✅ Save the file to 'datasets' directory BEFORE using the stream
+            // Save CSV file locally
             File outputDir = new File("src/main/resources/datasets/download");
             if (!outputDir.exists()) outputDir.mkdirs();
 
-            File outputFile = new java.io.File(outputDir, datasetName + ".csv");
-            System.out.println("✅ Trying to write dataset to: " + outputFile.getAbsolutePath());
-
-            try (InputStream in = file.getInputStream();
-                 OutputStream out = new FileOutputStream(outputFile)) {
+            File outputFile = new File(outputDir, datasetName + ".csv");
+            try (InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(outputFile)) {
                 in.transferTo(out);
-                System.out.println("✅ File saved successfully.");
-            }
-            catch(Exception e){
-                System.err.println("❌ Failed to save file: " + e.getMessage());
-                e.printStackTrace();
             }
 
-            // 1. Read the file
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(outputFile)));
-
-            String headerLine = reader.readLine(); // e.g. "name,latitude,longitude"
+            String headerLine = reader.readLine();
             if (headerLine == null) return false;
 
             String[] columns = headerLine.split(",");
-
             for (int i = 0; i < columns.length; i++) {
                 columns[i] = columns[i].replace("\uFEFF", "").trim();
             }
 
-            // 2. Create table if it doesn't exist
             String createSQL = "CREATE TABLE IF NOT EXISTS `" + normalisedName + "` (id INT AUTO_INCREMENT PRIMARY KEY, " +
-                    Arrays.stream(columns)
-                            .map(col -> "`" + col.trim() + "` VARCHAR(255)")
-                            .collect(Collectors.joining(", ")) +
-                    ")";
+                    Arrays.stream(columns).map(col -> "`" + col + "` VARCHAR(255)").collect(Collectors.joining(", ")) + ")";
             try (Statement stmt = conn.createStatement()) {
                 stmt.execute(createSQL);
             }
 
-            // 3. Prepare insert statement
             String insertSQL = "INSERT INTO `" + normalisedName + "` (" +
                     Arrays.stream(columns).map(String::trim).collect(Collectors.joining(", ")) +
-                    ") VALUES (" +
-                    Arrays.stream(columns).map(col -> "?").collect(Collectors.joining(", ")) +
-                    ")";
+                    ") VALUES (" + Arrays.stream(columns).map(col -> "?").collect(Collectors.joining(", ")) + ")";
             PreparedStatement pstmt = conn.prepareStatement(insertSQL);
 
             int batchSize = 0;
-
             String rowLine;
             while ((rowLine = reader.readLine()) != null) {
-                String[] values = rowLine.split(",", -1); // -1 keeps trailing empty values
+                String[] values = rowLine.split(",", -1);
                 for (int i = 0; i < columns.length; i++) {
                     pstmt.setString(i + 1, i < values.length ? values[i].trim() : null);
                 }
                 pstmt.addBatch();
                 batchSize++;
-
                 if (batchSize >= 500) {
                     pstmt.executeBatch();
                     batchSize = 0;
@@ -155,7 +151,7 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
                 pstmt.executeBatch();
             }
 
-            // 4. Insert metadata (skip if already exists)
+            // Insert metadata if it doesn't already exist
             String checkMeta = "SELECT COUNT(*) FROM dataset_metadata WHERE dataset_name = ? AND uploaded_by = ?";
             try (PreparedStatement checkStmt = conn.prepareStatement(checkMeta)) {
                 checkStmt.setString(1, datasetName);
@@ -183,6 +179,12 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         return false;
     }
 
+    /**
+     * Fetches the dataset content from the dynamically created table using the dataset name.
+     *
+     * @param datasetName The name of the dataset/table.
+     * @return A list of maps representing each row in the dataset.
+     */
     @Override
     public List<Map<String, Object>> getDatasetContent(String datasetName) {
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -210,6 +212,11 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
         return rows;
     }
 
+    /**
+     * Deletes the stored CSV file associated with the given dataset name.
+     *
+     * @param datasetName The name of the dataset to delete.
+     */
     @Override
     public void deleteDatasetFile(String datasetName) {
         File file = new File("src/main/resources/datasets/download/" + datasetName + ".csv");
@@ -217,5 +224,4 @@ public class UploadDatasetRepositoryImpl implements UploadDatasetRepository{
             file.delete();
         }
     }
-
 }

@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+    <!-- Basic page metadata and responsive setup -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="'Viewing Dataset: ' + ${datasetName}">Dataset View</title>
+
+    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Accessibility Mode Setup -->
+    <!-- Colorblind accessibility mode script (applies on page load if enabled) -->
     <script>
         if (localStorage.getItem("colorblindMode") === "true") {
             document.documentElement.classList.add("colorblind-mode");
         }
     </script>
 
+    <!-- Colorblind mode styling -->
     <style>
         .colorblind-mode {
             background-color: black !important;
@@ -38,11 +42,14 @@
 
 <body class="bg-gray-100 min-h-screen flex flex-col text-gray-900">
 
-<!-- Header -->
+<!-- ========== HEADER ========== -->
 <header class="flex justify-between items-center p-4 bg-white shadow relative">
+    <!-- Logo Link -->
     <a th:href="@{/index}">
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
+
+    <!-- Right-hand side: search + accessibility toggle + profile icon -->
     <div class="flex items-center gap-4">
         <input type="text" placeholder="Search datasets"
                class="border border-gray-300 rounded px-3 py-2 text-sm" />
@@ -57,7 +64,7 @@
     </div>
 </header>
 
-<!-- Accessibility Script -->
+<!-- Toggle Colorblind Mode Script -->
 <script>
     function toggleColorblindMode() {
         const body = document.body;
@@ -65,6 +72,7 @@
         localStorage.setItem("colorblindMode", isEnabled);
     }
 
+    // Load colorblind mode on page load if previously enabled
     window.onload = () => {
         if (localStorage.getItem("colorblindMode") === "true") {
             document.body.classList.add("colorblind-mode");
@@ -72,7 +80,7 @@
     };
 </script>
 
-<!-- Navigation -->
+<!-- ========== NAVIGATION ========== -->
 <nav class="bg-blue-800 text-white">
     <ul class="flex justify-center gap-10 py-3 text-lg">
         <li><a th:href="@{/admin/dashboard}" class="hover:underline">DASHBOARD</a></li>
@@ -84,8 +92,10 @@
     </ul>
 </nav>
 
-<!-- Main Content -->
+<!-- ========== MAIN CONTENT ========== -->
 <main class="flex-grow p-6 overflow-x-auto max-w-screen-xl w-full mx-auto">
+
+    <!-- Header with Dataset Name and Back Button -->
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-xl font-semibold" th:text="'Dataset: ' + ${datasetName}">Viewing Dataset</h2>
         <a th:href="@{/admin/datasets}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 text-sm">
@@ -93,16 +103,20 @@
         </a>
     </div>
 
+    <!-- Dataset Table -->
     <table class="min-w-full bg-white border border-gray-300 rounded shadow text-sm">
         <thead class="bg-gray-200 text-left">
+        <!-- Render table headers only if data is not empty -->
         <tr th:if="${data != null and !data.isEmpty()}">
             <th class="p-3" th:each="header : ${data[0].keySet()}" th:text="${header}"></th>
         </tr>
         </thead>
         <tbody>
+        <!-- Render each data row -->
         <tr th:each="row : ${data}" class="even:bg-gray-50">
             <td class="p-3" th:each="value : ${row.values()}" th:text="${value}"></td>
         </tr>
+        <!-- Show message if dataset is empty -->
         <tr th:if="${data == null or data.isEmpty()}">
             <td class="p-4 text-center text-gray-500" colspan="100%">No data available in this dataset.</td>
         </tr>
@@ -110,7 +124,7 @@
     </table>
 </main>
 
-<!-- Footer Section 1 -->
+<!-- ========== FOOTER SECTION 1: CONTACT & SOCIALS ========== -->
 <footer class="bg-gray-800 text-white py-6 px-8">
     <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-left">
@@ -138,7 +152,7 @@
     </div>
 </footer>
 
-<!-- Footer Section 2 -->
+<!-- ========== FOOTER SECTION 2: LEGAL LINKS ========== -->
 <footer class="bg-blue-900 text-white py-4 text-center space-x-4">
     <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
     <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>

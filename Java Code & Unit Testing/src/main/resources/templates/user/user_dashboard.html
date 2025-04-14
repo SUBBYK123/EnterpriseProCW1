@@ -5,34 +5,46 @@
     <title>User Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
 
-<!-- Header -->
+<!-- ============ HEADER ============ -->
 <header class="flex justify-between items-center p-4 bg-white shadow relative">
+    <!-- Website logo linked to user home -->
     <a th:href="@{/user/home}">
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
+
+    <!-- Right section: Search bar, accessibility toggle, profile icon -->
     <div class="flex items-center gap-4">
+        <!-- Search input (currently decorative, can be linked later) -->
         <input type="text" placeholder="Search datasets"
                class="border border-gray-300 rounded px-3 py-2 text-sm" />
+
+        <!-- Accessibility toggle button -->
         <button id="colorblind-toggle"
                 onclick="toggleColorblindMode()"
                 class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
             Accessibility
         </button>
+
+        <!-- User profile icon -->
         <a th:href="@{/user/dashboard}">
             <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />
         </a>
     </div>
 </header>
 
-<!-- Accessibility Toggle Script -->
+<!-- ============ ACCESSIBILITY SCRIPT ============ -->
 <script>
+    // Toggle dark/high contrast mode
     function toggleColorblindMode() {
         const body = document.body;
         const isEnabled = body.classList.toggle("colorblind-mode");
         localStorage.setItem("colorblindMode", isEnabled);
     }
+
+    // Load preference from local storage on page load
     window.onload = () => {
         if (localStorage.getItem("colorblindMode") === "true") {
             document.body.classList.add("colorblind-mode");
@@ -40,33 +52,40 @@
     };
 </script>
 
-
-<!-- Main Content -->
+<!-- ============ MAIN DASHBOARD CONTENT ============ -->
 <main class="flex-grow p-8 flex flex-col items-center justify-center bg-gray-50">
+    <!-- Welcome message -->
     <h2 class="text-3xl font-semibold mb-10 text-center">Welcome, User!</h2>
 
+    <!-- Main navigation cards (datasets and requests) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-5xl px-4">
-        <a th:href="@{/user/datasets/list}" class="bg-white p-6 shadow-xl rounded-2xl hover:shadow-2xl transition transform hover:scale-105 text-center h-56 flex flex-col justify-center">
+        <!-- View Datasets -->
+        <a th:href="@{/user/datasets/list}"
+           class="bg-white p-6 shadow-xl rounded-2xl hover:shadow-2xl transition transform hover:scale-105 text-center h-56 flex flex-col justify-center">
             <h3 class="text-xl font-bold mb-2 text-blue-900">View Datasets</h3>
             <p class="text-gray-600">Search and filter available datasets.</p>
         </a>
 
-        <a th:href="@{/user/my-requests}" class="bg-white p-6 shadow-xl rounded-2xl hover:shadow-2xl transition transform hover:scale-105 text-center h-56 flex flex-col justify-center">
+        <!-- My Access Requests -->
+        <a th:href="@{/user/my-requests}"
+           class="bg-white p-6 shadow-xl rounded-2xl hover:shadow-2xl transition transform hover:scale-105 text-center h-56 flex flex-col justify-center">
             <h3 class="text-xl font-bold mb-2 text-blue-900">My Requests</h3>
             <p class="text-gray-600">Check status of your access requests.</p>
         </a>
     </div>
 </main>
 
-
-<!-- Footer Section 1 -->
+<!-- ============ FOOTER SECTION 1 ============ -->
 <footer class="bg-gray-800 text-white py-6 px-8">
     <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+        <!-- Contact info -->
         <div class="text-left">
             <p class="text-sm">Council Switchboard: 01274 432111</p>
             <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
             <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
         </div>
+
+        <!-- Social Media Links -->
         <div class="flex gap-3">
             <a href="https://www.facebook.com/bradfordmdc">
                 <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
@@ -87,8 +106,9 @@
     </div>
 </footer>
 
-<!-- Footer Section 2 -->
+<!-- ============ FOOTER SECTION 2 ============ -->
 <footer class="bg-blue-900 text-white py-4 text-center space-x-4">
+    <!-- Legal and help links -->
     <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
     <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
     <a th:href="@{/atoz}" class="hover:underline">A to Z</a>

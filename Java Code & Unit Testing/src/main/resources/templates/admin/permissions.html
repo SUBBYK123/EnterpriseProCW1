@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
+
 <head>
+    <!-- Meta & Tailwind Setup -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="@{/js/validation.js}" defer></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Permissions Page</title>
 
-
+    <!-- Auto-apply colorblind mode if previously enabled -->
     <script>
         if (localStorage.getItem("colorblindMode") === "true") {
             document.documentElement.classList.add("colorblind-mode");
         }
     </script>
 
+    <!-- Styles for colorblind accessibility -->
     <style>
         .colorblind-mode {
             background-color: black !important;
@@ -34,49 +37,40 @@
 
 <body class="min-h-screen flex flex-col bg-gray-100 text-gray-900">
 
-<!-- Header -->
+<!-- ========== HEADER ========== -->
 <header class="flex justify-between items-center p-4 bg-white shadow relative">
-    <!-- Logo -->
+    <!-- Left: Logo -->
     <a th:href="@{/index}">
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
 
-    <!-- Right section: Accessibility & Profile -->
+    <!-- Right: Accessibility & User Profile -->
     <div class="flex items-center gap-6">
-        <!-- Accessibility Button -->
         <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
             Accessibility
         </button>
-
-        <!-- Profile Icon -->
         <a th:href="@{/admin/dashboard}" title="Profile">
             <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border border-gray-300" />
         </a>
     </div>
 </header>
 
+<!-- Colorblind Mode Toggle Script -->
 <script>
-    console.log("Accessibility script loaded!");
-
     function toggleColorblindMode() {
-        console.log("Toggling colorblind mode...");
         let body = document.body;
         let isEnabled = body.classList.toggle("colorblind-mode");
-        console.log("Colorblind mode is now:", isEnabled);
         localStorage.setItem("colorblindMode", isEnabled);
     }
 
-    // Preserve user preference on reload
     window.onload = function () {
-        console.log("Checking stored colorblind mode...");
         if (localStorage.getItem("colorblindMode") === "true") {
             document.body.classList.add("colorblind-mode");
-            console.log("Colorblind mode applied on load");
         }
     };
 </script>
 
-<!-- Navigation -->
+<!-- ========== NAVIGATION BAR ========== -->
 <nav class="bg-blue-800 text-white">
     <ul class="flex justify-center gap-10 py-3 text-lg">
         <li><a th:href="@{/admin/dashboard}" class="hover:underline">DASHBOARD</a></li>
@@ -88,14 +82,15 @@
     </ul>
 </nav>
 
-<!-- Main Content -->
+<!-- ========== MAIN CONTENT ========== -->
 <main class="flex-grow p-6 max-w-7xl mx-auto">
 
-    <!-- 🔍 Search & Filter Form -->
+    <!-- Filter Form -->
     <form th:action="@{/admin/permissions}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
         <input type="text" name="email" placeholder="Search by email" class="px-3 py-2 border rounded" />
         <input type="text" name="dataset" placeholder="Dataset name" class="px-3 py-2 border rounded" />
 
+        <!-- Department Dropdown -->
         <select name="department" class="px-3 py-2 border rounded">
             <option value="">All Departments</option>
             <option value="Department of Adult Social Care">Department of Adult Social Care</option>
@@ -104,6 +99,7 @@
             <option value="Department of Place">Department of Place</option>
         </select>
 
+        <!-- Status Dropdown -->
         <select name="status" class="px-3 py-2 border rounded">
             <option value="">All Statuses</option>
             <option value="PENDING">Pending</option>
@@ -112,20 +108,17 @@
         </select>
 
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
-
-        <!-- 🔁 Reset Filters Button -->
-        <a th:href="@{/admin/permissions}"
-           class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-center">
-            Reset Filters
-        </a>
+        <a th:href="@{/admin/permissions}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-center">Reset Filters</a>
     </form>
 
+    <!-- Page Heading -->
     <h1 class="text-3xl font-bold text-center mb-8">Permissions Management</h1>
 
+    <!-- Success/Error Messages -->
     <div th:if="${success}" class="bg-green-100 text-green-800 p-4 rounded mb-6 text-center font-semibold" th:text="${success}"></div>
     <div th:if="${error}" class="bg-red-100 text-red-800 p-4 rounded mb-6 text-center font-semibold" th:text="${error}"></div>
 
-    <!-- Dataset Access Requests -->
+    <!-- ========== DATASET ACCESS REQUESTS TABLE ========== -->
     <h2 class="text-xl font-semibold mb-4 text-center">Dataset Access Requests</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full border border-gray-300 text-sm mb-10">
@@ -150,9 +143,11 @@
                 <td class="p-2" th:text="${#temporals.format(request.requestDate, 'dd MMM yyyy HH:mm')}"></td>
                 <td class="p-2">
                     <div th:if="${request.status == 'PENDING'}" class="flex flex-col gap-1">
+                        <!-- Approve Dataset Request -->
                         <form th:action="@{/admin/permissions/approve-dataset/{id}(id=${request.id})}" method="post">
                             <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
                         </form>
+                        <!-- Deny Dataset Request -->
                         <form th:action="@{/admin/permissions/deny-dataset/{id}(id=${request.id})}" method="post">
                             <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
                         </form>
@@ -163,7 +158,7 @@
         </table>
     </div>
 
-    <!-- Role & Permission Requests -->
+    <!-- ========== ROLE & PERMISSION REQUESTS TABLE ========== -->
     <h2 class="text-xl font-semibold mb-4 text-center">Role & Department Permission Requests</h2>
     <div class="overflow-x-auto">
         <table class="min-w-full border border-gray-300 text-sm">
@@ -194,13 +189,13 @@
                 <td class="p-2" th:text="${req.status}"></td>
                 <td class="p-2">
                     <div th:if="${req.status == 'PENDING'}" class="flex flex-col gap-1">
+                        <!-- Approve Role Request -->
                         <form th:action="@{/admin/permissions/approve/{id}(id=${req.requestId})}" method="post">
-
-                        <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
+                            <button type="submit" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600">Approve</button>
                         </form>
+                        <!-- Deny Role Request -->
                         <form th:action="@{/admin/permissions/deny/{id}(id=${req.requestId})}" method="post">
-
-                        <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Deny</button>
                         </form>
                     </div>
                 </td>
@@ -210,7 +205,7 @@
     </div>
 </main>
 
-<!-- Footer Section 1 -->
+<!-- ========== FOOTER SECTION 1 ========== -->
 <footer class="bg-gray-800 text-white py-6 px-8">
     <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-left">
@@ -219,26 +214,16 @@
             <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
         </div>
         <div class="flex gap-3">
-            <a href="https://www.facebook.com/bradfordmdc">
-                <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
-            </a>
-            <a href="https://x.com/bradfordmdc">
-                <img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" />
-            </a>
-            <a href="https://www.linkedin.com/company/bradford-council/">
-                <img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" />
-            </a>
-            <a href="https://www.instagram.com/bradfordmdc/">
-                <img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" />
-            </a>
-            <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P">
-                <img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" />
-            </a>
+            <a href="https://www.facebook.com/bradfordmdc"><img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" /></a>
+            <a href="https://x.com/bradfordmdc"><img th:src="@{/images/twitter.png}" alt="Twitter" class="w-10 h-10" /></a>
+            <a href="https://www.linkedin.com/company/bradford-council/"><img th:src="@{/images/linkedin.png}" alt="LinkedIn" class="w-10 h-10" /></a>
+            <a href="https://www.instagram.com/bradfordmdc/"><img th:src="@{/images/Instagram.png}" alt="Instagram" class="w-10 h-10" /></a>
+            <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P"><img th:src="@{/images/Whatsapp.png}" alt="Whatsapp" class="w-10 h-10" /></a>
         </div>
     </div>
 </footer>
 
-<!-- Footer Section 2 -->
+<!-- ========== FOOTER SECTION 2 ========== -->
 <footer class="bg-blue-900 text-white py-4 text-center space-x-4">
     <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
     <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
@@ -248,5 +233,4 @@
 </footer>
 
 </body>
-
 </html>

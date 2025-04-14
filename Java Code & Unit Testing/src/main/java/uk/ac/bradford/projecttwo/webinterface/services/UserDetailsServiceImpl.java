@@ -10,25 +10,33 @@ import org.springframework.stereotype.Service;
 import uk.ac.bradford.projecttwo.webinterface.models.LoginModel;
 import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Service implementation of {@link UserDetailsService} for Spring Security.
+ * Loads user-specific data from the database for authentication.
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructs a new instance of {@code UserDetailsServiceImpl} with the provided {@link UserRepository}.
+     *
+     * @param userRepository the repository used to retrieve user data
+     */
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     /**
-     * Locates the user based on the username (email).
+     * Loads the user from the database by their email address (used as username).
      *
-     * @param username the email identifying the user
-     * @return UserDetails object for Spring Security
-     * @throws UsernameNotFoundException if the user is not found
+     * @param username the user's email address
+     * @return a {@link UserDetails} object containing the user credentials and authorities
+     * @throws UsernameNotFoundException if no user is found with the given email
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

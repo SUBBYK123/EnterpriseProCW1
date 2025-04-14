@@ -9,11 +9,19 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Integration tests for {@link LogServiceImpl} that verify logging functionality
+ * with an actual MySQL database using {@link LogRepositoryImpl}.
+ */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class LogServiceMySQLIntegrationTest {
 
     private LogServiceImpl logService;
 
+    /**
+     * Sets up the log service using a real instance of {@link LogRepositoryImpl}
+     * to allow testing against a live MySQL database.
+     */
     @BeforeEach
     void setUp() {
         // Use actual repository that connects to MySQL
@@ -21,6 +29,10 @@ public class LogServiceMySQLIntegrationTest {
         logService = new LogServiceImpl(repo);
     }
 
+    /**
+     * Inserts a log into the MySQL database using the service.
+     * This must run before the verification test.
+     */
     @Test
     @Order(1)
     void testInsertLogIntoMySQL() {
@@ -28,6 +40,10 @@ public class LogServiceMySQLIntegrationTest {
         System.out.println("✅ Log insertion attempted.");
     }
 
+    /**
+     * Verifies that the previously inserted log exists in the MySQL database.
+     * Directly queries the database using JDBC.
+     */
     @Test
     @Order(2)
     void testLogExistsInMySQL() throws SQLException {

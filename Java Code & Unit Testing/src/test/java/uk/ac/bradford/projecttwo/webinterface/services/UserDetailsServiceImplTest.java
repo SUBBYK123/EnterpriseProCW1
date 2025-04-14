@@ -11,17 +11,28 @@ import uk.ac.bradford.projecttwo.webinterface.repositories.UserRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link UserDetailsServiceImpl}, which is used by Spring Security
+ * to load user details for authentication.
+ */
 class UserDetailsServiceImplTest {
 
     private UserRepository userRepository;
     private UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Sets up mocked {@link UserRepository} and injects it into the UserDetailsServiceImpl before each test.
+     */
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         userDetailsService = new UserDetailsServiceImpl(userRepository);
     }
 
+    /**
+     * Verifies that when a valid email is provided, the user details are correctly returned,
+     * including username, password, and role-based authorities.
+     */
     @Test
     void testLoadUserByUsername_UserFound() {
         // Arrange
@@ -41,6 +52,9 @@ class UserDetailsServiceImplTest {
         verify(userRepository, times(1)).findUserByEmail("test@example.com");
     }
 
+    /**
+     * Verifies that a {@link UsernameNotFoundException} is thrown when no user is found with the provided email.
+     */
     @Test
     void testLoadUserByUsername_UserNotFound() {
         // Arrange

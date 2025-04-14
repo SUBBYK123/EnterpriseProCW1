@@ -8,39 +8,61 @@ import uk.ac.bradford.projecttwo.webinterface.repositories.DatasetAccessRequestR
 
 import java.util.List;
 
+/**
+ * Implementation of {@link DatasetAccessRequestService} for managing
+ * dataset access requests. Handles CRUD operations and email notifications.
+ */
 @Service
-public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestService{
-
+public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestService {
 
     private final DatasetAccessRequestRepository repository;
-
     private final EmailService emailService;
 
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param repository    The dataset access request repository.
+     * @param emailService  The service used to send email notifications.
+     */
     @Autowired
     public DatasetAccessRequestServiceImpl(DatasetAccessRequestRepository repository, EmailService emailService) {
         this.repository = repository;
         this.emailService = emailService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<DatasetAccessRequestModel> getAllAccessRequests() {
         return repository.getAllRequests();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean updateRequestStatus(int requestId, String newStatus) {
-        return repository.updateRequestStatus(requestId,newStatus);
+        return repository.updateRequestStatus(requestId, newStatus);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasUserAlreadyRequested(String datasetName, String email) {
         return repository.existsByDatasetAndUser(datasetName, email);
     }
 
+    /**
+     * {@inheritDoc}
+     * Sends notification emails to both user and admin upon request submission.
+     */
     @Override
     public void saveAccessRequest(DatasetAccessRequestModel request) {
         repository.saveRequest(request);
 
+        // Notify user
         try {
             MimeMessage userEmail = emailService.createEmail(
                     request.getRequestedBy(),
@@ -56,6 +78,7 @@ public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestServ
             e.printStackTrace();
         }
 
+        // Notify admin
         try {
             MimeMessage adminEmail = emailService.createEmail(
                     "mustafakamran491@gmail.com",
@@ -72,30 +95,44 @@ public class DatasetAccessRequestServiceImpl implements DatasetAccessRequestServ
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public DatasetAccessRequestModel getRequestByDatasetAndEmail(String datasetName, String email) {
         return repository.findByDatasetNameAndEmail(datasetName, email);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getRequestEmailById(int requestId) {
         return repository.getRequestEmailById(requestId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isApproved(String datasetName, String userEmail) {
         DatasetAccessRequestModel request = repository.findByDatasetNameAndEmail(datasetName, userEmail);
         return request != null && "APPROVED".equalsIgnoreCase(request.getStatus());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status) {
         return repository.searchDatasetRequests(email, datasetName, department, status);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<DatasetAccessRequestModel> getRequestsByEmail(String email) {
         return repository.findRequestsByEmail(email);
     }
-
 }

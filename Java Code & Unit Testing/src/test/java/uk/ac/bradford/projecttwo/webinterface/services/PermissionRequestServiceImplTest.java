@@ -12,12 +12,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link PermissionRequestServiceImpl}, which handles logic
+ * related to admin approval or denial of permission/role assignment requests.
+ */
 class PermissionRequestServiceImplTest {
 
     private PermissionRequestRepository permissionRequestRepository;
     private EmailService emailService;
     private PermissionRequestServiceImpl service;
 
+    /**
+     * Initializes mocks and injects dependencies into the service before each test.
+     */
     @BeforeEach
     void setUp() {
         permissionRequestRepository = mock(PermissionRequestRepository.class);
@@ -25,6 +32,9 @@ class PermissionRequestServiceImplTest {
         service = new PermissionRequestServiceImpl(permissionRequestRepository, emailService);
     }
 
+    /**
+     * Tests that all permission requests are fetched correctly from the repository.
+     */
     @Test
     void testGetAllRequests() {
         PermissionRequestModel request = new PermissionRequestModel();
@@ -36,6 +46,9 @@ class PermissionRequestServiceImplTest {
         verify(permissionRequestRepository, times(1)).getAllRequests();
     }
 
+    /**
+     * Tests the approval of a permission request, including user creation and notification email.
+     */
     @Test
     void testApproveRequest_Success() throws Exception {
         int requestId = 1;
@@ -53,6 +66,9 @@ class PermissionRequestServiceImplTest {
         verify(emailService, times(1)).sendApprovalNotification(eq("test@example.com"), eq("Test User"));
     }
 
+    /**
+     * Tests behavior when approval fails due to request not being found.
+     */
     @Test
     void testApproveRequest_Failure() throws Exception {
         int requestId = 1;
@@ -64,6 +80,9 @@ class PermissionRequestServiceImplTest {
         verify(emailService, never()).sendApprovalNotification(any(), any());
     }
 
+    /**
+     * Tests the denial of a permission request.
+     */
     @Test
     void testDenyRequest() {
         int requestId = 2;
@@ -75,6 +94,9 @@ class PermissionRequestServiceImplTest {
         verify(permissionRequestRepository, times(1)).denyRequest(requestId);
     }
 
+    /**
+     * Verifies that the correct email address is retrieved by permission request ID.
+     */
     @Test
     void testGetRequestEmailById() {
         int requestId = 3;

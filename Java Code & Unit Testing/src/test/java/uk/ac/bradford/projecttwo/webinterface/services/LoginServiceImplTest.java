@@ -12,17 +12,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for {@link LoginServiceImpl}, which manages user authentication and user account operations.
+ */
 class LoginServiceImplTest {
 
     private UserRepositoryImpl mockRepository;
     private LoginServiceImpl loginService;
 
+    /**
+     * Sets up a mocked user repository and injects it into the login service before each test.
+     */
     @BeforeEach
     void setUp() {
         mockRepository = mock(UserRepositoryImpl.class);
         loginService = new LoginServiceImpl(mockRepository);
     }
 
+    /**
+     * Tests successful user authentication when correct credentials are provided.
+     */
     @Test
     void testAuthenticateUser_ValidCredentials() {
         String email = "test@example.com";
@@ -37,6 +46,9 @@ class LoginServiceImplTest {
         verify(mockRepository).findUserByEmail(email);
     }
 
+    /**
+     * Tests authentication failure when an incorrect password is used.
+     */
     @Test
     void testAuthenticateUser_InvalidPassword() {
         String email = "test@example.com";
@@ -51,6 +63,9 @@ class LoginServiceImplTest {
         assertFalse(loginService.authenticateUser(email, wrongPassword));
     }
 
+    /**
+     * Verifies that a user can be retrieved correctly by email if they exist.
+     */
     @Test
     void testFindUserByEmail_UserExists() {
         String email = "findme@example.com";
@@ -63,12 +78,18 @@ class LoginServiceImplTest {
         assertEquals(email, found.getEmailAddress());
     }
 
+    /**
+     * Ensures null is returned when a user is not found by email.
+     */
     @Test
     void testFindUserByEmail_UserNotFound() {
         when(mockRepository.findUserByEmail("notfound@example.com")).thenReturn(null);
         assertNull(loginService.findUserByEmail("notfound@example.com"));
     }
 
+    /**
+     * Tests that all users are retrieved from the repository as a list.
+     */
     @Test
     void testGetAllUsers_ReturnsList() {
         List<LoginModel> users = Arrays.asList(
@@ -83,6 +104,10 @@ class LoginServiceImplTest {
         verify(mockRepository).getAllUsers();
     }
 
+    /**
+     * Tests that user passwords are hashed before being updated in the repository.
+     * Also checks that the hash matches the raw password.
+     */
     @Test
     void testUpdateUserPassword_HashesCorrectly() {
         String email = "change@example.com";

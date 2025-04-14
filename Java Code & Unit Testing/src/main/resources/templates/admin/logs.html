@@ -7,20 +7,26 @@
   <script src="@{/js/validation.js}" defer></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <title>Logs Page</title>
+
+  <!-- Enable colorblind mode on page load if stored in localStorage -->
   <script>
     if (localStorage.getItem("colorblindMode") === "true") {
       document.documentElement.classList.add("colorblind-mode");
     }
   </script>
 
+  <!-- Colorblind styling for improved accessibility -->
   <style>
     .colorblind-mode {
       background-color: black !important;
       color: yellow !important;
     }
-    .colorblind-mode a, .colorblind-mode p {
+
+    .colorblind-mode a,
+    .colorblind-mode p {
       color: yellow !important;
     }
+
     .colorblind-mode .navbar,
     .colorblind-mode .site-footer,
     .colorblind-mode .site-footer-blue,
@@ -33,23 +39,21 @@
 
 <body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
 
-<!-- Header -->
+<!-- ========== Header Section ========== -->
 <header class="flex justify-between items-center p-4 bg-white shadow">
+  <!-- Logo -->
   <a th:href="@{/index}">
     <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
   </a>
+
+  <!-- Search, Accessibility Button & Profile Icon -->
   <div class="flex items-center gap-4">
-    <!-- Search -->
     <input type="text" placeholder="Search datasets"
            class="px-3 py-2 text-sm rounded border border-gray-300 focus:outline-none focus:ring focus:ring-blue-400" />
-
-    <!-- Accessibility -->
     <button id="colorblind-toggle" onclick="toggleColorblindMode()"
             class="bg-blue-800 text-white px-3 py-1 rounded hover:bg-blue-700">
       Accessibility
     </button>
-
-    <!-- Profile Icon -->
     <a th:href="@{/admin/dashboard}">
       <img th:src="@{/images/user.png}" alt="User Profile"
            class="h-10 w-10 rounded-full border border-gray-300" />
@@ -57,6 +61,7 @@
   </div>
 </header>
 
+<!-- ========== Accessibility Script ========== -->
 <script>
   console.log("Accessibility script loaded!");
 
@@ -68,7 +73,7 @@
     localStorage.setItem("colorblindMode", isEnabled);
   }
 
-  // Preserve user preference on reload
+  // Maintain mode on reload
   window.onload = function () {
     console.log("Checking stored colorblind mode...");
     if (localStorage.getItem("colorblindMode") === "true") {
@@ -78,7 +83,7 @@
   };
 </script>
 
-<!-- Navigation -->
+<!-- ========== Navigation Menu ========== -->
 <nav class="bg-blue-800 text-white">
   <ul class="flex justify-center gap-10 py-3 text-lg">
     <li><a th:href="@{/admin/dashboard}" class="hover:underline">DASHBOARD</a></li>
@@ -90,10 +95,10 @@
   </ul>
 </nav>
 
-<!-- Logs Section -->
+<!-- ========== Logs Section ========== -->
 <main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
 
-  <!-- 🔍 Log Filter Form -->
+  <!-- 🔍 Filter Form for Logs -->
   <form th:action="@{/admin/logs/search}" method="get" class="mb-6 flex flex-wrap gap-4 justify-center items-end">
     <input type="text" name="email" placeholder="Email" class="px-3 py-2 border rounded" />
     <input type="text" name="action" placeholder="Action" class="px-3 py-2 border rounded" />
@@ -103,18 +108,19 @@
       <option value="FAILED">FAILED</option>
     </select>
 
+    <!-- Search Button -->
     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
 
-    <!-- 🔁 Reset Filters -->
+    <!-- Reset Filters -->
     <a th:href="@{/admin/logs}" class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 text-center">
       Reset Filters
     </a>
   </form>
 
-
-
+  <!-- Logs Title -->
   <h2 class="text-2xl font-semibold mb-6 text-center">User Logs</h2>
 
+  <!-- 📊 Logs Table -->
   <div class="overflow-x-auto">
     <table class="w-full border border-gray-300 text-sm shadow rounded">
       <thead class="bg-gray-200">
@@ -126,6 +132,7 @@
       </tr>
       </thead>
       <tbody>
+      <!-- Loop through logs -->
       <tr th:each="log : ${logs}" class="even:bg-gray-50">
         <td class="p-3" th:text="${#temporals.format(log.timeStamp, 'yyyy-MM-dd HH:mm')}"></td>
         <td class="p-3" th:text="${log.emailAddress}"></td>
@@ -137,15 +144,17 @@
   </div>
 </main>
 
-
-<!-- Footer 1 -->
+<!-- ========== Footer Section 1 ========== -->
 <footer class="bg-gray-800 text-white py-6 px-8">
   <div class="w-full flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Contact Info -->
     <div class="text-left">
       <p class="text-sm">Council Switchboard: 01274 432111</p>
       <p class="text-sm">Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
       <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300 text-sm">Contact us now</a>
     </div>
+
+    <!-- Social Links -->
     <div class="flex gap-3">
       <a href="https://www.facebook.com/bradfordmdc">
         <img th:src="@{/images/facebook.png}" alt="Facebook" class="w-10 h-10" />
@@ -166,7 +175,7 @@
   </div>
 </footer>
 
-<!-- Footer 2 -->
+<!-- ========== Footer Section 2 ========== -->
 <footer class="bg-blue-900 text-white py-4 text-center space-x-4">
   <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
   <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>

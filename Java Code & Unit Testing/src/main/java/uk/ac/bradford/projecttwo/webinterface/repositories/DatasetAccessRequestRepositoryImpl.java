@@ -7,16 +7,31 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of the DatasetAccessRequestRepository interface.
+ * Handles JDBC operations for dataset access requests such as saving, searching,
+ * retrieving, and updating request status.
+ */
 @Repository
-public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequestRepository{
+public class DatasetAccessRequestRepositoryImpl implements DatasetAccessRequestRepository {
+
     private final String JDBC_URL = "jdbc:mysql://localhost:3306/project_two";
     private final String JDBC_USER = "root";
     private final String JDBC_PASSWORD = "Pakistan@1";
 
+    /**
+     * Establishes a database connection.
+     *
+     * @return A valid SQL Connection.
+     * @throws SQLException if the connection fails.
+     */
     private Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
     }
 
+    /**
+     * Saves a new dataset access request in the database.
+     */
     @Override
     public boolean saveRequest(DatasetAccessRequestModel request) {
         String query = "INSERT INTO dataset_access_requests (dataset_name, requested_by, department, role, request_date, status) VALUES (?, ?, ?, ?, ?, ?)";
@@ -37,6 +52,9 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return false;
     }
 
+    /**
+     * Returns all access requests from the database.
+     */
     @Override
     public List<DatasetAccessRequestModel> getAllRequests() {
         List<DatasetAccessRequestModel> requests = new ArrayList<>();
@@ -64,6 +82,9 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return requests;
     }
 
+    /**
+     * Updates the status of a request based on its ID.
+     */
     @Override
     public boolean updateRequestStatus(int requestId, String status) {
         String query = "UPDATE dataset_access_requests SET status = ? WHERE id = ?";
@@ -82,10 +103,12 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return false;
     }
 
+    /**
+     * Checks if a PENDING request exists for a given user and dataset.
+     */
     @Override
     public boolean existsByDatasetAndUser(String datasetName, String userEmail) {
-        String query = "SELECT COUNT(*) FROM dataset_access_requests " +
-                "WHERE dataset_name = ? AND requested_by = ? AND status = 'PENDING'";
+        String query = "SELECT COUNT(*) FROM dataset_access_requests WHERE dataset_name = ? AND requested_by = ? AND status = 'PENDING'";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -102,6 +125,9 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return false;
     }
 
+    /**
+     * Finds a specific request based on dataset name and requester email.
+     */
     @Override
     public DatasetAccessRequestModel findByDatasetNameAndEmail(String datasetName, String email) {
         String query = "SELECT * FROM dataset_access_requests WHERE dataset_name = ? AND requested_by = ?";
@@ -131,10 +157,12 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return null;
     }
 
+    /**
+     * Returns the email associated with a given request ID.
+     */
     @Override
     public String getRequestEmailById(int requestId) {
         String sql = "SELECT requested_by FROM dataset_access_requests WHERE id = ?";
-        ;
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -149,6 +177,9 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return null;
     }
 
+    /**
+     * Filters dataset access requests based on optional parameters.
+     */
     @Override
     public List<DatasetAccessRequestModel> searchDatasetRequests(String email, String datasetName, String department, String status) {
         List<DatasetAccessRequestModel> results = new ArrayList<>();
@@ -200,6 +231,9 @@ public class DatasetAccessRequestRepositoryImpl implements  DatasetAccessRequest
         return results;
     }
 
+    /**
+     * Finds all dataset access requests submitted by a specific user.
+     */
     @Override
     public List<DatasetAccessRequestModel> findRequestsByEmail(String email) {
         List<DatasetAccessRequestModel> list = new ArrayList<>();

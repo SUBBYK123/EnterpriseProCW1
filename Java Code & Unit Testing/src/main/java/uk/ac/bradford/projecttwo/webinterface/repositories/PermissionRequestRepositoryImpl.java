@@ -1,8 +1,6 @@
 package uk.ac.bradford.projecttwo.webinterface.repositories;
 
-import org.hibernate.sql.ast.tree.insert.InsertSelectStatement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import uk.ac.bradford.projecttwo.webinterface.models.PermissionRequestModel;
 import uk.ac.bradford.projecttwo.webinterface.security.Encryptor;
@@ -12,8 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Implementation of the {@link PermissionRequestRepository} interface.
+ * Handles database operations related to permission requests for roles, departments, and dataset access.
+ */
 @Repository
-public class PermissionRequestRepositoryImpl implements PermissionRequestRepository{
+public class PermissionRequestRepositoryImpl implements PermissionRequestRepository {
 
     @Autowired
     private Encryptor encryptor;
@@ -26,18 +28,19 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
     }
 
-
+    /**
+     * Fetches all permission requests from the database.
+     */
     @Override
     public List<PermissionRequestModel> getAllRequests() {
         List<PermissionRequestModel> requests = new ArrayList<>();
         String sql = "SELECT * FROM permission_requests";
 
-        try {
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery(sql);
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 PermissionRequestModel request = extractRequestFromResultSet(resultSet);
                 requests.add(request);
             }
@@ -46,24 +49,28 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
             throwables.printStackTrace();
         }
 
-
         return requests;
     }
 
-
-
+    /**
+     * Approves a permission request by updating its status to "APPROVED".
+     */
     @Override
     public boolean approveRequest(int requestId) {
-        return updateStatus(requestId,"APPROVED");
-
+        return updateStatus(requestId, "APPROVED");
     }
 
+    /**
+     * Denies a permission request by updating its status to "DENIED".
+     */
     @Override
     public boolean denyRequest(int requestId) {
-
-        return updateStatus(requestId,"DENIED");
+        return updateStatus(requestId, "DENIED");
     }
 
+    /**
+     * Approves a request and creates a new user entry using the request's details.
+     */
     @Override
     public boolean approveRequestAndCreateUser(int requestId) {
         String selectQuery = "SELECT * FROM permission_requests WHERE request_id = ?";
@@ -75,29 +82,23 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
              PreparedStatement insertStmt = conn.prepareStatement(insertUserQuery);
              PreparedStatement updateStmt = conn.prepareStatement(updateStatusQuery)) {
 
-            // Step 1: Select user data from permission_requests
             selectStmt.setInt(1, requestId);
             ResultSet rs = selectStmt.executeQuery();
 
             if (rs.next()) {
-                // ✅ Extract correct column names
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
-                String email = rs.getString("email"); // from permission_requests
+                String email = rs.getString("email");
                 String hashedPassword = rs.getString("password_hash");
                 String department = rs.getString("department");
 
-                // Step 2: Insert into user table
                 insertStmt.setString(1, firstName);
                 insertStmt.setString(2, lastName);
-                insertStmt.setString(3, email);              // ✅ goes into email_address
-                insertStmt.setString(4, hashedPassword);           // ✅ goes into password_hash
+                insertStmt.setString(3, email);
+                insertStmt.setString(4, hashedPassword);
                 insertStmt.setString(5, department);
 
-                int inserted = insertStmt.executeUpdate();
-
-                // Step 3: Update status if insert successful
-                if (inserted > 0) {
+                if (insertStmt.executeUpdate() > 0) {
                     updateStmt.setInt(1, requestId);
                     updateStmt.executeUpdate();
                     return true;
@@ -111,7 +112,9 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return false;
     }
 
-
+    /**
+     * Retrieves a permission request by ID.
+     */
     @Override
     public PermissionRequestModel getRequestById(int requestId) {
         String sql = "SELECT * FROM permission_requests WHERE request_id = ?";
@@ -122,13 +125,7 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                PermissionRequestModel req = new PermissionRequestModel();
-                req.setRequestId(rs.getInt("request_id"));
-                req.setFirstName(rs.getString("first_name"));
-                req.setLastName(rs.getString("last_name"));
-                req.setEmailAddress(rs.getString("email"));
-                // other fields if needed
-                return req;
+                return extractRequestFromResultSet(rs);
             }
 
         } catch (SQLException e) {
@@ -138,6 +135,9 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return null;
     }
 
+    /**
+     * Returns the email address associated with the given request ID.
+     */
     @Override
     public String getRequestEmailById(int requestId) {
         String query = "SELECT email FROM permission_requests WHERE request_id = ?";
@@ -154,28 +154,31 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return null;
     }
 
+    /**
+     * Saves a new dataset access request entry.
+     */
     @Override
     public boolean saveDatasetAccessRequest(String email, String department, String datasetList) {
-        String sql = "INSERT INTO permission_requests (email,department,accessible_datasets, requested_role,status) "
-                    + "VALUES (?,?,?,'ROLE_USER','PENDING')";
+        String sql = "INSERT INTO permission_requests (email, department, accessible_datasets, requested_role, status) VALUES (?, ?, ?, 'ROLE_USER', 'PENDING')";
 
-        try {
-            Connection connection = getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql);
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            statement.setString(1,email);
-            statement.setString(2,department);
-            statement.setString(3,datasetList);
-
+            statement.setString(1, email);
+            statement.setString(2, department);
+            statement.setString(3, datasetList);
+            return statement.executeUpdate() > 0;
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
         return false;
-
     }
 
+    /**
+     * Searches permission requests based on optional filters: email, dataset, department, status.
+     */
     @Override
     public List<PermissionRequestModel> searchPermissionRequests(String email, String datasetName, String department, String status) {
         List<PermissionRequestModel> results = new ArrayList<>();
@@ -220,7 +223,9 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         return results;
     }
 
-
+    /**
+     * Helper method to update a request’s status.
+     */
     private boolean updateStatus(int requestId, String newStatus) {
         String sql = "UPDATE permission_requests SET status = ? WHERE request_id = ? AND status = 'PENDING'";
         try (Connection connection = getConnection();
@@ -237,10 +242,12 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         }
     }
 
+    /**
+     * Helper method to convert a ResultSet row to a {@link PermissionRequestModel}.
+     */
     private PermissionRequestModel extractRequestFromResultSet(ResultSet resultSet) throws SQLException {
         PermissionRequestModel request = new PermissionRequestModel();
 
-        request.setRequestId(resultSet.getInt("request_id"));
         request.setRequestId(resultSet.getInt("request_id"));
         request.setFirstName(resultSet.getString("first_name"));
         request.setLastName(resultSet.getString("last_name"));
@@ -249,15 +256,13 @@ public class PermissionRequestRepositoryImpl implements PermissionRequestReposit
         request.setDepartment(resultSet.getString("department"));
 
         String datasetStr = resultSet.getString("accessible_datasets");
-        List<String> datasets = new ArrayList<>();
-
         if (datasetStr != null && !datasetStr.isBlank()) {
-            datasets = Arrays.asList(datasetStr.split("\\s*,\\s*"));
+            request.setAccessibleDatasets(Arrays.asList(datasetStr.split("\\s*,\\s*")));
+        } else {
+            request.setAccessibleDatasets(new ArrayList<>());
         }
-        request.setAccessibleDatasets(datasets);
 
         request.setStatus(resultSet.getString("status"));
         return request;
-
     }
 }
