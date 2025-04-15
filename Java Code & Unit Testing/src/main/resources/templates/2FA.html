@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTP Verification</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Colorblind Mode on Load -->
+  <script>
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.documentElement.classList.add("colorblind-mode");
+    }
+  </script>
+
+  <style>
+    .colorblind-mode {
+      background-color: black !important;
+      color: yellow !important;
+    }
+
+    .colorblind-mode a,
+    .colorblind-mode p {
+      color: yellow !important;
+    }
+
+    .colorblind-mode .navbar,
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue {
+      background-color: black !important;
+      color: white !important;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col justify-between text-gray-800">
+
+<!-- Header -->
+<header class="flex justify-between items-center p-4 bg-white shadow-md">
+  <a th:href="@{/login}">
+    <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
+  </a>
+
+  <!-- Accessibility Dropdown -->
+  <div class="relative inline-block text-left">
+    <button onclick="toggleAccessibilityMenu()"
+            class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+      Accessibility
+    </button>
+    <div id="accessibility-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 text-sm">
+      <button onclick="toggleColorblindMode()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Toggle Colorblind Mode</button>
+      <button onclick="adjustFontSize(1)" class="w-full text-left px-4 py-2 hover:bg-gray-100">Increase Font Size</button>
+      <button onclick="adjustFontSize(-1)" class="w-full text-left px-4 py-2 hover:bg-gray-100">Decrease Font Size</button>
+      <button onclick="resetFontSize()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Reset Font Size</button>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="flex-grow flex items-center justify-center p-6">
+  <div class="w-full max-w-md bg-white p-8 rounded shadow">
+    <h2 class="text-2xl font-semibold mb-6 text-center">Two-Factor Authentication</h2>
+
+    <!-- Error / Success Messages -->
+    <p th:if="${errorMessage}" class="text-red-600 text-sm text-center mb-2">[[${errorMessage}]]</p>
+    <p th:if="${success}" class="text-green-600 text-sm text-center mb-2">[[${success}]]</p>
+
+    <!-- OTP Form -->
+    <form th:action="@{/verify-otp}" method="post" id="otpForm" class="space-y-4">
+      <div>
+        <label for="otp" class="block text-sm font-medium mb-1">Enter OTP</label>
+        <input type="text" id="otp" name="otp"
+               placeholder="Enter 6-digit OTP"
+               required
+               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-500" />
+        <p id="otpErrorMsg" class="text-red-500 text-xs mt-1"></p>
+      </div>
+
+      <button type="submit"
+              class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
+        Verify OTP
+      </button>
+    </form>
+
+    <!-- Resend OTP -->
+    <form th:action="@{/resend-otp}" method="post" class="mt-4 text-center">
+      <button type="submit" class="text-blue-600 hover:underline text-sm">Didn't receive the OTP? Resend</button>
+    </form>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white px-6 py-8">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center">
+    <div class="text-sm space-y-1">
+      <p>Council Switchboard: 01274 432111</p>
+      <p>Council Address: Britannia House, Hall Ings, Bradford BD1 HW</p>
+      <a th:href="@{/contact}" class="text-blue-400 underline hover:text-blue-300">Contact us now</a>
+    </div>
+    <div class="flex gap-4 mt-4 md:mt-0">
+      <a href="https://www.facebook.com/bradfordmdc"><img th:src="@{/images/facebook.png}" class="h-10 w-10" alt="Facebook" /></a>
+      <a href="https://x.com/bradfordmdc"><img th:src="@{/images/twitter.png}" class="h-10 w-10" alt="Twitter" /></a>
+      <a href="https://www.linkedin.com/company/bradford-council/"><img th:src="@{/images/linkedin.png}" class="h-10 w-10" alt="LinkedIn" /></a>
+      <a href="https://www.instagram.com/bradfordmdc/"><img th:src="@{/images/Instagram.png}" class="h-10 w-10" alt="Instagram" /></a>
+      <a href="https://www.whatsapp.com/channel/0029VaIlkgqBqbr47t1fFy3P"><img th:src="@{/images/Whatsapp.png}" class="h-10 w-10" alt="Whatsapp" /></a>
+    </div>
+  </div>
+</footer>
+
+<footer class="bg-blue-900 text-white py-4 text-center text-sm space-x-4">
+  <a th:href="@{/cookies}" class="hover:underline">Cookies</a>
+  <a th:href="@{/privacy}" class="hover:underline">Privacy Notice</a>
+  <a th:href="@{/atoz}" class="hover:underline">A to Z</a>
+  <a th:href="@{/accessibility}" class="hover:underline">Accessibility Statement</a>
+  <p class="mt-2">&copy; 2025 City of Bradford Metropolitan District Council</p>
+</footer>
+
+<!-- Accessibility & OTP Validation Script -->
+<script>
+  function toggleAccessibilityMenu() {
+    document.getElementById("accessibility-menu").classList.toggle("hidden");
+  }
+
+  function toggleColorblindMode() {
+    const body = document.body;
+    const isEnabled = body.classList.toggle("colorblind-mode");
+    localStorage.setItem("colorblindMode", isEnabled);
+  }
+
+  let currentFontSize = parseFloat(localStorage.getItem("fontSize")) || 1;
+
+  function applyFontSize() {
+    document.body.style.fontSize = `${currentFontSize}em`;
+    localStorage.setItem("fontSize", currentFontSize);
+  }
+
+  function adjustFontSize(change) {
+    currentFontSize += change * 0.1;
+    currentFontSize = Math.max(0.8, Math.min(currentFontSize, 2));
+    applyFontSize();
+  }
+
+  function resetFontSize() {
+    currentFontSize = 1;
+    applyFontSize();
+  }
+
+  window.onload = function () {
+    if (localStorage.getItem("colorblindMode") === "true") {
+      document.body.classList.add("colorblind-mode");
+    }
+    applyFontSize();
+  };
+
+  // OTP Validation
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("otpForm");
+    const otpInput = document.getElementById("otp");
+    const errorMsg = document.getElementById("otpErrorMsg");
+
+    form.addEventListener("submit", function (event) {
+      const otp = otpInput.value.trim();
+      if (!/^\d{6}$/.test(otp)) {
+        errorMsg.textContent = "OTP must be exactly 6 digits.";
+        event.preventDefault();
+      } else {
+        errorMsg.textContent = "";
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

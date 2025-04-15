@@ -119,4 +119,15 @@ public class EmailService {
         sendMessage(email);
     }
 
+    public void sendLoginOtpEmail(String toEmail, String otp) throws MessagingException, IOException {
+        MimeMessage email = createEmail(
+                toEmail,
+                "mustafakamran491@gmail.com",
+                "Login OTP Verification",
+                "Your OTP for login verification is: " + otp + "\nThis code is valid for 15 minutes."
+        );
+        sendMessage(email);
+    }
+
+
 }
