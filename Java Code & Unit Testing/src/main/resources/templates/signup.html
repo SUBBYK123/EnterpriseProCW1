@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js" defer></script>
   <script src="@{/js/validation.js}" defer></script>
   <title>Sign Up Page</title>
 
@@ -79,11 +78,13 @@
     <div>
       <label for="firstName" class="block text-sm font-medium">First Name</label>
       <input type="text" id="firstName" th:field="*{firstName}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <span id="firstNameErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <div>
       <label for="lastName" class="block text-sm font-medium">Last Name</label>
       <input type="text" id="lastName" th:field="*{lastName}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <span id="lastNameErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <div>
@@ -95,21 +96,25 @@
         <option value="Department of Corporate Resources">Department of Corporate Resources</option>
         <option value="Department of Place">Department of Place</option>
       </select>
+      <span id="departmentErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <div>
       <label for="emailAddress" class="block text-sm font-medium">Email Address</label>
       <input type="email" id="emailAddress" th:field="*{emailAddress}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <span id="emailErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <div>
       <label for="password" class="block text-sm font-medium">Password</label>
       <input type="password" id="password" th:field="*{password}" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <span id="passwordErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <div>
       <label for="password_confirmation" class="block text-sm font-medium">Re-enter Password</label>
       <input type="password" id="password_confirmation" name="password_confirmation" required class="w-full mt-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <span id="passwordConfirmErrorMsg" class="text-red-500 text-sm"></span>
     </div>
 
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
@@ -160,84 +165,94 @@
 </footer>
 
   <!-- JavaScript Validation -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('signup');
-      const errorMessages = {
-        firstName: document.getElementById('firstNameErrorMsg'),
-        secondName: document.getElementById('secondNameErrorMsg'),
-        department: document.getElementById('departmentErrorMsg'),
-        emailAddress: document.getElementById('emailErrorMsg'),
-        password: document.getElementById('passwordErrorMsg')
-      };
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('signup');
 
-      function validateForm() {
-        let isValid = true;
+    const errorMessages = {
+      firstName: document.getElementById('firstNameErrorMsg'),
+      lastName: document.getElementById('lastNameErrorMsg'),
+      department: document.getElementById('departmentErrorMsg'),
+      emailAddress: document.getElementById('emailErrorMsg'),
+      password: document.getElementById('passwordErrorMsg'),
+      passwordConfirm: document.getElementById('passwordConfirmErrorMsg')
+    };
 
-        // Validate First Name
-        const firstName = form.firstName.value.trim();
-        if (!firstName) {
-          errorMessages.firstName.textContent = 'First name cannot be blank';
-          isValid = false;
-        } else {
-          errorMessages.firstName.textContent = '';
-        }
+    function validateForm() {
+      let isValid = true;
 
-        // Validate Second Name
-        const secondName = form.secondName.value.trim();
-        if (!secondName) {
-          errorMessages.secondName.textContent = 'Second name cannot be blank';
-          isValid = false;
-        } else {
-          errorMessages.secondName.textContent = '';
-        }
-
-        // Validate Department
-        const department = form.department.value;
-        if (!department) {
-          errorMessages.department.textContent = 'Please select a department';
-          isValid = false;
-        } else {
-          errorMessages.department.textContent = '';
-        }
-
-        // Validate Email
-        const emailAddress = form.emailAddress.value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(emailAddress)) {
-          errorMessages.emailAddress.textContent = 'Invalid emailAddress format';
-          isValid = false;
-        } else {
-          errorMessages.emailAddress.textContent = '';
-        }
-
-        // Validate Password
-        const password = form.password.value;
-        if (password.length < 8) {
-          errorMessages.password.textContent = 'Password must be at least 8 characters long';
-          isValid = false;
-        } else {
-          errorMessages.password.textContent = '';
-        }
-
-        // Validate Password Confirmation
-        const passwordConfirm = form.password_confirmation.value;
-        if (password !== passwordConfirm) {
-          errorMessages.password.textContent = 'Passwords do not match';
-          isValid = false;
-        }
-
-        return isValid;
+      // Validate First Name
+      const firstName = form.firstName.value.trim();
+      if (!firstName) {
+        errorMessages.firstName.textContent = 'First name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.firstName.textContent = '';
       }
 
-      form.addEventListener('submit', function (event) {
-        if (!validateForm()) {
-          event.preventDefault(); // Prevent form submission if validation fails
-        }
-      });
+      // Validate Last Name
+      const lastName = form.lastName.value.trim();
+      if (!lastName) {
+        errorMessages.lastName.textContent = 'Last name cannot be blank';
+        isValid = false;
+      } else {
+        errorMessages.lastName.textContent = '';
+      }
+
+      // Validate Department
+      const department = form.department.value;
+      if (!department) {
+        errorMessages.department.textContent = 'Please select a department';
+        isValid = false;
+      } else {
+        errorMessages.department.textContent = '';
+      }
+
+      // Validate Email
+      const email = form.emailAddress.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        errorMessages.emailAddress.textContent = 'Invalid email address format';
+        isValid = false;
+      } else {
+        errorMessages.emailAddress.textContent = '';
+      }
+
+      // Validate Password
+      const password = form.password.value;
+      const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+
+      if (password.length < 8) {
+        errorMessages.password.textContent = 'Password must be at least 8 characters';
+        isValid = false;
+      } else if (!strongPasswordRegex.test(password)) {
+        errorMessages.password.textContent = 'Password must include letters and numbers';
+        isValid = false;
+      } else {
+        errorMessages.password.textContent = '';
+      }
+
+      // Validate Password Confirmation
+      const passwordConfirm = form.password_confirmation.value;
+      if (password !== passwordConfirm) {
+        errorMessages.passwordConfirm.textContent = 'Passwords do not match';
+        isValid = false;
+      } else {
+        errorMessages.passwordConfirm.textContent = '';
+      }
+
+      return isValid;
+    }
+
+    form.addEventListener('submit', function (event) {
+      if (!validateForm()) {
+        event.preventDefault(); // Prevent form submission
+      }
     });
-  </script>
-  <script>
+  });
+</script>
+
+<script>
     document.getElementById("colorblind-toggle").addEventListener("click", function () {
       console.log("Button clicked!");
     });

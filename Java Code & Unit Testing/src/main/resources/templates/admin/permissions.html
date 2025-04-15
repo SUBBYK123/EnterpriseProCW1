@@ -169,7 +169,7 @@
                 <th class="p-2">Email</th>
                 <th class="p-2">Requested Role</th>
                 <th class="p-2">Department</th>
-                <th class="p-2">Accessible Datasets</th>
+
                 <th class="p-2">Status</th>
                 <th class="p-2">Actions</th>
             </tr>
@@ -181,11 +181,6 @@
                 <td class="p-2" th:text="${req.emailAddress}"></td>
                 <td class="p-2" th:text="${req.requestedRole}"></td>
                 <td class="p-2" th:text="${req.department}"></td>
-                <td class="p-2">
-                    <ul>
-                        <li th:each="ds : ${req.accessibleDatasets}" th:text="${ds}"></li>
-                    </ul>
-                </td>
                 <td class="p-2" th:text="${req.status}"></td>
                 <td class="p-2">
                     <div th:if="${req.status == 'PENDING'}" class="flex flex-col gap-1">
