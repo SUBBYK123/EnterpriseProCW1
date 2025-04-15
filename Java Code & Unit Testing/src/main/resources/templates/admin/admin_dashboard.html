@@ -5,6 +5,27 @@
     <title>Admin Dashboard</title>
     <!-- Load Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .colorblind-mode {
+            background-color: black !important;
+            color: yellow !important;
+        }
+
+        .colorblind-mode a, .colorblind-mode p {
+            color: yellow !important;
+        }
+
+        .colorblind-mode .site-footer,
+        .colorblind-mode .site-footer-blue {
+            background-color: black !important;
+            color: white !important;
+        }
+
+        body {
+            transition: font-size 0.2s ease;
+        }
+    </style>
+
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
@@ -15,15 +36,29 @@
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14" />
     </a>
 
-    <!-- Right-side tools: search bar, accessibility toggle, user icon, logout -->
+    <!-- Right-side tools: accessibility toggle, user icon, logout -->
     <div class="flex items-center gap-4">
 
-        <!-- Accessibility toggle button -->
-        <button id="colorblind-toggle"
-                onclick="toggleColorblindMode()"
-                class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
-            Accessibility
-        </button>
+        <!-- Accessibility Dropdown -->
+        <div class="relative inline-block text-left">
+            <button onclick="toggleAccessibilityMenu()"
+                    class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+                Accessibility
+            </button>
+
+            <!-- Dropdown menu -->
+            <div id="accessibility-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 text-sm">
+                <button onclick="toggleColorblindMode()"
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100">Toggle Colorblind Mode</button>
+                <button onclick="adjustFontSize(1)"
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100">Increase Font Size</button>
+                <button onclick="adjustFontSize(-1)"
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100">Decrease Font Size</button>
+                <button onclick="resetFontSize()"
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100">Reset Font Size</button>
+            </div>
+        </div>
+
 
         <!-- Logout button -->
         <form th:action="@{/logout}" method="post" class="ml-2">
@@ -44,20 +79,47 @@
 
 <!-- ========== Accessibility Mode Script ========== -->
 <script>
-    // Toggles colorblind mode and stores the preference in local storage
+    // Dropdown toggle
+    function toggleAccessibilityMenu() {
+        const menu = document.getElementById("accessibility-menu");
+        menu.classList.toggle("hidden");
+    }
+
+    // Colorblind mode toggle
     function toggleColorblindMode() {
         const body = document.body;
         const isEnabled = body.classList.toggle("colorblind-mode");
         localStorage.setItem("colorblindMode", isEnabled);
     }
 
-    // Applies the colorblind mode setting on page load
-    window.onload = () => {
+    // Font size control
+    let currentFontSize = parseFloat(localStorage.getItem("fontSize")) || 1;
+
+    function applyFontSize() {
+        document.body.style.fontSize = `${currentFontSize}em`;
+        localStorage.setItem("fontSize", currentFontSize);
+    }
+
+    function adjustFontSize(change) {
+        currentFontSize += change * 0.1;
+        currentFontSize = Math.max(0.8, Math.min(currentFontSize, 2)); // limit between 80%–200%
+        applyFontSize();
+    }
+
+    function resetFontSize() {
+        currentFontSize = 1;
+        applyFontSize();
+    }
+
+    // On load: apply saved settings
+    window.onload = function () {
         if (localStorage.getItem("colorblindMode") === "true") {
             document.body.classList.add("colorblind-mode");
         }
+        applyFontSize();
     };
 </script>
+
 
 <!-- =================== Main Content =================== -->
 <main class="flex-grow p-8 flex flex-col items-center justify-center bg-gray-100">

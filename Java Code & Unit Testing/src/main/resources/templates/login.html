@@ -36,24 +36,71 @@
   <a th:href="@{/login}">
     <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
   </a>
-  <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
-    Accessibility
-  </button>
+  <!-- Accessibility Dropdown -->
+  <div class="relative inline-block text-left">
+    <button onclick="toggleAccessibilityMenu()"
+            class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+      Accessibility
+    </button>
+
+    <!-- Dropdown menu -->
+    <div id="accessibility-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 text-sm">
+      <button onclick="toggleColorblindMode()"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100">Toggle Colorblind Mode</button>
+      <button onclick="adjustFontSize(1)"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100">Increase Font Size</button>
+      <button onclick="adjustFontSize(-1)"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100">Decrease Font Size</button>
+      <button onclick="resetFontSize()"
+              class="w-full text-left px-4 py-2 hover:bg-gray-100">Reset Font Size</button>
+    </div>
+  </div>
+
 </header>
 
 <!-- Accessibility Script -->
 <script>
+  // Dropdown toggle
+  function toggleAccessibilityMenu() {
+    const menu = document.getElementById("accessibility-menu");
+    menu.classList.toggle("hidden");
+  }
+
+  // Colorblind mode toggle
   function toggleColorblindMode() {
-    let isEnabled = document.body.classList.toggle("colorblind-mode");
+    const body = document.body;
+    const isEnabled = body.classList.toggle("colorblind-mode");
     localStorage.setItem("colorblindMode", isEnabled);
   }
 
+  // Font size control
+  let currentFontSize = parseFloat(localStorage.getItem("fontSize")) || 1;
+
+  function applyFontSize() {
+    document.body.style.fontSize = `${currentFontSize}em`;
+    localStorage.setItem("fontSize", currentFontSize);
+  }
+
+  function adjustFontSize(change) {
+    currentFontSize += change * 0.1;
+    currentFontSize = Math.max(0.8, Math.min(currentFontSize, 2)); // limit between 80%–200%
+    applyFontSize();
+  }
+
+  function resetFontSize() {
+    currentFontSize = 1;
+    applyFontSize();
+  }
+
+  // On load: apply saved settings
   window.onload = function () {
     if (localStorage.getItem("colorblindMode") === "true") {
       document.body.classList.add("colorblind-mode");
     }
+    applyFontSize();
   };
 </script>
+
 
 <!-- Main -->
 <main class="flex-grow flex flex-col items-center justify-center px-4">

@@ -40,24 +40,49 @@
     <a th:href="@{/login}">
         <img th:src="@{/images/logo.png}" alt="Website Logo" class="h-14">
     </a>
-    <button id="colorblind-toggle" onclick="toggleColorblindMode()" class="bg-gray-800 text-white px-3 py-1 rounded">
-        Accessibility
-    </button>
+    <!-- Accessibility Dropdown -->
+    <div class="relative inline-block text-left">
+        <button onclick="toggleAccessibilityMenu()"
+                class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+            Accessibility
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="accessibility-menu" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-50 text-sm">
+            <button onclick="toggleColorblindMode()"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100">Toggle Colorblind Mode</button>
+            <button onclick="adjustFontSize(1)"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100">Increase Font Size</button>
+            <button onclick="adjustFontSize(-1)"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100">Decrease Font Size</button>
+            <button onclick="resetFontSize()"
+                    class="w-full text-left px-4 py-2 hover:bg-gray-100">Reset Font Size</button>
+        </div>
+    </div>
+
 </header>
 
-<script>
-    function toggleColorblindMode() {
-        const body = document.body;
-        const enabled = body.classList.toggle("colorblind-mode");
-        localStorage.setItem("colorblindMode", enabled);
+<style>
+    .colorblind-mode {
+        background-color: black !important;
+        color: yellow !important;
     }
 
-    window.onload = function () {
-        if (localStorage.getItem("colorblindMode") === "true") {
-            document.body.classList.add("colorblind-mode");
-        }
-    };
-</script>
+    .colorblind-mode a, .colorblind-mode p {
+        color: yellow !important;
+    }
+
+    .colorblind-mode .site-footer,
+    .colorblind-mode .site-footer-blue {
+        background-color: black !important;
+        color: white !important;
+    }
+
+    body {
+        transition: font-size 0.2s ease;
+    }
+</style>
+
 
 <!-- Main Message -->
 <main class="flex-grow flex items-center justify-center px-4">
