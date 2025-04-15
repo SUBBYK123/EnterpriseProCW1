@@ -28,6 +28,14 @@
             Accessibility
         </button>
 
+        <!-- Logout button -->
+        <form th:action="@{/logout}" method="post" class="ml-2">
+            <button type="submit"
+                    class="bg-gray-800 text-white px-3 py-1 rounded hover:bg-gray-700">
+                Logout
+            </button>
+        </form>
+
         <!-- User profile icon -->
         <a th:href="@{/user/dashboard}">
             <img th:src="@{/images/user.png}" alt="User Profile" class="h-10 w-10 rounded-full border" />

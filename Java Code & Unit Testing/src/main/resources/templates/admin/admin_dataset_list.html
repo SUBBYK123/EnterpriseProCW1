@@ -93,7 +93,7 @@
 <main class="flex-grow px-6 py-10 max-w-screen-xl w-full mx-auto">
 
     <!-- Filter Form -->
-    <form th:action="@{/datasets/search}" method="get" class="flex flex-wrap items-end gap-3 mb-6 justify-center">
+    <form th:action="@{/admin/datasets}" method="get" class="flex flex-wrap items-end gap-3 mb-6 justify-center">
         <!-- Keyword search -->
         <input type="text" name="keyword" placeholder="Search dataset name or uploaded by"
                class="border border-gray-300 rounded px-3 py-2 text-sm" />
@@ -125,6 +125,9 @@
            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 text-sm text-center">
             Reset Filters
         </a>
+
+
+
     </form>
 
     <!-- Page Title -->

@@ -43,11 +43,22 @@ public class AdminDatasetController {
      * @return The view name to display the list of datasets.
      */
     @GetMapping
-    public String showAdminDatasets(Model model) {
-        List<DatasetMetadataModel> datasets = datasetMetadataService.fetchAllMetadata();
+    public String showAdminDatasets(@RequestParam(required = false) String keyword,
+                                    @RequestParam(required = false) String department,
+                                    @RequestParam(required = false) String role,
+                                    Model model) {
+        List<DatasetMetadataModel> datasets;
+
+        if (keyword != null || department != null || role != null) {
+            datasets = datasetMetadataService.searchAndFilter(keyword, department, role);
+        } else {
+            datasets = datasetMetadataService.fetchAllMetadata();
+        }
+
         model.addAttribute("datasets", datasets);
         return "admin/admin_dataset_list";
     }
+
 
     /**
      * Displays the content of a specific dataset.

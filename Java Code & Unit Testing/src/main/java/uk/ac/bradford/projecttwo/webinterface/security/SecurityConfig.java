@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -69,6 +70,10 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/api/assets/delete/**")
                         )
                 )
+
+                .requestCache(requestCache -> requestCache
+                        .requestCache(new HttpSessionRequestCache()))
+
 
                 // Configure form-based login
                 .formLogin(form -> form
