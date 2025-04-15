@@ -156,7 +156,7 @@
 
   function adjustFontSize(change) {
     currentFontSize += change * 0.1;
-    currentFontSize = Math.max(0.8, Math.min(currentFontSize, 2)); // limit between 80%–200%
+    currentFontSize = Math.max(0.8, Math.min(currentFontSize, 2));
     applyFontSize();
   }
 
@@ -165,7 +165,7 @@
     applyFontSize();
   }
 
-  // On load: apply saved settings
+  // Apply settings on load
   window.onload = function () {
     if (localStorage.getItem("colorblindMode") === "true") {
       document.body.classList.add("colorblind-mode");
@@ -173,8 +173,10 @@
     applyFontSize();
   };
 
+  // Form validation
   document.addEventListener("DOMContentLoaded", function () {
     const form = document.getElementById("resetVerifyForm");
+    const emailInput = document.getElementById("emailAddress");
     const otpInput = document.getElementById("otp");
     const passwordInput = document.getElementById("newPassword");
     const confirmInput = document.getElementById("password_confirmation");
@@ -184,17 +186,32 @@
     form.addEventListener("submit", function (event) {
       let valid = true;
 
-      // OTP Validation
-      if (!/^[0-9]{6}$/.test(otpInput.value.trim())) {
+      // Trim inputs
+      emailInput.value = emailInput.value.trim();
+      otpInput.value = otpInput.value.trim();
+      passwordInput.value = passwordInput.value.trim();
+      confirmInput.value = confirmInput.value.trim();
+
+      // Optional email validation (in addition to HTML5)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(emailInput.value)) {
+        alert("Please enter a valid email address.");
+        valid = false;
+      }
+
+      // OTP Validation (6 digits)
+      if (!/^[0-9]{6}$/.test(otpInput.value)) {
         otpError.textContent = "OTP must be exactly 6 digits";
         valid = false;
       } else {
         otpError.textContent = "";
       }
 
-      // Password Validation
-      if (passwordInput.value.length < 8) {
-        passwordError.textContent = "Password must be at least 8 characters";
+      // Strong password rule: min 8 chars, includes letters and numbers
+      const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+
+      if (!strongPasswordRegex.test(passwordInput.value)) {
+        passwordError.textContent = "Password must be 8+ characters and include letters and numbers";
         valid = false;
       } else if (passwordInput.value !== confirmInput.value) {
         passwordError.textContent = "Passwords do not match";
@@ -207,5 +224,6 @@
     });
   });
 </script>
+
 </body>
 </html>
